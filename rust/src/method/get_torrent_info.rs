@@ -19,6 +19,7 @@ pub struct OutputPayload {
     pub files: Vec<Files>,
 }
 
+
 pub async fn get_torrent_info(torrent_file: &str) -> Result<OutputPayload, String> {
 
     let torrent_info = utils::get_torrent_info::new(&PathBuf::from(torrent_file))

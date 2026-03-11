@@ -3,12 +3,15 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'api/get_torrent_info.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
 import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'method/generate_torrent_handle.dart';
+import 'method/get_torrent_info.dart';
+import 'method/init_torrent_session.dart';
+import 'method/spawn_stream_server.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
@@ -58,9 +61,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
       RustLibWire.fromExternalLibrary;
 
   @override
-  Future<void> executeRustInitializers() async {
-    await api.crateApiInitApp();
-  }
+  Future<void> executeRustInitializers() async {}
 
   @override
   ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
@@ -70,7 +71,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -112686125;
+  int get rustContentHash => -1242920438;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -81,10 +82,15 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<OutputPayload> crateApiGetTorrentInfoGetTorrentInfo(
+  Future<void> crateMethodGenerateTorrentHandleGenerateTorrentHandle(
+      {required String torrentFile, required BigInt fileId});
+
+  Future<OutputPayload> crateMethodGetTorrentInfoGetTorrentInfo(
       {required String torrentFile});
 
-  Future<void> crateApiInitApp();
+  Future<void> crateMethodInitTorrentSessionInitTorrentSession();
+
+  Future<void> crateMethodSpawnStreamServerSpawnStreamServer();
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -96,51 +102,105 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<OutputPayload> crateApiGetTorrentInfoGetTorrentInfo(
+  Future<void> crateMethodGenerateTorrentHandleGenerateTorrentHandle(
+      {required String torrentFile, required BigInt fileId}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(torrentFile, serializer);
+        sse_encode_usize(fileId, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 1, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodGenerateTorrentHandleGenerateTorrentHandleConstMeta,
+      argValues: [torrentFile, fileId],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodGenerateTorrentHandleGenerateTorrentHandleConstMeta =>
+          const TaskConstMeta(
+            debugName: "generate_torrent_handle",
+            argNames: ["torrentFile", "fileId"],
+          );
+
+  @override
+  Future<OutputPayload> crateMethodGetTorrentInfoGetTorrentInfo(
       {required String torrentFile}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(torrentFile, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_output_payload,
         decodeErrorData: sse_decode_String,
       ),
-      constMeta: kCrateApiGetTorrentInfoGetTorrentInfoConstMeta,
+      constMeta: kCrateMethodGetTorrentInfoGetTorrentInfoConstMeta,
       argValues: [torrentFile],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiGetTorrentInfoGetTorrentInfoConstMeta =>
+  TaskConstMeta get kCrateMethodGetTorrentInfoGetTorrentInfoConstMeta =>
       const TaskConstMeta(
         debugName: "get_torrent_info",
         argNames: ["torrentFile"],
       );
 
   @override
-  Future<void> crateApiInitApp() {
+  Future<void> crateMethodInitTorrentSessionInitTorrentSession() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
+        decodeErrorData: sse_decode_String,
       ),
-      constMeta: kCrateApiInitAppConstMeta,
+      constMeta: kCrateMethodInitTorrentSessionInitTorrentSessionConstMeta,
       argValues: [],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiInitAppConstMeta => const TaskConstMeta(
-        debugName: "init_app",
+  TaskConstMeta get kCrateMethodInitTorrentSessionInitTorrentSessionConstMeta =>
+      const TaskConstMeta(
+        debugName: "init_torrent_session",
+        argNames: [],
+      );
+
+  @override
+  Future<void> crateMethodSpawnStreamServerSpawnStreamServer() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodSpawnStreamServerSpawnStreamServerConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateMethodSpawnStreamServerSpawnStreamServerConstMeta =>
+      const TaskConstMeta(
+        debugName: "spawn_stream_server",
         argNames: [],
       );
 

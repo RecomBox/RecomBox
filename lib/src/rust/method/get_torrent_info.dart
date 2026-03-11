@@ -10,7 +10,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<OutputPayload> getTorrentInfo({required String torrentFile}) =>
     RustLib.instance.api
-        .crateApiGetTorrentInfoGetTorrentInfo(torrentFile: torrentFile);
+        .crateMethodGetTorrentInfoGetTorrentInfo(torrentFile: torrentFile);
 
 class Files {
   final String? path;

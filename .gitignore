@@ -1,5 +1,6 @@
 # Miscellaneous
 tmp/
+rust/tmp/
 *.torrent
 *.class
 *.log
