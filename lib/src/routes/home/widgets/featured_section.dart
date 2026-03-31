@@ -41,7 +41,7 @@ class _FeaturedSectionState extends State<FeaturedSection> {
                 Container(
                   width: double.infinity,
                   height: double.infinity,
-                  color: Colors.black.withAlpha(50),
+                  color: Colors.black.withAlpha(60),
                 ),
                 Container(
                     width: double.infinity,

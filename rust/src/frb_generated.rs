@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -864201337;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -482939301;
 
 // Section: executor
 
@@ -168,7 +168,7 @@ fn wire__crate__method__get_torrent_info__get_torrent_info_impl(
         },
     )
 }
-fn wire__crate__method__init__init_settings__init_settings_impl(
+fn wire__crate__method__settings__init_settings__init_settings_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -196,7 +196,7 @@ fn wire__crate__method__init__init_settings__init_settings_impl(
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
                         let output_ok =
-                            crate::method::init::init_settings::init_settings(api_settings)?;
+                            crate::method::settings::init_settings::init_settings(api_settings)?;
                         Ok(output_ok)
                     })(),
                 )
@@ -597,7 +597,7 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        4 => wire__crate__method__init__init_settings__init_settings_impl(
+        4 => wire__crate__method__settings__init_settings__init_settings_impl(
             port,
             ptr,
             rust_vec_len,

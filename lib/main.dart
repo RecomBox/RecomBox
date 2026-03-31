@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/rust/frb_generated.dart';
-import 'package:recombox/src/rust/method/init/init_settings.dart';
+import 'package:recombox/src/rust/method/settings/init_settings.dart';
 import 'package:recombox/src/rust/utils/settings.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';

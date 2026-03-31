@@ -10,10 +10,10 @@ import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'method/generate_torrent_handle.dart';
 import 'method/get_torrent_info.dart';
-import 'method/init/init_settings.dart';
 import 'method/init/init_torrent_session.dart';
 import 'method/metadata_provider/featured_content.dart';
 import 'method/metadata_provider/trending_content.dart';
+import 'method/settings/init_settings.dart';
 import 'method/spawn_stream_server.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'utils/settings.dart';
@@ -75,7 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -864201337;
+  int get rustContentHash => -482939301;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -97,7 +97,7 @@ abstract class RustLibApi extends BaseApi {
   Future<OutputPayload> crateMethodGetTorrentInfoGetTorrentInfo(
       {required String torrentSource});
 
-  Future<void> crateMethodInitInitSettingsInitSettings(
+  Future<void> crateMethodSettingsInitSettingsInitSettings(
       {required Settings settings});
 
   Future<void> crateMethodInitInitTorrentSessionInitTorrentSession();
@@ -203,7 +203,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateMethodInitInitSettingsInitSettings(
+  Future<void> crateMethodSettingsInitSettingsInitSettings(
       {required Settings settings}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -216,13 +216,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeSuccessData: sse_decode_unit,
         decodeErrorData: sse_decode_AnyhowException,
       ),
-      constMeta: kCrateMethodInitInitSettingsInitSettingsConstMeta,
+      constMeta: kCrateMethodSettingsInitSettingsInitSettingsConstMeta,
       argValues: [settings],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateMethodInitInitSettingsInitSettingsConstMeta =>
+  TaskConstMeta get kCrateMethodSettingsInitSettingsInitSettingsConstMeta =>
       const TaskConstMeta(
         debugName: "init_settings",
         argNames: ["settings"],
