@@ -16,14 +16,14 @@ Map<int, String> availableSorts = {
   2: "Release Date",
 };
 
-class Search extends StatefulWidget {
-  const Search({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<Search> createState() => _SearchState();
+  State<SearchScreen> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends State<SearchScreen> {
   AppColorsScheme appColors = appColorsNotifier.value;
 
   List<SearchContentInfo> searchContentResult = [];
@@ -146,7 +146,6 @@ class _SearchState extends State<Search> {
           if (MediaQuery.of(context).size.width >= 600)
             NavigationBarVertical(
               currentIndex: 1,
-              useRefresh: false,
             ),
           Expanded(
             child: Scaffold(
@@ -203,7 +202,7 @@ class _SearchState extends State<Search> {
                       ],
                     )
                   ),
-                  // -> Search TextField Widgets
+                  // -> SearchScreen TextField Widgets
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.only(right: 10),

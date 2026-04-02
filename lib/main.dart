@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/routes/search/search.dart';
+import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/rust/frb_generated.dart';
 import 'package:recombox/src/rust/method/settings/init_settings.dart';
 import 'package:recombox/src/rust/utils/settings.dart';
@@ -25,11 +26,11 @@ Future<void> main() async {
 	await RustLib.init();
 	WidgetsFlutterBinding.ensureInitialized();
   initSettings(settings: Settings(
-    paths: Paths(
-      appSupportDir: (await getApplicationSupportDirectory()).path,
-      appCacheDir: (await getApplicationCacheDirectory()).path, 
-      tempDir: (await getTemporaryDirectory()).path
-    )
+	paths: Paths(
+	  appSupportDir: (await getApplicationSupportDirectory()).path,
+	  appCacheDir: (await getApplicationCacheDirectory()).path, 
+	  tempDir: (await getTemporaryDirectory()).path
+	)
   ));
 	// <-
 
@@ -93,11 +94,12 @@ class App extends StatelessWidget {
 						dragDevices: {PointerDeviceKind.mouse},
 					),
 					debugShowCheckedModeBanner: false,
-					initialRoute: "/search",
+					initialRoute: "/view",
 					title: 'RecomBox',
 					routes: {
-						"/": (context) => const Home(),
-            "/search": (context) => const Search(),
+						"/": (context) => const HomeScreen(),
+						"/search": (context) => const SearchScreen(),
+						"/view": (context) => const ViewScreen(),
 					},
 				);
 			}
@@ -120,8 +122,8 @@ class TransitionsBuilder extends PageTransitionsBuilder {
 	) {
 		
 		return ColoredBox(
-      color: appColors.primary,
-      child: child,
-    );
+			color: appColors.primary,
+			child: child,
+		);
   }
 }

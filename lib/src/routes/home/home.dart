@@ -18,16 +18,16 @@ import 'package:shimmer/shimmer.dart';
 import 'widgets/featured_section.dart';
 // <-
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<HomeScreen> {
 
-  bool isLoading = true;
+  bool isLoading = false;
 
 	List<FeaturedContentInfo> featuredContentList = [];
 	Map<Source, List<TrendingContentInfo>> trendingContentMap = {};
@@ -43,31 +43,55 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> initMetadataProvider({bool fromCache=true}) async {
+    if (isLoading) return;
+
     setState(() {
       isLoading = true;
     });
-		// -> Featured Content
-		List<FeaturedContentInfo> featuredContentListResult = [];
-		for (final source in Source.values) {
-			final result = await featuredContent(source: source.name, fromCache: fromCache);
-			featuredContentListResult.addAll(result);
-		}
-		setState(() {
-			featuredContentList = featuredContentListResult..shuffle(Random());
-		});
-		
-		// <-
+    try{
+      await Future.wait([
+        (() async{
+          // -> Featured Content
+          final waitResult = await Future.wait([
+            for (final source in Source.values)
+              featuredContent(source: source.name, fromCache: fromCache),
+          ]);
 
-		// -> Trending Content
-		Map<Source, List<TrendingContentInfo>> trendingContentMapResult = {};
-		for (final source in Source.values) {
-			final result = await trendingContent(source: source.name, fromCache: fromCache);
-			trendingContentMapResult[source] = result;
-		}
-		setState(() {
-			trendingContentMap = trendingContentMapResult;
-		});
-		// <-
+          List<FeaturedContentInfo> featuredContentListResult = [];
+
+          for (final result in waitResult) {
+            featuredContentListResult.addAll(result);
+          }
+          setState(() {
+            featuredContentList = featuredContentListResult..shuffle(Random());
+          });
+              
+          // <-
+        })(),
+        
+        (() async{
+          // -> Trending Content
+          var waitResult = await Future.wait([
+            for (final source in Source.values)
+              trendingContent(source: source.name, fromCache: fromCache),
+          ]);
+
+          Map<Source, List<TrendingContentInfo>> trendingContentMapResult = {};
+
+          // zip Source.values with waitResult
+          for (int i = 0; i < Source.values.length; i++) {
+            trendingContentMapResult[Source.values[i]] = waitResult[i];
+          }
+
+          setState(() {
+            trendingContentMap = trendingContentMapResult;
+          });
+          // <-
+        })()
+      ]);
+    }catch(e){
+      debugPrint(e.toString());
+    }
 
     setState(() {
       isLoading = false;
@@ -83,10 +107,6 @@ class _HomeState extends State<Home> {
           if (MediaQuery.of(context).size.width >= 600)
             NavigationBarVertical(
               currentIndex: 0,
-              useRefresh: true,
-              onRefresh: () {
-                initMetadataProvider(fromCache: false);
-              },
             ),
           Expanded(
             child: Scaffold(
@@ -154,7 +174,28 @@ class _HomeState extends State<Home> {
                         ),
                     ),
                     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-                      Positioned(top: 0, left: 0, right: 0, child: TitleBar()),
+                      Positioned(top: 0, left: 0, right: 0, 
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8, right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                mouseCursor: SystemMouseCursors.click,
+                                onPressed: () {
+                                  initMetadataProvider(fromCache: false);
+                                },
+                                icon: Icon(
+                                  Icons.refresh,
+                                  color: appColors.secondary,
+                                ),
+                              ),
+                              Expanded(child: TitleBar())
+                            ],
+                          )
+                        )
+                      ),
                 ],
               ),
               bottomNavigationBar: ((Platform.isWindows || Platform.isLinux || Platform.isMacOS) && (MediaQuery.of(context).size.width < 600)) 

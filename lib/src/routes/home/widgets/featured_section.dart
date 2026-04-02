@@ -113,6 +113,8 @@ class _FeaturedSectionState extends State<FeaturedSection> {
                       ],
                     ))
               ],
-            )));
+            )
+          )
+        );
   }
 }

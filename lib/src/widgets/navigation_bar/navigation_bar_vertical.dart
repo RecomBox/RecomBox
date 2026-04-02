@@ -8,13 +8,9 @@ class NavigationBarVertical extends StatefulWidget {
       {
         super.key, required, 
         required this.currentIndex,
-        this.useRefresh=false,
-        this.onRefresh,
       });
 
   final int currentIndex;
-  final bool useRefresh;
-  final VoidCallback? onRefresh;
 
   @override
   State<NavigationBarVertical> createState() => _NavigationBarVerticalState();
@@ -101,22 +97,6 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
               ],
             ),
           ),
-
-          if (widget.useRefresh)
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: IconButton(
-                mouseCursor: SystemMouseCursors.click,
-                onPressed: () {
-                  widget.onRefresh?.call();
-                },
-                icon: Icon(
-                  color: appColors.secondary,
-                  Icons.refresh
-                )
-              )
-            ),
-
         ],
       )
     );
