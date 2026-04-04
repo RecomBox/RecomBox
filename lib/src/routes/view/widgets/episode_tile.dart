@@ -17,6 +17,7 @@ class EpisodeTile extends StatefulWidget {
 class _EpisodeTileState extends State<EpisodeTile> {
 
   AppColorsScheme appColors = appColorsNotifier.value;
+  bool failLoadThumbnail = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +36,13 @@ class _EpisodeTileState extends State<EpisodeTile> {
                 Ink.image(
                   width: 150,
                   height: 100,
-                  image: NetworkImage(widget.episodeInfo.thumbnailUrl),
+                  image: NetworkImage(failLoadThumbnail ? "https://placehold.co/150x100?text=RecomBox" : widget.episodeInfo.thumbnailUrl),
                   fit: BoxFit.cover,
+                  onImageError: (_,__){
+                    setState(() {
+                      failLoadThumbnail = true;
+                    });
+                  },
                 ),
                 Expanded(
                   child: Container(
@@ -52,7 +58,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
                           ),
-                          maxLines: 2,
+                          maxLines: 3,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                         )

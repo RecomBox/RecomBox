@@ -29,6 +29,38 @@ class ViewScreen extends StatefulWidget {
 
 class _ViewState extends State<ViewScreen> {
 
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      isLoading = true;
+    });
+
+    // Defer until after build context is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final rawArgs = ModalRoute.of(context)?.settings.arguments;
+
+      args = rawArgs is ViewScreenArguments
+          ? rawArgs
+          : ViewScreenArguments(
+              source: Source.movies,
+              id: "%2F53906%2Fspider-man",
+          );
+
+      debugPrint(args.toString());
+      initViewContentInfo();
+
+      
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _episodeScrollController.dispose();
+    _seasonScrollController.dispose();
+  }
+
   late ViewScreenArguments args;
 
   final _seasonScrollController = ScrollController();
@@ -68,30 +100,7 @@ class _ViewState extends State<ViewScreen> {
     Navigator.pop(context);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      isLoading = true;
-    });
-
-    // Defer until after build context is ready
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final rawArgs = ModalRoute.of(context)?.settings.arguments;
-
-      args = rawArgs is ViewScreenArguments
-          ? rawArgs
-          : ViewScreenArguments(
-              source: Source.movies,
-              id: "%2F53906%2Fspider-man",
-          );
-
-      debugPrint(args.toString());
-      initViewContentInfo();
-
-      
-    });
-  }
+  
 
   Future<void> initViewContentInfo({bool fromCache=true}) async {
     setState(() {
@@ -498,34 +507,62 @@ class _ViewState extends State<ViewScreen> {
                     // <-
 
 
+                    IndexedStack(
+                      index: currentTabIndex,
+                      children: [
+                      
+                        // -> Episodes
+                        Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          padding: EdgeInsets.all(10),
+                          child: Scrollbar(
+                            thickness: 0,
+                            controller: _episodeScrollController,
+                            
+                            child: ListView.separated(
+                              controller: _episodeScrollController,
+                              scrollDirection: Axis.vertical,
+                              itemCount: viewContentInfoResult.episodes.elementAtOrNull(currentSeasonIndex)?.length ?? 0,
+                              itemBuilder: (current, index) {
+                                  return EpisodeTile(
+                                    episodeInfo: viewContentInfoResult.episodes[currentSeasonIndex][index],
+                                  );
+                              }, 
+                              separatorBuilder: (current, index) {
+                                return SizedBox(height: 10,);
+                              },
+                              
+                            )
+                          )
+                        ),
 
-                    // -> Episodes
-                    Container(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      padding: EdgeInsets.all(10),
-                      child: Scrollbar(
-                        thickness: 0,
-                        controller: _episodeScrollController,
+                        // <- 
                         
-                        child: ListView.separated(
-                          controller: _episodeScrollController,
-                          scrollDirection: Axis.vertical,
-                          itemCount: viewContentInfoResult.episodes.elementAtOrNull(currentSeasonIndex)?.length ?? 0,
-                          itemBuilder: (current, index) {
-                              return EpisodeTile(
-                                episodeInfo: viewContentInfoResult.episodes[currentSeasonIndex][index],
-                              );
-                          }, 
-                          separatorBuilder: (current, index) {
-                            return SizedBox(height: 10,);
-                          },
-                          
+                        // -> Pictures
+                        Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          alignment: Alignment.centerRight,
+                          child: GridView.count(
+                            crossAxisCount: 2, // number of columns
+                            crossAxisSpacing: 10, // horizontal spacing
+                            mainAxisSpacing: 10, 
+                            children: [
+                              for (var pic in viewContentInfoResult.pictures)
+                                Ink.image(
+                                  width: 50,
+                                  image: NetworkImage(pic),
+                                ),
+                            ],
+                          )
                         )
-                      )
-                    )
 
-                    // <- 
+                        // <-
+
+                      ],
+                    ),
                   ]
 
                   // <-

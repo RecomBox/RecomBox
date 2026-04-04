@@ -94,7 +94,7 @@ class App extends StatelessWidget {
 						dragDevices: {PointerDeviceKind.mouse},
 					),
 					debugShowCheckedModeBanner: false,
-					initialRoute: "/",
+					initialRoute: "/view",
 					title: 'RecomBox',
 					routes: {
 						"/": (context) => const HomeScreen(),
