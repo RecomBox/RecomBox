@@ -36,7 +36,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
                 Ink.image(
                   width: 150,
                   height: 100,
-                  image: NetworkImage(failLoadThumbnail ? "https://placehold.co/150x100?text=RecomBox" : widget.episodeInfo.thumbnailUrl),
+                  image: NetworkImage(failLoadThumbnail ? "https://placehold.co/150x100/jpeg?text=RecomBox" : widget.episodeInfo.thumbnailUrl),
                   fit: BoxFit.cover,
                   onImageError: (_,__){
                     setState(() {
