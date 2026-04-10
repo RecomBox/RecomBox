@@ -19,10 +19,10 @@ class SetCategoryTile extends StatefulWidget {
   final String categoryName;
 
   @override
-  State<SetCategoryTile> createState() => _SetFavoriteTileState();
+  State<SetCategoryTile> createState() => _SetCategoryTileState();
 }
 
-class _SetFavoriteTileState extends State<SetCategoryTile> {
+class _SetCategoryTileState extends State<SetCategoryTile> {
 
   AppColorsScheme appColors = appColorsNotifier.value;
 
@@ -98,6 +98,8 @@ class _SetFavoriteTileState extends State<SetCategoryTile> {
                   color: appColors.textPrimary,
                   fontSize: 16
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           )

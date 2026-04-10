@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:recombox/src/global/dialogs/favorite/set_category.dart';
+import 'package:recombox/src/global/dialogs/favorite/set_category_dialog.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/view/widgets/episode_tile.dart';
@@ -158,8 +157,8 @@ class _ViewState extends State<ViewScreen> {
     });
   }
 
-  List<EpisodeInfo> onFilterChange(List<EpisodeInfo> episodes) {
-    return episodes.asMap().entries
+  List<EpisodeInfo> onFilterChange() {
+    return viewContentInfoResult!.episodes[currentSeasonIndex].asMap().entries
       .where((entry) {
         final item = entry.value;
         return item.title.toLowerCase().contains(_textEditingController.text.toLowerCase())
@@ -185,7 +184,7 @@ class _ViewState extends State<ViewScreen> {
   @override
   Widget build(BuildContext context) {
     List<EpisodeInfo> filteredEpisodes = (viewContentInfoResult != null)
-      ? onFilterChange(viewContentInfoResult!.episodes[currentSeasonIndex])
+      ? onFilterChange()
       : <EpisodeInfo>[];
 
 
@@ -729,12 +728,12 @@ class _ViewState extends State<ViewScreen> {
                                           controller: _textEditingController,
                                           onChanged: (_){
                                             setState(() {
-                                              onFilterChange(viewContentInfoResult!.episodes[currentSeasonIndex]);
+                                              filteredEpisodes = onFilterChange();
                                             });
                                           },
                                           onSubmitted: (value){
                                             setState(() {
-                                              filteredEpisodes = onFilterChange(viewContentInfoResult!.episodes[currentSeasonIndex]);
+                                              filteredEpisodes = onFilterChange();
                                             });
                                           },
                                           cursorColor: appColors.textPrimary,

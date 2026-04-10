@@ -20,10 +20,10 @@ class SetCategoryDialog extends StatefulWidget {
   final Function? onDone;
 
   @override
-  State<SetCategoryDialog> createState() => _FavoriteDialogState();
+  State<SetCategoryDialog> createState() => _SetCategoryDialogState();
 }
 
-class _FavoriteDialogState extends State<SetCategoryDialog> {
+class _SetCategoryDialogState extends State<SetCategoryDialog> {
 
   AppColorsScheme appColors = appColorsNotifier.value;
   
@@ -91,7 +91,7 @@ class _FavoriteDialogState extends State<SetCategoryDialog> {
         width: min(300, MediaQuery.of(context).size.width * 0.9),
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.width * 0.9,
+            maxHeight: MediaQuery.of(context).size.height * 0.9,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -111,17 +111,19 @@ class _FavoriteDialogState extends State<SetCategoryDialog> {
               ),
 
               if (allCategoryKeyList.isNotEmpty)
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: allCategoryKeyList.length,
-                  itemBuilder: (context, index) {
-                    return SetCategoryTile(
-                      selected: itemCategoryMap.field0.containsKey(allCategoryKeyList[index]),
-                      itemId: widget.itemId,
-                      categoryID: allCategoryKeyList[index],
-                      categoryName: allCategoryValueList[index],
-                    );
-                  },
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: allCategoryKeyList.length,
+                    itemBuilder: (context, index) {
+                      return SetCategoryTile(
+                        selected: itemCategoryMap.field0.containsKey(allCategoryKeyList[index]),
+                        itemId: widget.itemId,
+                        categoryID: allCategoryKeyList[index],
+                        categoryName: allCategoryValueList[index],
+                      );
+                    },
+                  ),
                 ),
               
               if (allCategoryKeyList.isEmpty)

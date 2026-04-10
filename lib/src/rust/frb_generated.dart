@@ -26,8 +26,11 @@ import 'method/metadata_provider/featured_content.dart';
 import 'method/metadata_provider/search_content.dart';
 import 'method/metadata_provider/trending_content.dart';
 import 'method/metadata_provider/view_content.dart';
+import 'method/plugin_provider.dart';
 import 'method/plugin_provider/get_installed_plugins.dart';
 import 'method/plugin_provider/get_plugin_list.dart';
+import 'method/plugin_provider/install_plugin.dart';
+import 'method/plugin_provider/remove_plugin.dart';
 import 'method/settings/init_settings.dart';
 import 'method/spawn_stream_server.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
@@ -90,7 +93,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 2006075058;
+  int get rustContentHash => 312102692;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -128,9 +131,8 @@ abstract class RustLibApi extends BaseApi {
       crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins(
           {required String source});
 
-  Future<Map<String, PluginInfo>>
-      crateMethodPluginProviderGetPluginListGetPluginList(
-          {required String source});
+  Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList(
+      {required String source});
 
   Future<OutputPayload> crateMethodGetTorrentInfoGetTorrentInfo(
       {required String torrentSource});
@@ -140,8 +142,14 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateMethodInitInitTorrentSessionInitTorrentSession();
 
+  Future<void> crateMethodPluginProviderInstallPluginInstallPlugins(
+      {required String source, required PluginInfo pluginInfo});
+
   Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
       {required String itemId});
+
+  Future<void> crateMethodPluginProviderRemovePluginRemovePlugins(
+      {required String source, required PluginInfo pluginInfo});
 
   Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
       {required BigInt categoryId, required String newCategoryName});
@@ -400,9 +408,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
-  Future<Map<String, PluginInfo>>
-      crateMethodPluginProviderGetPluginListGetPluginList(
-          {required String source}) {
+  Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList(
+      {required String source}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -411,7 +418,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             funcId: 9, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_Map_String_plugin_info_None,
+        decodeSuccessData: sse_decode_list_plugin_info,
         decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodPluginProviderGetPluginListGetPluginListConstMeta,
@@ -505,6 +512,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<void> crateMethodPluginProviderInstallPluginInstallPlugins(
+      {required String source, required PluginInfo pluginInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 13, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderInstallPluginInstallPluginsConstMeta,
+      argValues: [source, pluginInfo],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodPluginProviderInstallPluginInstallPluginsConstMeta =>
+          const TaskConstMeta(
+            debugName: "install_plugins",
+            argNames: ["source", "pluginInfo"],
+          );
+
+  @override
   Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
       {required String itemId}) {
     return handler.executeNormal(NormalTask(
@@ -512,7 +547,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(itemId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
+            funcId: 14, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -531,6 +566,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateMethodPluginProviderRemovePluginRemovePlugins(
+      {required String source, required PluginInfo pluginInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 15, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta,
+      argValues: [source, pluginInfo],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta =>
+          const TaskConstMeta(
+            debugName: "remove_plugins",
+            argNames: ["source", "pluginInfo"],
+          );
+
+  @override
   Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
       {required BigInt categoryId, required String newCategoryName}) {
     return handler.executeNormal(NormalTask(
@@ -539,7 +602,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId, serializer);
         sse_encode_String(newCategoryName, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 14, port: port_);
+            funcId: 16, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -572,7 +635,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(sort, serializer);
         sse_encode_u_64(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 15, port: port_);
+            funcId: 17, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_search_content_info,
@@ -601,7 +664,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId, serializer);
         sse_encode_String(itemId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 16, port: port_);
+            funcId: 18, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -625,7 +688,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 17, port: port_);
+            funcId: 19, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -652,7 +715,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId1, serializer);
         sse_encode_u_64(categoryId2, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 18, port: port_);
+            funcId: 20, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -682,7 +745,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_bool(fromCache, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 19, port: port_);
+            funcId: 21, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_trending_content_info,
@@ -711,7 +774,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId, serializer);
         sse_encode_String(itemId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 20, port: port_);
+            funcId: 22, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -739,7 +802,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(id, serializer);
         sse_encode_bool(fromCache, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 21, port: port_);
+            funcId: 23, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_view_content_info,
@@ -774,13 +837,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Map<String, PluginInfo> dco_decode_Map_String_plugin_info_None(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return Map.fromEntries(dco_decode_list_record_string_plugin_info(raw)
-        .map((e) => MapEntry(e.$1, e.$2)));
-  }
-
-  @protected
   Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Map.fromEntries(dco_decode_list_record_u_64_string(raw)
@@ -804,6 +860,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
+  }
+
+  @protected
+  PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_plugin_info(raw);
   }
 
   @protected
@@ -948,6 +1010,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_plugin_info).toList();
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
@@ -959,15 +1027,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>)
         .map(dco_decode_record_string_installed_plugin_info)
-        .toList();
-  }
-
-  @protected
-  List<(String, PluginInfo)> dco_decode_list_record_string_plugin_info(
-      dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>)
-        .map(dco_decode_record_string_plugin_info)
         .toList();
   }
 
@@ -1045,12 +1104,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PluginInfo dco_decode_plugin_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return PluginInfo(
-      name: dco_decode_String(arr[0]),
-      repoUrl: dco_decode_String(arr[1]),
-      iconUrl: dco_decode_String(arr[2]),
+      hashedManifestRepoId: dco_decode_String(arr[0]),
+      manifestRepoName: dco_decode_String(arr[1]),
+      pluginId: dco_decode_String(arr[2]),
+      pluginName: dco_decode_String(arr[3]),
+      pluginRepoUrl: dco_decode_String(arr[4]),
+      pluginIconUrl: dco_decode_String(arr[5]),
     );
   }
 
@@ -1065,19 +1127,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (
       dco_decode_String(arr[0]),
       dco_decode_installed_plugin_info(arr[1]),
-    );
-  }
-
-  @protected
-  (String, PluginInfo) dco_decode_record_string_plugin_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) {
-      throw Exception('Expected 2 elements, got ${arr.length}');
-    }
-    return (
-      dco_decode_String(arr[0]),
-      dco_decode_plugin_info(arr[1]),
     );
   }
 
@@ -1214,14 +1263,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Map<String, PluginInfo> sse_decode_Map_String_plugin_info_None(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_list_record_string_plugin_info(deserializer);
-    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
-  }
-
-  @protected
   Map<BigInt, String> sse_decode_Map_u_64_String_None(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1248,6 +1289,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
+  }
+
+  @protected
+  PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_plugin_info(deserializer));
   }
 
   @protected
@@ -1412,6 +1459,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <PluginInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_plugin_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -1428,19 +1487,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <(String, InstalledPluginInfo)>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_record_string_installed_plugin_info(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<(String, PluginInfo)> sse_decode_list_record_string_plugin_info(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <(String, PluginInfo)>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_record_string_plugin_info(deserializer));
     }
     return ans_;
   }
@@ -1554,11 +1600,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PluginInfo sse_decode_plugin_info(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_name = sse_decode_String(deserializer);
-    var var_repoUrl = sse_decode_String(deserializer);
-    var var_iconUrl = sse_decode_String(deserializer);
+    var var_hashedManifestRepoId = sse_decode_String(deserializer);
+    var var_manifestRepoName = sse_decode_String(deserializer);
+    var var_pluginId = sse_decode_String(deserializer);
+    var var_pluginName = sse_decode_String(deserializer);
+    var var_pluginRepoUrl = sse_decode_String(deserializer);
+    var var_pluginIconUrl = sse_decode_String(deserializer);
     return PluginInfo(
-        name: var_name, repoUrl: var_repoUrl, iconUrl: var_iconUrl);
+        hashedManifestRepoId: var_hashedManifestRepoId,
+        manifestRepoName: var_manifestRepoName,
+        pluginId: var_pluginId,
+        pluginName: var_pluginName,
+        pluginRepoUrl: var_pluginRepoUrl,
+        pluginIconUrl: var_pluginIconUrl);
   }
 
   @protected
@@ -1567,15 +1621,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_String(deserializer);
     var var_field1 = sse_decode_installed_plugin_info(deserializer);
-    return (var_field0, var_field1);
-  }
-
-  @protected
-  (String, PluginInfo) sse_decode_record_string_plugin_info(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_String(deserializer);
-    var var_field1 = sse_decode_plugin_info(deserializer);
     return (var_field0, var_field1);
   }
 
@@ -1715,14 +1760,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_Map_String_plugin_info_None(
-      Map<String, PluginInfo> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_record_string_plugin_info(
-        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
-  }
-
-  @protected
   void sse_encode_Map_u_64_String_None(
       Map<BigInt, String> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1748,6 +1785,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_plugin_info(
+      PluginInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_plugin_info(self, serializer);
   }
 
   @protected
@@ -1882,6 +1926,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_plugin_info(
+      List<PluginInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_plugin_info(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1896,16 +1950,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_record_string_installed_plugin_info(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_record_string_plugin_info(
-      List<(String, PluginInfo)> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_record_string_plugin_info(item, serializer);
     }
   }
 
@@ -1999,9 +2043,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.name, serializer);
-    sse_encode_String(self.repoUrl, serializer);
-    sse_encode_String(self.iconUrl, serializer);
+    sse_encode_String(self.hashedManifestRepoId, serializer);
+    sse_encode_String(self.manifestRepoName, serializer);
+    sse_encode_String(self.pluginId, serializer);
+    sse_encode_String(self.pluginName, serializer);
+    sse_encode_String(self.pluginRepoUrl, serializer);
+    sse_encode_String(self.pluginIconUrl, serializer);
   }
 
   @protected
@@ -2010,14 +2057,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.$1, serializer);
     sse_encode_installed_plugin_info(self.$2, serializer);
-  }
-
-  @protected
-  void sse_encode_record_string_plugin_info(
-      (String, PluginInfo) self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.$1, serializer);
-    sse_encode_plugin_info(self.$2, serializer);
   }
 
   @protected

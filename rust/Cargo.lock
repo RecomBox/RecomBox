@@ -2977,7 +2977,7 @@ dependencies = [
 [[package]]
 name = "recombox_plugin_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_plugin_provider#159366151d702ea43c065038c3687a2b88ebc931"
+source = "git+https://github.com/RecomBox/recombox_plugin_provider#fb8c36a321209b44e4fb0974a96fed20b757d03c"
 dependencies = [
  "anyhow",
  "blake3",

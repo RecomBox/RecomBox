@@ -25,8 +25,11 @@ import 'method/metadata_provider/featured_content.dart';
 import 'method/metadata_provider/search_content.dart';
 import 'method/metadata_provider/trending_content.dart';
 import 'method/metadata_provider/view_content.dart';
+import 'method/plugin_provider.dart';
 import 'method/plugin_provider/get_installed_plugins.dart';
 import 'method/plugin_provider/get_plugin_list.dart';
+import 'method/plugin_provider/install_plugin.dart';
+import 'method/plugin_provider/remove_plugin.dart';
 import 'method/settings/init_settings.dart';
 import 'method/spawn_stream_server.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
@@ -48,9 +51,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dco_decode_Map_String_installed_plugin_info_None(dynamic raw);
 
   @protected
-  Map<String, PluginInfo> dco_decode_Map_String_plugin_info_None(dynamic raw);
-
-  @protected
   Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw);
 
   @protected
@@ -61,6 +61,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool dco_decode_bool(dynamic raw);
+
+  @protected
+  PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw);
 
   @protected
   Settings dco_decode_box_autoadd_settings(dynamic raw);
@@ -111,15 +114,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw);
 
   @protected
+  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
   List<(String, InstalledPluginInfo)>
       dco_decode_list_record_string_installed_plugin_info(dynamic raw);
-
-  @protected
-  List<(String, PluginInfo)> dco_decode_list_record_string_plugin_info(
-      dynamic raw);
 
   @protected
   List<(BigInt, String)> dco_decode_list_record_u_64_string(dynamic raw);
@@ -154,9 +156,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   (String, InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(
       dynamic raw);
-
-  @protected
-  (String, PluginInfo) dco_decode_record_string_plugin_info(dynamic raw);
 
   @protected
   (BigInt, String) dco_decode_record_u_64_string(dynamic raw);
@@ -197,10 +196,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  Map<String, PluginInfo> sse_decode_Map_String_plugin_info_None(
-      SseDeserializer deserializer);
-
-  @protected
   Map<BigInt, String> sse_decode_Map_u_64_String_None(
       SseDeserializer deserializer);
 
@@ -213,6 +208,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer);
 
   @protected
   Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer);
@@ -267,16 +265,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
   List<(String, InstalledPluginInfo)>
       sse_decode_list_record_string_installed_plugin_info(
           SseDeserializer deserializer);
-
-  @protected
-  List<(String, PluginInfo)> sse_decode_list_record_string_plugin_info(
-      SseDeserializer deserializer);
 
   @protected
   List<(BigInt, String)> sse_decode_list_record_u_64_string(
@@ -314,10 +311,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, InstalledPluginInfo) sse_decode_record_string_installed_plugin_info(
-      SseDeserializer deserializer);
-
-  @protected
-  (String, PluginInfo) sse_decode_record_string_plugin_info(
       SseDeserializer deserializer);
 
   @protected
@@ -364,10 +357,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Map<String, InstalledPluginInfo> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_Map_String_plugin_info_None(
-      Map<String, PluginInfo> self, SseSerializer serializer);
-
-  @protected
   void sse_encode_Map_u_64_String_None(
       Map<BigInt, String> self, SseSerializer serializer);
 
@@ -380,6 +369,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_plugin_info(
+      PluginInfo self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer);
@@ -436,16 +429,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<List<EpisodeInfo>> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_plugin_info(
+      List<PluginInfo> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_string_installed_plugin_info(
       List<(String, InstalledPluginInfo)> self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_record_string_plugin_info(
-      List<(String, PluginInfo)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_u_64_string(
@@ -484,10 +477,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_string_installed_plugin_info(
       (String, InstalledPluginInfo) self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_string_plugin_info(
-      (String, PluginInfo) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_u_64_string(

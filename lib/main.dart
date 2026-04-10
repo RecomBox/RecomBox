@@ -97,12 +97,12 @@ class App extends StatelessWidget {
 					),
 					scrollBehavior: const MaterialScrollBehavior().copyWith(
             dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-              PointerDeviceKind.trackpad,
-              PointerDeviceKind.stylus,
-              PointerDeviceKind.invertedStylus,
-              PointerDeviceKind.unknown, // covers TV remotes / other inputs
+								PointerDeviceKind.touch,
+								PointerDeviceKind.mouse,
+								PointerDeviceKind.trackpad,
+								PointerDeviceKind.stylus,
+								PointerDeviceKind.invertedStylus,
+								PointerDeviceKind.unknown, // covers TV remotes / other inputs
             },
           ),
 

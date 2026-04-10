@@ -28,8 +28,11 @@ pub async fn get_installed_plugins(source: &str) -> Result<HashMap<String, Insta
     let settings = Settings::get()
         .map_err(|e| e.to_string())?;
 
+    let plugin_dir = PathBuf::from(&settings.paths.app_support_dir)
+        .join("plugins");
+
     let plugin_db_manager = PluginDatabaseManager{
-        plugin_directory: PathBuf::from(&settings.paths.app_support_dir)
+        plugin_directory: plugin_dir
     };
 
     let installed_plugins = plugin_db_manager.get_installed_plugins(source).await

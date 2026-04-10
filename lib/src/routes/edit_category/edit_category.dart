@@ -170,35 +170,35 @@ class _EditCategoryState extends State<EditCategoryScreen> {
             ],
           ),
           floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end, 
-          children: [
-            FloatingActionButton.extended(
-              mouseCursor: SystemMouseCursors.click,
-              heroTag: "Add", 
-              onPressed: () {
-                showDialog(
-                  context: context, 
-                  builder: (_) => AddCategoryDialog(
-                    onAdd: initEditCategoryScreen
-                  )
-                );
-              },
-              backgroundColor: appColors.accentSecondary,
-              icon: Icon(
-                Icons.add,
-                color: appColors.textPrimary,
-              ),
-              label: Text(
-                "Add",
-                style: GoogleFonts.nunito(
+            mainAxisAlignment: MainAxisAlignment.end, 
+            children: [
+              FloatingActionButton.extended(
+                mouseCursor: SystemMouseCursors.click,
+                heroTag: "Add", 
+                onPressed: () {
+                  showDialog(
+                    context: context, 
+                    builder: (_) => AddCategoryDialog(
+                      onAdd: initEditCategoryScreen
+                    )
+                  );
+                },
+                backgroundColor: appColors.accentSecondary,
+                icon: Icon(
+                  Icons.add,
                   color: appColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight(700),
+                ),
+                label: Text(
+                  "Add",
+                  style: GoogleFonts.nunito(
+                    color: appColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight(700),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         )
       )
     );
