@@ -16,6 +16,7 @@ class SelectPluginScreenArguments {
   Source source;
   String id;
   String title;
+  String titleSecondary;
   BigInt season;
   BigInt episode;
 
@@ -25,6 +26,7 @@ class SelectPluginScreenArguments {
     required this.id,
     required this.title,
     required this.season,
+    required this.titleSecondary,
     required this.episode
   });
 }
@@ -61,6 +63,7 @@ class _SelectPluginState extends State<SelectPluginScreen> {
               source: Source.movies,
               id: "%2F53906%2Fspider-man",
               title: "Spiderman",
+              titleSecondary: "Spiderman",
               season: BigInt.from(1),
               episode: BigInt.from(1)
               
@@ -160,6 +163,8 @@ class _SelectPluginState extends State<SelectPluginScreen> {
                         ),
                       ),
                       // -> Search Widget
+
+                      
                       Container(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Container(
@@ -220,18 +225,37 @@ class _SelectPluginState extends State<SelectPluginScreen> {
                     
                       // <-
 
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: filteredInstalledPluginMap.length,
-                          itemBuilder: (context, index) {
-                            return SelectPluginTile(
-                              pluginInfo: filteredInstalledPluginMap.values.toList()[index],
-                              selectPluginScreenArguments: args,
-                            );
-                          },
+                      if (installedPluginMap.isNotEmpty)
+
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filteredInstalledPluginMap.length,
+                            itemBuilder: (context, index) {
+                              return SelectPluginTile(
+                                pluginInfo: filteredInstalledPluginMap.values.toList()[index],
+                                selectPluginScreenArguments: args,
+                              );
+                            },
+                          ),
                         ),
-                      ),
+                      if (installedPluginMap.isEmpty)
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              child: Text(
+                                "No plugins found.\n You can add plugins using the 'Add plugins' button.",
+                                style: GoogleFonts.nunito(
+                                  color: appColors.textPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
                     ],
                   ),
                   

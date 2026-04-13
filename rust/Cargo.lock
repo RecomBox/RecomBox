@@ -2956,7 +2956,7 @@ dependencies = [
 [[package]]
 name = "recombox_metadata_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_metadata_provider#1d584cd1d593efab9cb2c5437e61b4cdabf252ac"
+source = "git+https://github.com/RecomBox/recombox_metadata_provider#d9382dbf156b02555e7923a8d6be50ada96dc376"
 dependencies = [
  "anyhow",
  "chrono",
@@ -2977,7 +2977,7 @@ dependencies = [
 [[package]]
 name = "recombox_plugin_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_plugin_provider#4872a7a0abd2630a781f205d96f9ae2448bb8d54"
+source = "git+https://github.com/RecomBox/recombox_plugin_provider#b8c4873e6bfadceed7940b40a59cb0aaabec432f"
 dependencies = [
  "anyhow",
  "blake3",

@@ -9,12 +9,14 @@ class EpisodeTile extends StatefulWidget {
     super.key,
     required this.id,
     required this.title,
+    required this.titleSecondary,
     required this.season,
     required this.episode,
     required this.episodeInfo,
   });
 
   final String id;
+  final String titleSecondary;
   final String title;
   final BigInt season;
   final BigInt episode;
@@ -34,6 +36,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
       source: SourceExtension.fromString(widget.episodeInfo.source),
       id: widget.id,
       title: widget.title,
+      titleSecondary: widget.titleSecondary,
       season: widget.season,
       episode: widget.episode
 

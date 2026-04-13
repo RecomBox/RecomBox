@@ -347,6 +347,7 @@ mixin _$ViewContentInfo {
   String get externalId;
   String get url;
   String get title;
+  String get titleSecondary;
   String get thumbnailUrl;
   String get bannerUrl;
   List<String> get contextual;
@@ -377,6 +378,8 @@ mixin _$ViewContentInfo {
                 other.externalId == externalId) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.titleSecondary, titleSecondary) ||
+                other.titleSecondary == titleSecondary) &&
             (identical(other.thumbnailUrl, thumbnailUrl) ||
                 other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.bannerUrl, bannerUrl) ||
@@ -401,6 +404,7 @@ mixin _$ViewContentInfo {
       externalId,
       url,
       title,
+      titleSecondary,
       thumbnailUrl,
       bannerUrl,
       const DeepCollectionEquality().hash(contextual),
@@ -412,7 +416,7 @@ mixin _$ViewContentInfo {
 
   @override
   String toString() {
-    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
+    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
   }
 }
 
@@ -427,6 +431,7 @@ abstract mixin class $ViewContentInfoCopyWith<$Res> {
       String externalId,
       String url,
       String title,
+      String titleSecondary,
       String thumbnailUrl,
       String bannerUrl,
       List<String> contextual,
@@ -454,6 +459,7 @@ class _$ViewContentInfoCopyWithImpl<$Res>
     Object? externalId = null,
     Object? url = null,
     Object? title = null,
+    Object? titleSecondary = null,
     Object? thumbnailUrl = null,
     Object? bannerUrl = null,
     Object? contextual = null,
@@ -479,6 +485,10 @@ class _$ViewContentInfoCopyWithImpl<$Res>
       title: null == title
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      titleSecondary: null == titleSecondary
+          ? _self.titleSecondary
+          : titleSecondary // ignore: cast_nullable_to_non_nullable
               as String,
       thumbnailUrl: null == thumbnailUrl
           ? _self.thumbnailUrl
@@ -612,6 +622,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String externalId,
             String url,
             String title,
+            String titleSecondary,
             String thumbnailUrl,
             String bannerUrl,
             List<String> contextual,
@@ -631,6 +642,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.externalId,
             _that.url,
             _that.title,
+            _that.titleSecondary,
             _that.thumbnailUrl,
             _that.bannerUrl,
             _that.contextual,
@@ -664,6 +676,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String externalId,
             String url,
             String title,
+            String titleSecondary,
             String thumbnailUrl,
             String bannerUrl,
             List<String> contextual,
@@ -682,6 +695,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.externalId,
             _that.url,
             _that.title,
+            _that.titleSecondary,
             _that.thumbnailUrl,
             _that.bannerUrl,
             _that.contextual,
@@ -712,6 +726,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String externalId,
             String url,
             String title,
+            String titleSecondary,
             String thumbnailUrl,
             String bannerUrl,
             List<String> contextual,
@@ -730,6 +745,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.externalId,
             _that.url,
             _that.title,
+            _that.titleSecondary,
             _that.thumbnailUrl,
             _that.bannerUrl,
             _that.contextual,
@@ -752,6 +768,7 @@ class _ViewContentInfo implements ViewContentInfo {
       required this.externalId,
       required this.url,
       required this.title,
+      required this.titleSecondary,
       required this.thumbnailUrl,
       required this.bannerUrl,
       required final List<String> contextual,
@@ -774,6 +791,8 @@ class _ViewContentInfo implements ViewContentInfo {
   final String url;
   @override
   final String title;
+  @override
+  final String titleSecondary;
   @override
   final String thumbnailUrl;
   @override
@@ -833,6 +852,8 @@ class _ViewContentInfo implements ViewContentInfo {
                 other.externalId == externalId) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.titleSecondary, titleSecondary) ||
+                other.titleSecondary == titleSecondary) &&
             (identical(other.thumbnailUrl, thumbnailUrl) ||
                 other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.bannerUrl, bannerUrl) ||
@@ -857,6 +878,7 @@ class _ViewContentInfo implements ViewContentInfo {
       externalId,
       url,
       title,
+      titleSecondary,
       thumbnailUrl,
       bannerUrl,
       const DeepCollectionEquality().hash(_contextual),
@@ -868,7 +890,7 @@ class _ViewContentInfo implements ViewContentInfo {
 
   @override
   String toString() {
-    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
+    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
   }
 }
 
@@ -885,6 +907,7 @@ abstract mixin class _$ViewContentInfoCopyWith<$Res>
       String externalId,
       String url,
       String title,
+      String titleSecondary,
       String thumbnailUrl,
       String bannerUrl,
       List<String> contextual,
@@ -912,6 +935,7 @@ class __$ViewContentInfoCopyWithImpl<$Res>
     Object? externalId = null,
     Object? url = null,
     Object? title = null,
+    Object? titleSecondary = null,
     Object? thumbnailUrl = null,
     Object? bannerUrl = null,
     Object? contextual = null,
@@ -937,6 +961,10 @@ class __$ViewContentInfoCopyWithImpl<$Res>
       title: null == title
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      titleSecondary: null == titleSecondary
+          ? _self.titleSecondary
+          : titleSecondary // ignore: cast_nullable_to_non_nullable
               as String,
       thumbnailUrl: null == thumbnailUrl
           ? _self.thumbnailUrl

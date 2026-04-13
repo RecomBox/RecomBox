@@ -22,6 +22,7 @@ pub async fn get_sources(
     source: String, 
     id: String,
     title: String,
+    title_secondary: String,
     season: u64,
     episode: u64,
     search: String,
@@ -44,12 +45,13 @@ pub async fn get_sources(
             get_sources::new(
         &PathBuf::from(real_plugin_path),
                 InputPayload {
-                    source: source.clone(),
-                    id: id.to_string(),
-                    title: title.to_string(),
+                    source: source,
+                    id: id,
+                    title: title,
+                    title_secondary: title_secondary,
                     season: Some(season),
                     episode: Some(episode),
-                    search: Some(search.to_string()),
+                    search: Some(search),
                     page,
                 },
             ).await.unwrap()

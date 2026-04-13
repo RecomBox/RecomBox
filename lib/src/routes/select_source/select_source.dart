@@ -43,7 +43,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
   final TextEditingController _textEditingController = TextEditingController(text: '');
   FocusNode searchFocus = FocusNode();
 
-  late SelectSourceScreenArguments args;
+  SelectSourceScreenArguments? args;
   
   @override
 
@@ -53,26 +53,25 @@ class _SelectSourceState extends State<SelectSourceScreen> {
     // Defer until after build context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final rawArgs = ModalRoute.of(context)?.settings.arguments;
-
-      args = rawArgs is SelectSourceScreenArguments
-          ? rawArgs
-          : SelectSourceScreenArguments(
-            pluginPath: "/home/goodday/.local/share/io.github.RecomBox.recombox/plugins/movies/8c8fb2b288439bcd9a71ff75051af9922162ba23b8a8ebd3db1dbe905cca00ee/2036011253247552227.js", 
-            selectPluginScreenArguments: SelectPluginScreenArguments(
-                source: Source.movies,
-                id: "%2F53906%2Fspider-man",
-                title: "Spiderman",
-                season: BigInt.from(1),
-                episode: BigInt.from(1)
-                
-            )
-          );
-
+      setState(() {
+        
+        args = rawArgs is SelectSourceScreenArguments
+            ? rawArgs
+            : SelectSourceScreenArguments(
+              pluginPath: "/home/goodday/.local/share/io.github.RecomBox.recombox/plugins/movies/8c8fb2b288439bcd9a71ff75051af9922162ba23b8a8ebd3db1dbe905cca00ee/2036011253247552227.js", 
+              selectPluginScreenArguments: SelectPluginScreenArguments(
+                  source: Source.movies,
+                  id: "%2F53906%2Fspider-man",
+                  title: "Spiderman",
+                  titleSecondary: "Spiderman",
+                  season: BigInt.from(1),
+                  episode: BigInt.from(1)
+                  
+              )
+            );
+      });
       debugPrint(args.toString());
       initSelectSource();
-
-      
-      
     });
   }
 
@@ -88,19 +87,17 @@ class _SelectSourceState extends State<SelectSourceScreen> {
     setState(() {
       isLoading = true;
     });
-
-    debugPrint(args.selectPluginScreenArguments.title);
-    
     try{
 
       
       List<SourceInfo> getSourceInfoResult = await getSources(
-        pluginPath: args.pluginPath, 
-        source: args.selectPluginScreenArguments.source.name, 
-        id: args.selectPluginScreenArguments.id, 
-        title: args.selectPluginScreenArguments.title, 
-        season: args.selectPluginScreenArguments.season, 
-        episode: args.selectPluginScreenArguments.episode, 
+        pluginPath: args!.pluginPath, 
+        source: args!.selectPluginScreenArguments.source.name, 
+        id: args!.selectPluginScreenArguments.id, 
+        title: args!.selectPluginScreenArguments.title, 
+        titleSecondary: args!.selectPluginScreenArguments.titleSecondary,
+        season: args!.selectPluginScreenArguments.season, 
+        episode: args!.selectPluginScreenArguments.episode, 
         search: _textEditingController.text, 
         page: BigInt.from(1)
       );
@@ -135,7 +132,8 @@ class _SelectSourceState extends State<SelectSourceScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    if (args == null) return Container();
+    
     return SafeArea(
       child: Material(
         color: Colors.transparent,
@@ -177,7 +175,55 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                           ],
                         ),
                       ),
+                      // -> Default filter info
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Text(
+                          "Title: ${args!.selectPluginScreenArguments.title}",
+                          style: GoogleFonts.nunito(
+                            color: appColors.textPrimary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Text(
+                          "Secondary Title: ${args!.selectPluginScreenArguments.titleSecondary}",
+                          style: GoogleFonts.nunito(
+                            color: appColors.textPrimary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
                       
+                      if (args!.selectPluginScreenArguments.source != Source.movies)
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Text(
+                            "Season: ${args!.selectPluginScreenArguments.season}, Episode: ${args!.selectPluginScreenArguments.episode}",
+                            style: GoogleFonts.nunito(
+                              color: appColors.textPrimary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        
+                      // <-
                       if (isLoading) 
                         Expanded(
                           flex: 1,
@@ -251,24 +297,41 @@ class _SelectSourceState extends State<SelectSourceScreen> {
 
                         ),
                         // <-
-
-                        Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: sourceInfoList.length,
-                          itemBuilder: (context, index) {
-                            return SelectSourceTile(
-                              getSourceInfo: sourceInfoList[index],
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return Divider(
-                              height: 1,
-                              color: appColors.strokePrimary,
-                            );
-                          },
-                        ),
-                      ),
+                        if (sourceInfoList.isNotEmpty)
+                          Expanded(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              itemCount: sourceInfoList.length,
+                              itemBuilder: (context, index) {
+                                return SelectSourceTile(
+                                  getSourceInfo: sourceInfoList[index],
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return Divider(
+                                  height: 1,
+                                  color: appColors.strokePrimary,
+                                );
+                              },
+                            ),
+                          ),
+                        if (sourceInfoList.isEmpty)
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              child: Text(
+                                "No source found from default filter.\nYou can try search yourself.",
+                                style: GoogleFonts.nunito(
+                                  color: appColors.textPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
                       ],
                     ],
                   ),

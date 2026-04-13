@@ -25,6 +25,7 @@ _ViewContentInfo _$ViewContentInfoFromJson(Map<String, dynamic> json) =>
       externalId: json['externalId'] as String,
       url: json['url'] as String,
       title: json['title'] as String,
+      titleSecondary: json['titleSecondary'] as String,
       thumbnailUrl: json['thumbnailUrl'] as String,
       bannerUrl: json['bannerUrl'] as String,
       contextual: (json['contextual'] as List<dynamic>)
@@ -48,6 +49,7 @@ Map<String, dynamic> _$ViewContentInfoToJson(_ViewContentInfo instance) =>
       'externalId': instance.externalId,
       'url': instance.url,
       'title': instance.title,
+      'titleSecondary': instance.titleSecondary,
       'thumbnailUrl': instance.thumbnailUrl,
       'bannerUrl': instance.bannerUrl,
       'contextual': instance.contextual,

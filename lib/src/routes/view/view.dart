@@ -44,11 +44,11 @@ class _ViewState extends State<ViewScreen> {
       final rawArgs = ModalRoute.of(context)?.settings.arguments;
 
       args = rawArgs is ViewScreenArguments
-          ? rawArgs
-          : ViewScreenArguments(
-              source: Source.movies,
-              id: "%2F53906%2Fspider-man",
-          );
+        ? rawArgs
+        : ViewScreenArguments(
+          source: Source.movies,
+          id: "%2F53906%2Fspider-man",
+        );
 
       debugPrint(args.toString());
       initViewContentInfo();
@@ -103,7 +103,7 @@ class _ViewState extends State<ViewScreen> {
       isLoading = true;
     });
     var data = await viewContent(source: args.source.name, id: args.id, fromCache: fromCache);
-    debugPrint(data.trailerUrl);
+    debugPrint(data.titleSecondary);
     setState(() {
       viewContentInfoResult = data;
     });
@@ -114,10 +114,7 @@ class _ViewState extends State<ViewScreen> {
       );
     }
 
-    bool inFavorite = await isInCategory(itemId: args.id);
-    setState(() {
-      isInFavorite = inFavorite;
-    });
+    onFavoriteUpdate();
     
     
     setState(() {
@@ -150,6 +147,12 @@ class _ViewState extends State<ViewScreen> {
     }
   }
 
+  Future<void> onFavoriteUpdate() async {
+    bool inFavorite = await isInCategory(itemId: args.id);
+    setState(() {
+      isInFavorite = inFavorite;
+    });
+  }
 
   void onSeasonChange(int index){
     setState(() {
@@ -373,7 +376,7 @@ class _ViewState extends State<ViewScreen> {
                                 context: context,
                                 builder: (_) => SetCategoryDialog(
                                   itemId: args.id,
-                                  onDone: initViewContentInfo,
+                                  onDone: onFavoriteUpdate,
                                 ),
                               );
 
@@ -772,6 +775,7 @@ class _ViewState extends State<ViewScreen> {
                                       return EpisodeTile(
                                         id: args.id,
                                         title: viewContentInfoResult!.title,
+                                        titleSecondary: viewContentInfoResult!.titleSecondary,
                                         season: BigInt.from(currentSeasonIndex+1),
                                         episode: BigInt.from(index+1),
                                         episodeInfo: filteredEpisodes[index],

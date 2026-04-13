@@ -37,6 +37,7 @@ sealed class ViewContentInfo with _$ViewContentInfo {
     required String externalId,
     required String url,
     required String title,
+    required String titleSecondary,
     required String thumbnailUrl,
     required String bannerUrl,
     required List<String> contextual,

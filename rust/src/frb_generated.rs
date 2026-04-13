@@ -376,6 +376,7 @@ fn wire__crate__method__plugin_provider__get_sources__get_sources_impl(
             let api_source = <String>::sse_decode(&mut deserializer);
             let api_id = <String>::sse_decode(&mut deserializer);
             let api_title = <String>::sse_decode(&mut deserializer);
+            let api_title_secondary = <String>::sse_decode(&mut deserializer);
             let api_season = <u64>::sse_decode(&mut deserializer);
             let api_episode = <u64>::sse_decode(&mut deserializer);
             let api_search = <String>::sse_decode(&mut deserializer);
@@ -389,6 +390,7 @@ fn wire__crate__method__plugin_provider__get_sources__get_sources_impl(
                             api_source,
                             api_id,
                             api_title,
+                            api_title_secondary,
                             api_season,
                             api_episode,
                             api_search,
@@ -1513,6 +1515,7 @@ impl SseDecode for crate::method::metadata_provider::view_content::ViewContentIn
         let mut var_externalId = <String>::sse_decode(deserializer);
         let mut var_url = <String>::sse_decode(deserializer);
         let mut var_title = <String>::sse_decode(deserializer);
+        let mut var_titleSecondary = <String>::sse_decode(deserializer);
         let mut var_thumbnailUrl = <String>::sse_decode(deserializer);
         let mut var_bannerUrl = <String>::sse_decode(deserializer);
         let mut var_contextual = <Vec<String>>::sse_decode(deserializer);
@@ -1528,6 +1531,7 @@ impl SseDecode for crate::method::metadata_provider::view_content::ViewContentIn
             external_id: var_externalId,
             url: var_url,
             title: var_title,
+            title_secondary: var_titleSecondary,
             thumbnail_url: var_thumbnailUrl,
             banner_url: var_bannerUrl,
             contextual: var_contextual,
@@ -1912,6 +1916,7 @@ impl flutter_rust_bridge::IntoDart
             self.external_id.into_into_dart().into_dart(),
             self.url.into_into_dart().into_dart(),
             self.title.into_into_dart().into_dart(),
+            self.title_secondary.into_into_dart().into_dart(),
             self.thumbnail_url.into_into_dart().into_dart(),
             self.banner_url.into_into_dart().into_dart(),
             self.contextual.into_into_dart().into_dart(),
@@ -2372,6 +2377,7 @@ impl SseEncode for crate::method::metadata_provider::view_content::ViewContentIn
         <String>::sse_encode(self.external_id, serializer);
         <String>::sse_encode(self.url, serializer);
         <String>::sse_encode(self.title, serializer);
+        <String>::sse_encode(self.title_secondary, serializer);
         <String>::sse_encode(self.thumbnail_url, serializer);
         <String>::sse_encode(self.banner_url, serializer);
         <Vec<String>>::sse_encode(self.contextual, serializer);

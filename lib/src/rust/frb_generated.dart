@@ -140,6 +140,7 @@ abstract class RustLibApi extends BaseApi {
       required String source,
       required String id,
       required String title,
+      required String titleSecondary,
       required BigInt season,
       required BigInt episode,
       required String search,
@@ -451,6 +452,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       required String source,
       required String id,
       required String title,
+      required String titleSecondary,
       required BigInt season,
       required BigInt episode,
       required String search,
@@ -462,6 +464,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         sse_encode_String(title, serializer);
+        sse_encode_String(titleSecondary, serializer);
         sse_encode_u_64(season, serializer);
         sse_encode_u_64(episode, serializer);
         sse_encode_String(search, serializer);
@@ -474,7 +477,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodPluginProviderGetSourcesGetSourcesConstMeta,
-      argValues: [pluginPath, source, id, title, season, episode, search, page],
+      argValues: [
+        pluginPath,
+        source,
+        id,
+        title,
+        titleSecondary,
+        season,
+        episode,
+        search,
+        page
+      ],
       apiImpl: this,
     ));
   }
@@ -487,6 +500,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "source",
           "id",
           "title",
+          "titleSecondary",
           "season",
           "episode",
           "search",
@@ -1306,21 +1320,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ViewContentInfo dco_decode_view_content_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 12)
-      throw Exception('unexpected arr length: expect 12 but see ${arr.length}');
+    if (arr.length != 13)
+      throw Exception('unexpected arr length: expect 13 but see ${arr.length}');
     return ViewContentInfo(
       source: dco_decode_String(arr[0]),
       externalId: dco_decode_String(arr[1]),
       url: dco_decode_String(arr[2]),
       title: dco_decode_String(arr[3]),
-      thumbnailUrl: dco_decode_String(arr[4]),
-      bannerUrl: dco_decode_String(arr[5]),
-      contextual: dco_decode_list_String(arr[6]),
-      description: dco_decode_String(arr[7]),
-      trailerUrl: dco_decode_String(arr[8]),
-      countdown: dco_decode_i_64(arr[9]),
-      pictures: dco_decode_list_String(arr[10]),
-      episodes: dco_decode_list_list_episode_info(arr[11]),
+      titleSecondary: dco_decode_String(arr[4]),
+      thumbnailUrl: dco_decode_String(arr[5]),
+      bannerUrl: dco_decode_String(arr[6]),
+      contextual: dco_decode_list_String(arr[7]),
+      description: dco_decode_String(arr[8]),
+      trailerUrl: dco_decode_String(arr[9]),
+      countdown: dco_decode_i_64(arr[10]),
+      pictures: dco_decode_list_String(arr[11]),
+      episodes: dco_decode_list_list_episode_info(arr[12]),
     );
   }
 
@@ -1816,6 +1831,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_externalId = sse_decode_String(deserializer);
     var var_url = sse_decode_String(deserializer);
     var var_title = sse_decode_String(deserializer);
+    var var_titleSecondary = sse_decode_String(deserializer);
     var var_thumbnailUrl = sse_decode_String(deserializer);
     var var_bannerUrl = sse_decode_String(deserializer);
     var var_contextual = sse_decode_list_String(deserializer);
@@ -1829,6 +1845,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         externalId: var_externalId,
         url: var_url,
         title: var_title,
+        titleSecondary: var_titleSecondary,
         thumbnailUrl: var_thumbnailUrl,
         bannerUrl: var_bannerUrl,
         contextual: var_contextual,
@@ -2255,6 +2272,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.externalId, serializer);
     sse_encode_String(self.url, serializer);
     sse_encode_String(self.title, serializer);
+    sse_encode_String(self.titleSecondary, serializer);
     sse_encode_String(self.thumbnailUrl, serializer);
     sse_encode_String(self.bannerUrl, serializer);
     sse_encode_list_String(self.contextual, serializer);
