@@ -11,6 +11,7 @@ use tokio::io::AsyncSeekExt;
 use tokio_util::io::ReaderStream;
 use std::path::PathBuf;
 use tokio;
+use num_cpus;
 
 
 use crate::{ utils::settings::Settings};

@@ -66,6 +66,7 @@ class _SelectFileTileState extends State<SelectFileTile> {
       '/watch',
       arguments: watchScreenArgs,
     );
+    
   }
 
   @override

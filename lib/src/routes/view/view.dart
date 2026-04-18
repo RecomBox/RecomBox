@@ -188,7 +188,12 @@ class _ViewState extends State<ViewScreen> {
   }
 
   void onBack(){
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacementNamed(context, "/");
+    }
+
   }
 
   

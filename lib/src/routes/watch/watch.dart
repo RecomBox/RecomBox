@@ -212,7 +212,6 @@ class _WatchState extends State<WatchScreen> {
       )
     );
     
-
     
   }
 
@@ -283,62 +282,65 @@ class _WatchState extends State<WatchScreen> {
   
   ];
 
-    return SafeArea(
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          children: [
-            if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-              TitleBar(),
+    return PopScope(
+      canPop: false,
+      child: SafeArea(
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+                TitleBar(),
 
-            Expanded(
-              // Use [Video] widget to display video output.
-              child: Stack(
-                children: [
-                  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS)
-                    MaterialDesktopVideoControlsTheme(
-                      fullscreen: MaterialDesktopVideoControlsThemeData(
-                        padding: const EdgeInsets.all(25),
-                        buttonBarButtonSize: 32,
-                        buttonBarButtonColor: appColors.secondary,
-                        topButtonBar: topButtonBar,
-                      ),
-                      normal: MaterialDesktopVideoControlsThemeData(
-                        padding: const EdgeInsets.all(25),
-                        topButtonBar: topButtonBar,
+              Expanded(
+                // Use [Video] widget to display video output.
+                child: Stack(
+                  children: [
+                    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS)
+                      MaterialDesktopVideoControlsTheme(
+                        fullscreen: MaterialDesktopVideoControlsThemeData(
+                          padding: const EdgeInsets.all(25),
+                          buttonBarButtonSize: 32,
+                          buttonBarButtonColor: appColors.secondary,
+                          topButtonBar: topButtonBar,
+                        ),
+                        normal: MaterialDesktopVideoControlsThemeData(
+                          padding: const EdgeInsets.all(25),
+                          topButtonBar: topButtonBar,
+                          
+                        ),
                         
-                      ),
-                      
-                      child: Scaffold(
-                        body: Video(
-                          controller: controller,
+                        child: Scaffold(
+                          body: Video(
+                            controller: controller,
+                          ),
                         ),
                       ),
-                    ),
-                  
-                  if (!(Platform.isLinux || Platform.isWindows || Platform.isMacOS))
-                    MaterialVideoControlsTheme(
-                      fullscreen: MaterialVideoControlsThemeData(
-                        padding: const EdgeInsets.all(25),
-                        topButtonBar: topButtonBar,
-                      ),
-                      normal: MaterialVideoControlsThemeData(
-                        padding: const EdgeInsets.all(25),
-                        topButtonBar: topButtonBar,
+                    
+                    if (!(Platform.isLinux || Platform.isWindows || Platform.isMacOS))
+                      MaterialVideoControlsTheme(
+                        fullscreen: MaterialVideoControlsThemeData(
+                          padding: const EdgeInsets.all(25),
+                          topButtonBar: topButtonBar,
+                        ),
+                        normal: MaterialVideoControlsThemeData(
+                          padding: const EdgeInsets.all(25),
+                          topButtonBar: topButtonBar,
+                          
+                        ),
                         
-                      ),
-                      
-                      child: Scaffold(
-                        body: Video(
-                          controller: controller,
+                        child: Scaffold(
+                          body: Video(
+                            controller: controller,
+                          ),
                         ),
                       ),
-                    ),
-                  
-                ],
-              ),
-            )
-          ],
+                    
+                  ],
+                ),
+              )
+            ],
+          )
         )
       )
     );

@@ -111,7 +111,10 @@ class _SetFavoriteTileState extends State<InstallPluginTile> {
             Image.network(
               widget.pluginInfo.pluginIconUrl,
               width: 50,
-
+              errorBuilder: (context, error, stackTrace) {
+                debugPrint('Image failed: $error');
+                return const SizedBox(); 
+              },
             ),
             Expanded(
               child: Container(
