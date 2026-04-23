@@ -29,6 +29,7 @@ recombox_metadata_provider = { git = "https://github.com/RecomBox/recombox_metad
 recombox_plugin_provider = { git = "https://github.com/RecomBox/recombox_plugin_provider"}
 urlencoding = "2.1.3"
 num_cpus = "1.17.0"
+semver = "1.0.28"
 
 
 

@@ -236,6 +236,7 @@ class _SelectPluginState extends State<SelectPluginScreen> {
                             itemCount: filteredInstalledPluginMap.length,
                             itemBuilder: (context, index) {
                               return SelectPluginTile(
+                                key: ValueKey(filteredInstalledPluginMap.values.toList()[index].pluginPath),
                                 pluginInfo: filteredInstalledPluginMap.values.toList()[index],
                                 selectPluginScreenArguments: args,
                               );

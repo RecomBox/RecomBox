@@ -34,6 +34,8 @@ class _EpisodeTileState extends State<EpisodeTile> {
   bool failLoadThumbnail = false;
 
   void onNavigate() {
+    debugPrint(widget.season.toString());
+    debugPrint(widget.episode.toString());
     SelectPluginScreenArguments args = SelectPluginScreenArguments(
       source: SourceExtension.fromString(widget.episodeInfo.source),
       id: widget.id,

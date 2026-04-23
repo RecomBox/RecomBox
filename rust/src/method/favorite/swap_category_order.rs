@@ -1,14 +1,10 @@
-use std::path::PathBuf;
-use redb::{Database, ReadableTable};
-use crate::utils::settings::Settings;
+use redb::{ReadableTable};
 
-use super::{CATEGORY_ORDER_TABLE, DATABASE_NAME};
+use super::{get_db, CATEGORY_ORDER_TABLE};
 
 pub async fn swap_category_order(category_id_1: u64, category_id_2: u64) -> Result<(), String> {
-    let settings = Settings::get().map_err(|e| e.to_string())?;
-    let db_path = PathBuf::from(&settings.paths.app_support_dir).join(DATABASE_NAME);
+    let db = get_db()?;
 
-    let db = Database::create(db_path).map_err(|e| e.to_string())?;
     let write_txn = db.begin_write().map_err(|e| e.to_string())?;
 
     {

@@ -8,6 +8,7 @@ part of 'get_installed_plugins.dart';
 
 _InstalledPluginInfo _$InstalledPluginInfoFromJson(Map<String, dynamic> json) =>
     _InstalledPluginInfo(
+      hashedManifestRepoId: json['hashedManifestRepoId'] as String,
       manifestRepoName: json['manifestRepoName'] as String,
       pluginName: json['pluginName'] as String,
       pluginRepoUrl: json['pluginRepoUrl'] as String,
@@ -19,6 +20,7 @@ _InstalledPluginInfo _$InstalledPluginInfoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$InstalledPluginInfoToJson(
         _InstalledPluginInfo instance) =>
     <String, dynamic>{
+      'hashedManifestRepoId': instance.hashedManifestRepoId,
       'manifestRepoName': instance.manifestRepoName,
       'pluginName': instance.pluginName,
       'pluginRepoUrl': instance.pluginRepoUrl,

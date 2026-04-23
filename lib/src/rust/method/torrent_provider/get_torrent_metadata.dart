@@ -6,28 +6,37 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_torrent_metadata.freezed.dart';part 'get_torrent_metadata.g.dart';
+part 'get_torrent_metadata.freezed.dart';
+part 'get_torrent_metadata.g.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
 
-
-            Future<TorrentMetadata>  getTorrentMetadata({required String torrentSource }) => RustLib.instance.api.crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(torrentSource: torrentSource);
-
-            @freezed
-sealed class FileInfo with _$FileInfo  {
-                
-                const factory FileInfo({ required  BigInt id,  String? path,  BigInt? length,  String? sha1,}) = _FileInfo;
-                
-                factory FileInfo.fromJson(Map<String, dynamic> json) => _$FileInfoFromJson(json);
-                
-            }
+Future<TorrentMetadata> getTorrentMetadata({required String torrentSource}) =>
+    RustLib.instance.api
+        .crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
+            torrentSource: torrentSource);
 
 @freezed
-sealed class TorrentMetadata with _$TorrentMetadata  {
-                
-                const factory TorrentMetadata({  String? name,  BigInt? length, required  List<FileInfo> files,}) = _TorrentMetadata;
-                
-                factory TorrentMetadata.fromJson(Map<String, dynamic> json) => _$TorrentMetadataFromJson(json);
-                
-            }
-            
+sealed class FileInfo with _$FileInfo {
+  const factory FileInfo({
+    required BigInt id,
+    String? path,
+    BigInt? length,
+    String? sha1,
+  }) = _FileInfo;
+
+  factory FileInfo.fromJson(Map<String, dynamic> json) =>
+      _$FileInfoFromJson(json);
+}
+
+@freezed
+sealed class TorrentMetadata with _$TorrentMetadata {
+  const factory TorrentMetadata({
+    String? name,
+    BigInt? length,
+    required List<FileInfo> files,
+  }) = _TorrentMetadata;
+
+  factory TorrentMetadata.fromJson(Map<String, dynamic> json) =>
+      _$TorrentMetadataFromJson(json);
+}

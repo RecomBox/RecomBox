@@ -35,13 +35,13 @@ impl Cache{
 		let settings = Settings::get()
 			.map_err(|e| e.to_string())?;
 
-		let app_cache_dir = PathBuf::from(settings.paths.app_cache_dir.clone())
+		let temp_dir = PathBuf::from(settings.paths.temp_dir.clone())
 			.join("trending_content");
 
-		fs::create_dir_all(&app_cache_dir)
+		fs::create_dir_all(&temp_dir)
 			.map_err(|e| e.to_string())?;
 
-		let file_path = app_cache_dir
+		let file_path = temp_dir
 			.join(format!("{}.json", source.to_string()));
 
 		let new_cache = Cache{
@@ -62,10 +62,10 @@ impl Cache{
 		let settings = Settings::get()
 			.map_err(|e| e.to_string())?;
 
-		let app_cache_dir = PathBuf::from(settings.paths.app_cache_dir.clone())
+		let temp_dir = PathBuf::from(settings.paths.temp_dir.clone())
 			.join("trending_content");
 
-		let file_path = app_cache_dir
+		let file_path = temp_dir
 			.join(format!("{}.json", source.to_string()));
 
 		let data = fs::read_to_string(file_path)

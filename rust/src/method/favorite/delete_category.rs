@@ -1,22 +1,13 @@
 
 
-use std::path::PathBuf;
-use redb::{Database, ReadableDatabase, ReadableMultimapTable};
+use redb::{ReadableDatabase, ReadableMultimapTable};
 
-use super::{CATEGORY_TABLE, ITEM_AND_CATEGORY_TABLE, CATEGORY_AND_ITEM_TABLE, CATEGORY_ORDER_TABLE, DATABASE_NAME};
+use super::{get_db, CATEGORY_TABLE, ITEM_AND_CATEGORY_TABLE, CATEGORY_AND_ITEM_TABLE, CATEGORY_ORDER_TABLE};
 
 
-use crate::utils::settings::Settings;
 
 pub async fn delete_category(category_id: u64) -> Result<(), String> {
-    let settings = Settings::get()
-        .map_err(|e| e.to_string())?;
-
-    let db_path = PathBuf::from(&settings.paths.app_support_dir)
-        .join(DATABASE_NAME);
-
-    let db = Database::create(db_path)
-        .map_err(|e| e.to_string())?;
+    let db = get_db()?;
 
     // First check if category exists
     {

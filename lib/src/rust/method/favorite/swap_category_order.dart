@@ -6,10 +6,7 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-
-            
-
-            Future<void>  swapCategoryOrder({required BigInt categoryId1 , required BigInt categoryId2 }) => RustLib.instance.api.crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder(categoryId1: categoryId1, categoryId2: categoryId2);
-
-            
-            
+Future<void> swapCategoryOrder(
+        {required BigInt categoryId1, required BigInt categoryId2}) =>
+    RustLib.instance.api.crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder(
+        categoryId1: categoryId1, categoryId2: categoryId2);

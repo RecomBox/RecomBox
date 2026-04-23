@@ -360,7 +360,10 @@ class _SearchState extends State<SearchScreen> {
                               scrollDirection: Axis.vertical,
                               itemCount: searchContentResult.length,
                               itemBuilder: (context, index) {
-                                return SearchTile(searchContentInfo: searchContentResult[index]);
+                                return SearchTile(
+                                  key: ValueKey(searchContentResult[index].id),
+                                  searchContentInfo: searchContentResult[index],
+                                );
                               },
                               separatorBuilder: (context, index) {
                                 return const SizedBox(width: 18);

@@ -6,19 +6,26 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_torrents.freezed.dart';part 'get_torrents.g.dart';
+part 'get_torrents.freezed.dart';
+part 'get_torrents.g.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
+Future<List<TorrentInfo>> getTorrents(
+        {required String pluginPath,
+        required String source,
+        required String id,
+        required BigInt page}) =>
+    RustLib.instance.api.crateMethodPluginProviderGetTorrentsGetTorrents(
+        pluginPath: pluginPath, source: source, id: id, page: page);
 
-            Future<List<TorrentInfo>>  getTorrents({required String pluginPath , required String source , required String id , required BigInt page }) => RustLib.instance.api.crateMethodPluginProviderGetTorrentsGetTorrents(pluginPath: pluginPath, source: source, id: id, page: page);
+@freezed
+sealed class TorrentInfo with _$TorrentInfo {
+  const factory TorrentInfo({
+    required String title,
+    required String torrentUrl,
+  }) = _TorrentInfo;
 
-            @freezed
-sealed class TorrentInfo with _$TorrentInfo  {
-                
-                const factory TorrentInfo({ required  String title, required  String torrentUrl,}) = _TorrentInfo;
-                
-                factory TorrentInfo.fromJson(Map<String, dynamic> json) => _$TorrentInfoFromJson(json);
-                
-            }
-            
+  factory TorrentInfo.fromJson(Map<String, dynamic> json) =>
+      _$TorrentInfoFromJson(json);
+}

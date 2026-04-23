@@ -6,21 +6,30 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'featured_content.freezed.dart';part 'featured_content.g.dart';
+part 'featured_content.freezed.dart';
+part 'featured_content.g.dart';
 
-            // These functions are ignored because they are not marked as `pub`: `load`, `save`
+// These functions are ignored because they are not marked as `pub`: `load`, `save`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Cache`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
+Future<List<FeaturedContentInfo>> featuredContent(
+        {required String source, required bool fromCache}) =>
+    RustLib.instance.api
+        .crateMethodMetadataProviderFeaturedContentFeaturedContent(
+            source: source, fromCache: fromCache);
 
-            Future<List<FeaturedContentInfo>>  featuredContent({required String source , required bool fromCache }) => RustLib.instance.api.crateMethodMetadataProviderFeaturedContentFeaturedContent(source: source, fromCache: fromCache);
+@freezed
+sealed class FeaturedContentInfo with _$FeaturedContentInfo {
+  const factory FeaturedContentInfo({
+    required String source,
+    required String id,
+    required String title,
+    required List<String> contextual,
+    required String shortDescription,
+    required String bannerUrl,
+  }) = _FeaturedContentInfo;
 
-            @freezed
-sealed class FeaturedContentInfo with _$FeaturedContentInfo  {
-                
-                const factory FeaturedContentInfo({ required  String source, required  String id, required  String title, required  List<String> contextual, required  String shortDescription, required  String bannerUrl,}) = _FeaturedContentInfo;
-                
-                factory FeaturedContentInfo.fromJson(Map<String, dynamic> json) => _$FeaturedContentInfoFromJson(json);
-                
-            }
-            
+  factory FeaturedContentInfo.fromJson(Map<String, dynamic> json) =>
+      _$FeaturedContentInfoFromJson(json);
+}

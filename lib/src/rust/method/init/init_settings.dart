@@ -7,10 +7,5 @@ import '../../frb_generated.dart';
 import '../../utils/settings.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-
-            
-
-            Future<void>  initSettings({required Settings settings }) => RustLib.instance.api.crateMethodInitInitSettingsInitSettings(settings: settings);
-
-            
-            
+Future<void> initSettings({required Settings settings}) => RustLib.instance.api
+    .crateMethodInitInitSettingsInitSettings(settings: settings);

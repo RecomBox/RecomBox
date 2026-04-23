@@ -1,19 +1,11 @@
 use std::collections::HashMap;
-use std::path::PathBuf;
-use redb::{Database, ReadableDatabase, ReadableTable};
-use crate::utils::settings::Settings;
+use redb::{ReadableDatabase, ReadableTable};
 
-use super::{CATEGORY_ORDER_TABLE, DATABASE_NAME, CategoryOrderMap};
+
+use super::{get_db, CATEGORY_ORDER_TABLE, CategoryOrderMap};
 
 pub async fn get_category_order() -> Result<CategoryOrderMap, String> {
-    let settings = Settings::get()
-        .map_err(|e| e.to_string())?;
-
-    let db_path = PathBuf::from(&settings.paths.app_support_dir)
-        .join(DATABASE_NAME);
-
-    let db = Database::create(db_path)
-        .map_err(|e| e.to_string())?;
+    let db = get_db()?;
 
     let read_txn = db.begin_read()
         .map_err(|e| e.to_string())?;

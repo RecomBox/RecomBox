@@ -1,20 +1,12 @@
-use std::path::PathBuf;
-use redb::{Database, ReadableDatabase};
+
+use redb::{ReadableDatabase};
 use serde_json::from_slice;
 
-use crate::utils::settings::Settings;
 
-use super::{CATEGORY_AND_ITEM_TABLE, DATABASE_NAME, ItemInfo};
+use super::{get_db, CATEGORY_AND_ITEM_TABLE, ItemInfo};
 
 pub async fn get_all_item_by_category_id(category_id: u64) -> Result<Vec<ItemInfo>, String> {
-    let settings = Settings::get()
-        .map_err(|e| e.to_string())?;
-
-    let db_path = PathBuf::from(&settings.paths.app_support_dir)
-        .join(DATABASE_NAME);
-
-    let db = Database::create(db_path)
-        .map_err(|e| e.to_string())?;
+    let db = get_db()?;
 
     let read_txn = db.begin_read()
         .map_err(|e| e.to_string())?;

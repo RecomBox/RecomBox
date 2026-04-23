@@ -61,7 +61,7 @@ class _SetFavoriteTileState extends State<InstallPluginTile> {
 
     widget.onStartInstall?.call();
     try{
-      await installPlugins(
+      await installPlugin(
         source: widget.source.name, 
         pluginInfo: widget.pluginInfo
       );

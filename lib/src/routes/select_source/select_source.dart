@@ -97,8 +97,8 @@ class _SelectSourceState extends State<SelectSourceScreen> {
         id: args!.selectPluginScreenArguments.externalID, 
         title: args!.selectPluginScreenArguments.title, 
         titleSecondary: args!.selectPluginScreenArguments.titleSecondary,
-        season: args!.selectPluginScreenArguments.season, 
-        episode: args!.selectPluginScreenArguments.episode, 
+        season: args!.selectPluginScreenArguments.season+BigInt.from(1), 
+        episode: args!.selectPluginScreenArguments.episode+BigInt.from(1), 
         search: _textEditingController.text, 
         page: BigInt.from(1)
       );
@@ -213,7 +213,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                           alignment: Alignment.topLeft,
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Text(
-                            "Season: ${args!.selectPluginScreenArguments.season}, Episode: ${args!.selectPluginScreenArguments.episode}",
+                            "Season: ${args!.selectPluginScreenArguments.season+BigInt.from(1)}, Episode: ${args!.selectPluginScreenArguments.episode+BigInt.from(1)}",
                             style: GoogleFonts.nunito(
                               color: appColors.textPrimary,
                               fontSize: 18,
@@ -306,6 +306,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                               itemCount: sourceInfoList.length,
                               itemBuilder: (context, index) {
                                 return SelectSourceTile(
+                                  key: ValueKey(sourceInfoList[index].id),
                                   viewID: args!.selectPluginScreenArguments.id,
                                   pluginPath: args!.pluginPath,
                                   source: args!.selectPluginScreenArguments.source,

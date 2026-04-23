@@ -6,27 +6,27 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'settings.freezed.dart';part 'settings.g.dart';
-
-            
-
-            
-
-            @freezed
-sealed class Paths with _$Paths  {
-                
-                const factory Paths({ required  String appSupportDir, required  String appCacheDir, required  String tempDir,}) = _Paths;
-                
-                factory Paths.fromJson(Map<String, dynamic> json) => _$PathsFromJson(json);
-                
-            }
+part 'settings.freezed.dart';
+part 'settings.g.dart';
 
 @freezed
-sealed class Settings with _$Settings  {
-                
-                const factory Settings({ required  int port, required  Paths paths,}) = _Settings;
-                
-                factory Settings.fromJson(Map<String, dynamic> json) => _$SettingsFromJson(json);
-                
-            }
-            
+sealed class Paths with _$Paths {
+  const factory Paths({
+    required String appSupportDir,
+    required String appCacheDir,
+    required String tempDir,
+  }) = _Paths;
+
+  factory Paths.fromJson(Map<String, dynamic> json) => _$PathsFromJson(json);
+}
+
+@freezed
+sealed class Settings with _$Settings {
+  const factory Settings({
+    required int port,
+    required Paths paths,
+  }) = _Settings;
+
+  factory Settings.fromJson(Map<String, dynamic> json) =>
+      _$SettingsFromJson(json);
+}

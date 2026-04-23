@@ -12,7 +12,7 @@ use super::PluginInfo;
 
 
 
-pub async fn install_plugins(source: &str, plugin_info: &PluginInfo) -> Result<(), String> {
+pub async fn install_plugin(source: &str, plugin_info: &PluginInfo) -> Result<(), String> {
     let source = Source::from_str(source)
         .ok_or("Invalid Source")
         .map_err(|e| e.to_string())?;

@@ -1,10 +1,10 @@
 
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 
 use flutter_rust_bridge::frb;
 
 use crate::utils;
+use crate::utils::torrent_provider::get_torrent_metadata;
 
 #[frb(json_serializable)]
 #[derive(Debug, Deserialize, Serialize)]
@@ -28,7 +28,7 @@ pub async fn get_torrent_metadata(torrent_source: String) -> Result<TorrentMetad
     
     let torrent_info = tokio::task::spawn_blocking(move || {
         tokio::runtime::Handle::current().block_on(async {
-            utils::get_torrent_info::new(&torrent_source)
+            get_torrent_metadata::new(&torrent_source)
             .await.unwrap()
         })
     })

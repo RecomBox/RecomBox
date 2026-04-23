@@ -136,6 +136,8 @@ class _FavoriteState extends State<FavoriteScreen> {
               NavigationBarVertical(
                 currentIndex: 2,
               ),
+            
+            
             Expanded(
               child: Scaffold(
                 backgroundColor: Colors.transparent,
@@ -143,7 +145,6 @@ class _FavoriteState extends State<FavoriteScreen> {
                   children: [
                     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
                       TitleBar(),
-
                     // -> Category Bar
                     Container(
                       padding: EdgeInsets.only(bottom: 10),
@@ -158,43 +159,66 @@ class _FavoriteState extends State<FavoriteScreen> {
                           )
                         )
                       ),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categoryMap.field0.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: currentCategoryIndex == index 
-                                  ? BorderSide(
-                                    width: 1,
-                                    color: appColors.accentPrimary
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [ 
+                          Expanded(
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: categoryMap.field0.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  key: ValueKey(categoryMap.field0.values.toList()[index]),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: currentCategoryIndex == index 
+                                        ? BorderSide(
+                                          width: 1,
+                                          color: appColors.accentPrimary
+                                        )
+                                        : BorderSide.none
+                                    )
+                                  ),
+                                  child: TextButton(
+                                    onPressed: () => onCategoryChange(index), 
+                                    style: TextButton.styleFrom(
+                                      enabledMouseCursor: SystemMouseCursors.click,
+                                      backgroundColor: appColors.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                      ),
+                                      padding: EdgeInsets.all(20),
+                                    ),
+                                    child: Text(
+                                      categoryMap.field0.values.toList()[index],
+                                      style: GoogleFonts.nunito(
+                                        color: appColors.textPrimary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight(500)
+                                      ),
+                                    ),
                                   )
-                                  : BorderSide.none
-                              )
+                                );
+                              },
                             ),
-                            child: TextButton(
-                              onPressed: () => onCategoryChange(index), 
-                              style: TextButton.styleFrom(
-                                enabledMouseCursor: SystemMouseCursors.click,
-                                backgroundColor: appColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                                padding: EdgeInsets.all(20),
-                              ),
-                              child: Text(
-                                categoryMap.field0.values.toList()[index],
-                                style: GoogleFonts.nunito(
-                                  color: appColors.textPrimary,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight(500)
-                                ),
-                              ),
-                            )
-                          );
-                        },
-                      ),
+                          ),
+                          IconButton(
+                            mouseCursor: SystemMouseCursors.click,
+                            onPressed: (){
+                              Navigator.pushNamed(
+                                context, 
+                                "/edit_category"
+                              );
+                            }, 
+                            icon: Icon(
+                              Icons.edit_rounded,
+                              size: 24,
+                              color: appColors.secondary,
+                            ),
+                          )
+                        ]
+                      )
+
                     ),
 
                     // <-
@@ -271,32 +295,52 @@ class _FavoriteState extends State<FavoriteScreen> {
                         ]
                       )
                     ),
-                
+
+                    if (itemInfoList.isEmpty)
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.all(15),
-                        child: GridView.builder(
-                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 155,
-                              mainAxisExtent: 280,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              childAspectRatio: 1, 
-                            ),
-                            itemCount: filteredItemInfoList.length,
-                            itemBuilder: (context, index) {
-                              return FavoriteContentCard(
-                                addTitle: (String title) {
-                                  addTitle(index, title);
-                                },
-                                source: SourceExtension.fromString(filteredItemInfoList[index].source), 
-                                id: filteredItemInfoList[index].id,
-                              );
-                            },
-                          )
-
+                        height: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "No favorite found inside category",
+                          style: GoogleFonts.nunito(
+                            color: appColors.textPrimary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
                       ),
-                    )
+                    ),
+
+                    if (itemInfoList.isNotEmpty)
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(15),
+                          child: GridView.builder(
+                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 155,
+                                mainAxisExtent: 280,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 1, 
+                              ),
+                              itemCount: filteredItemInfoList.length,
+                              itemBuilder: (context, index) {
+                                return FavoriteContentCard(
+                                  key: ValueKey(filteredItemInfoList[index].id),
+                                  addTitle: (String title) {
+                                    addTitle(index, title);
+                                  },
+                                  source: SourceExtension.fromString(filteredItemInfoList[index].source), 
+                                  id: filteredItemInfoList[index].id,
+                                );
+                              },
+                            )
+
+                        ),
+                      )
+                    
                   ],
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
@@ -306,6 +350,7 @@ class _FavoriteState extends State<FavoriteScreen> {
                   : null,
               ),
             )
+          
           ],
         )
       )

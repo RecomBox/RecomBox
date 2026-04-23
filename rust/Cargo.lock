@@ -1774,7 +1774,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.3",
  "tokio",
  "tower-service",
  "tracing",
@@ -2816,7 +2816,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.37",
- "socket2 0.5.10",
+ "socket2 0.6.3",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -2853,7 +2853,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.5.10",
+ "socket2 0.6.3",
  "tracing",
  "windows-sys 0.60.2",
 ]
@@ -2977,7 +2977,7 @@ dependencies = [
 [[package]]
 name = "recombox_plugin_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_plugin_provider#bccebf346905d3c43c1f7eed77d8178cc1203b61"
+source = "git+https://github.com/RecomBox/recombox_plugin_provider#400a477bb6c4a127adda8160734c916b983014a6"
 dependencies = [
  "anyhow",
  "blake3",
@@ -3198,6 +3198,7 @@ dependencies = [
  "recombox_plugin_provider",
  "redb",
  "reqwest",
+ "semver 1.0.28",
  "serde",
  "serde_json",
  "snowid",

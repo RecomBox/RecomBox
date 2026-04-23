@@ -6,19 +6,22 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'plugin_provider.freezed.dart';part 'plugin_provider.g.dart';
+part 'plugin_provider.freezed.dart';
+part 'plugin_provider.g.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
+@freezed
+sealed class PluginInfo with _$PluginInfo {
+  const factory PluginInfo({
+    required String hashedManifestRepoId,
+    required String manifestRepoName,
+    required String pluginId,
+    required String pluginName,
+    required String pluginRepoUrl,
+    required String pluginIconUrl,
+  }) = _PluginInfo;
 
-            
-
-            @freezed
-sealed class PluginInfo with _$PluginInfo  {
-                
-                const factory PluginInfo({ required  String hashedManifestRepoId, required  String manifestRepoName, required  String pluginId, required  String pluginName, required  String pluginRepoUrl, required  String pluginIconUrl,}) = _PluginInfo;
-                
-                factory PluginInfo.fromJson(Map<String, dynamic> json) => _$PluginInfoFromJson(json);
-                
-            }
-            
+  factory PluginInfo.fromJson(Map<String, dynamic> json) =>
+      _$PluginInfoFromJson(json);
+}

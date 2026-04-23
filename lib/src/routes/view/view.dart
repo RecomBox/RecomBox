@@ -30,7 +30,8 @@ class ViewScreen extends StatefulWidget {
   State<ViewScreen> createState() => _ViewState();
 }
 
-class _ViewState extends State<ViewScreen> {
+
+class _ViewState extends State<ViewScreen> with RouteAware {
   late ViewScreenArguments args;
   
   @override
@@ -56,6 +57,8 @@ class _ViewState extends State<ViewScreen> {
       
     });
   }
+
+
 
   @override
   void dispose() {
@@ -105,10 +108,13 @@ class _ViewState extends State<ViewScreen> {
       isLoading = true;
     });
     try{
-      var data = await viewContent(source: args.source.name, id: args.id, fromCache: fromCache);
-      debugPrint(data.titleSecondary);
+      var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache);
+      debugPrint(data.lastWatchSeasonIndex.toString());
+
+      debugPrint(data.lastWatchEpisodeIndex.toString());
       setState(() {
         viewContentInfoResult = data;
+        currentSeasonIndex = (data.lastWatchSeasonIndex??BigInt.from(0)).toInt();
       });
     }catch(e){
       debugPrint(e.toString());
@@ -810,15 +816,18 @@ class _ViewState extends State<ViewScreen> {
                                   scrollDirection: Axis.vertical,
                                   itemCount: filteredEpisodes.length,
                                   itemBuilder: (current, index) {
-                                      return EpisodeTile(
-                                        id: args.id,
-                                        externalID: viewContentInfoResult!.externalId,
-                                        title: viewContentInfoResult!.title,
-                                        titleSecondary: viewContentInfoResult!.titleSecondary,
-                                        season: BigInt.from(currentSeasonIndex+1),
-                                        episode: BigInt.from(index+1),
-                                        episodeInfo: filteredEpisodes[index],
-                                        
+                                      return Container(
+                                        color: viewContentInfoResult!.lastWatchEpisodeIndex == BigInt.from(index) ? appColors.tertiary : Colors.transparent,
+                                        child: EpisodeTile(
+                                          id: args.id,
+                                          externalID: viewContentInfoResult!.externalId,
+                                          title: viewContentInfoResult!.title,
+                                          titleSecondary: viewContentInfoResult!.titleSecondary,
+                                          season: BigInt.from(currentSeasonIndex),
+                                          episode: BigInt.from(index),
+                                          episodeInfo: filteredEpisodes[index],
+                                          
+                                        )
                                       );
                                   }, 
                                   separatorBuilder: (current, index) {

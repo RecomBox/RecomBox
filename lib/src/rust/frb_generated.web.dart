@@ -3,7 +3,6 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
@@ -26,6 +25,7 @@ import 'method/get_settings.dart';
 import 'method/init/init_rest_server.dart';
 import 'method/init/init_settings.dart';
 import 'method/init/init_torrent_session.dart';
+import 'method/init/init_worker.dart';
 import 'method/metadata_provider/featured_content.dart';
 import 'method/metadata_provider/search_content.dart';
 import 'method/metadata_provider/trending_content.dart';
@@ -42,366 +42,627 @@ import 'method/torrent_provider/get_torrent_metadata.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 import 'utils/settings.dart';
 
+abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
+  RustLibApiImplPlatform({
+    required super.handler,
+    required super.wire,
+    required super.generalizedFrbRustBinding,
+    required super.portManager,
+  });
 
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_ArcDatabasePtr => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase;
 
+  @protected
+  AnyhowException dco_decode_AnyhowException(dynamic raw);
 
-                abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
-                  RustLibApiImplPlatform({
-                    required super.handler,
-                    required super.wire,
-                    required super.generalizedFrbRustBinding,
-                    required super.portManager,
-                  });
+  @protected
+  ArcDatabase
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          dynamic raw);
 
-                  
+  @protected
+  Map<String, InstalledPluginInfo>
+      dco_decode_Map_String_installed_plugin_info_None(dynamic raw);
 
-                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
+  @protected
+  Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw);
 
-@protected Map<String, InstalledPluginInfo> dco_decode_Map_String_installed_plugin_info_None(dynamic raw);
+  @protected
+  Map<BigInt, BigInt> dco_decode_Map_u_64_u_64_None(dynamic raw);
 
-@protected Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw);
+  @protected
+  ArcDatabase
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          dynamic raw);
 
-@protected Map<BigInt, BigInt> dco_decode_Map_u_64_u_64_None(dynamic raw);
+  @protected
+  String dco_decode_String(dynamic raw);
 
-@protected String dco_decode_String(dynamic raw);
+  @protected
+  bool dco_decode_bool(dynamic raw);
 
-@protected bool dco_decode_bool(dynamic raw);
+  @protected
+  ItemInfo dco_decode_box_autoadd_item_info(dynamic raw);
 
-@protected ItemInfo dco_decode_box_autoadd_item_info(dynamic raw);
+  @protected
+  PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw);
 
-@protected PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw);
+  @protected
+  Settings dco_decode_box_autoadd_settings(dynamic raw);
 
-@protected Settings dco_decode_box_autoadd_settings(dynamic raw);
+  @protected
+  BigInt dco_decode_box_autoadd_u_64(dynamic raw);
 
-@protected BigInt dco_decode_box_autoadd_u_64(dynamic raw);
+  @protected
+  BigInt dco_decode_box_autoadd_usize(dynamic raw);
 
-@protected BigInt dco_decode_box_autoadd_usize(dynamic raw);
+  @protected
+  CategoryMap dco_decode_category_map(dynamic raw);
 
-@protected CategoryMap dco_decode_category_map(dynamic raw);
+  @protected
+  CategoryOrderMap dco_decode_category_order_map(dynamic raw);
 
-@protected CategoryOrderMap dco_decode_category_order_map(dynamic raw);
+  @protected
+  EpisodeInfo dco_decode_episode_info(dynamic raw);
 
-@protected EpisodeInfo dco_decode_episode_info(dynamic raw);
+  @protected
+  double dco_decode_f_32(dynamic raw);
 
-@protected double dco_decode_f_32(dynamic raw);
+  @protected
+  FeaturedContentInfo dco_decode_featured_content_info(dynamic raw);
 
-@protected FeaturedContentInfo dco_decode_featured_content_info(dynamic raw);
+  @protected
+  FileInfo dco_decode_file_info(dynamic raw);
 
-@protected FileInfo dco_decode_file_info(dynamic raw);
+  @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw);
 
-@protected PlatformInt64 dco_decode_i_64(dynamic raw);
+  @protected
+  InstalledPluginInfo dco_decode_installed_plugin_info(dynamic raw);
 
-@protected InstalledPluginInfo dco_decode_installed_plugin_info(dynamic raw);
+  @protected
+  ItemInfo dco_decode_item_info(dynamic raw);
 
-@protected ItemInfo dco_decode_item_info(dynamic raw);
+  @protected
+  List<String> dco_decode_list_String(dynamic raw);
 
-@protected List<String> dco_decode_list_String(dynamic raw);
+  @protected
+  List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw);
 
-@protected List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw);
+  @protected
+  List<FeaturedContentInfo> dco_decode_list_featured_content_info(dynamic raw);
 
-@protected List<FeaturedContentInfo> dco_decode_list_featured_content_info(dynamic raw);
+  @protected
+  List<FileInfo> dco_decode_list_file_info(dynamic raw);
 
-@protected List<FileInfo> dco_decode_list_file_info(dynamic raw);
+  @protected
+  List<ItemInfo> dco_decode_list_item_info(dynamic raw);
 
-@protected List<ItemInfo> dco_decode_list_item_info(dynamic raw);
+  @protected
+  List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw);
 
-@protected List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw);
+  @protected
+  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw);
 
-@protected List<PluginInfo> dco_decode_list_plugin_info(dynamic raw);
+  @protected
+  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
-@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+  @protected
+  List<(String, InstalledPluginInfo)>
+      dco_decode_list_record_string_installed_plugin_info(dynamic raw);
 
-@protected List<(String,InstalledPluginInfo)> dco_decode_list_record_string_installed_plugin_info(dynamic raw);
+  @protected
+  List<(BigInt, String)> dco_decode_list_record_u_64_string(dynamic raw);
 
-@protected List<(BigInt,String)> dco_decode_list_record_u_64_string(dynamic raw);
+  @protected
+  List<(BigInt, BigInt)> dco_decode_list_record_u_64_u_64(dynamic raw);
 
-@protected List<(BigInt,BigInt)> dco_decode_list_record_u_64_u_64(dynamic raw);
+  @protected
+  List<SearchContentInfo> dco_decode_list_search_content_info(dynamic raw);
 
-@protected List<SearchContentInfo> dco_decode_list_search_content_info(dynamic raw);
+  @protected
+  List<SourceInfo> dco_decode_list_source_info(dynamic raw);
 
-@protected List<SourceInfo> dco_decode_list_source_info(dynamic raw);
+  @protected
+  List<TorrentInfo> dco_decode_list_torrent_info(dynamic raw);
 
-@protected List<TorrentInfo> dco_decode_list_torrent_info(dynamic raw);
+  @protected
+  List<TrendingContentInfo> dco_decode_list_trending_content_info(dynamic raw);
 
-@protected List<TrendingContentInfo> dco_decode_list_trending_content_info(dynamic raw);
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
 
-@protected String? dco_decode_opt_String(dynamic raw);
+  @protected
+  BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
 
-@protected BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
+  @protected
+  BigInt? dco_decode_opt_box_autoadd_usize(dynamic raw);
 
-@protected BigInt? dco_decode_opt_box_autoadd_usize(dynamic raw);
+  @protected
+  Paths dco_decode_paths(dynamic raw);
 
-@protected Paths dco_decode_paths(dynamic raw);
+  @protected
+  PluginInfo dco_decode_plugin_info(dynamic raw);
 
-@protected PluginInfo dco_decode_plugin_info(dynamic raw);
+  @protected
+  (String, InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(
+      dynamic raw);
 
-@protected (String,InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(dynamic raw);
+  @protected
+  (BigInt, String) dco_decode_record_u_64_string(dynamic raw);
 
-@protected (BigInt,String) dco_decode_record_u_64_string(dynamic raw);
+  @protected
+  (BigInt, BigInt) dco_decode_record_u_64_u_64(dynamic raw);
 
-@protected (BigInt,BigInt) dco_decode_record_u_64_u_64(dynamic raw);
+  @protected
+  SearchContentInfo dco_decode_search_content_info(dynamic raw);
 
-@protected SearchContentInfo dco_decode_search_content_info(dynamic raw);
+  @protected
+  Settings dco_decode_settings(dynamic raw);
 
-@protected Settings dco_decode_settings(dynamic raw);
+  @protected
+  SourceInfo dco_decode_source_info(dynamic raw);
 
-@protected SourceInfo dco_decode_source_info(dynamic raw);
+  @protected
+  TorrentInfo dco_decode_torrent_info(dynamic raw);
 
-@protected TorrentInfo dco_decode_torrent_info(dynamic raw);
+  @protected
+  TorrentMetadata dco_decode_torrent_metadata(dynamic raw);
 
-@protected TorrentMetadata dco_decode_torrent_metadata(dynamic raw);
+  @protected
+  TrendingContentInfo dco_decode_trending_content_info(dynamic raw);
 
-@protected TrendingContentInfo dco_decode_trending_content_info(dynamic raw);
+  @protected
+  int dco_decode_u_32(dynamic raw);
 
-@protected int dco_decode_u_32(dynamic raw);
+  @protected
+  BigInt dco_decode_u_64(dynamic raw);
 
-@protected BigInt dco_decode_u_64(dynamic raw);
+  @protected
+  int dco_decode_u_8(dynamic raw);
 
-@protected int dco_decode_u_8(dynamic raw);
+  @protected
+  void dco_decode_unit(dynamic raw);
 
-@protected void dco_decode_unit(dynamic raw);
+  @protected
+  BigInt dco_decode_usize(dynamic raw);
 
-@protected BigInt dco_decode_usize(dynamic raw);
+  @protected
+  ViewContentInfo dco_decode_view_content_info(dynamic raw);
 
-@protected ViewContentInfo dco_decode_view_content_info(dynamic raw);
+  @protected
+  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
-@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+  @protected
+  ArcDatabase
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          SseDeserializer deserializer);
 
-@protected Map<String, InstalledPluginInfo> sse_decode_Map_String_installed_plugin_info_None(SseDeserializer deserializer);
+  @protected
+  Map<String, InstalledPluginInfo>
+      sse_decode_Map_String_installed_plugin_info_None(
+          SseDeserializer deserializer);
 
-@protected Map<BigInt, String> sse_decode_Map_u_64_String_None(SseDeserializer deserializer);
+  @protected
+  Map<BigInt, String> sse_decode_Map_u_64_String_None(
+      SseDeserializer deserializer);
 
-@protected Map<BigInt, BigInt> sse_decode_Map_u_64_u_64_None(SseDeserializer deserializer);
+  @protected
+  Map<BigInt, BigInt> sse_decode_Map_u_64_u_64_None(
+      SseDeserializer deserializer);
 
-@protected String sse_decode_String(SseDeserializer deserializer);
+  @protected
+  ArcDatabase
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          SseDeserializer deserializer);
 
-@protected bool sse_decode_bool(SseDeserializer deserializer);
+  @protected
+  String sse_decode_String(SseDeserializer deserializer);
 
-@protected ItemInfo sse_decode_box_autoadd_item_info(SseDeserializer deserializer);
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer);
 
-@protected PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer);
+  @protected
+  ItemInfo sse_decode_box_autoadd_item_info(SseDeserializer deserializer);
 
-@protected Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer);
+  @protected
+  PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer);
 
-@protected BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
+  @protected
+  Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer);
 
-@protected BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer);
+  @protected
+  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
 
-@protected CategoryMap sse_decode_category_map(SseDeserializer deserializer);
+  @protected
+  BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer);
 
-@protected CategoryOrderMap sse_decode_category_order_map(SseDeserializer deserializer);
+  @protected
+  CategoryMap sse_decode_category_map(SseDeserializer deserializer);
 
-@protected EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer);
+  @protected
+  CategoryOrderMap sse_decode_category_order_map(SseDeserializer deserializer);
 
-@protected double sse_decode_f_32(SseDeserializer deserializer);
+  @protected
+  EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer);
 
-@protected FeaturedContentInfo sse_decode_featured_content_info(SseDeserializer deserializer);
+  @protected
+  double sse_decode_f_32(SseDeserializer deserializer);
 
-@protected FileInfo sse_decode_file_info(SseDeserializer deserializer);
+  @protected
+  FeaturedContentInfo sse_decode_featured_content_info(
+      SseDeserializer deserializer);
 
-@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+  @protected
+  FileInfo sse_decode_file_info(SseDeserializer deserializer);
 
-@protected InstalledPluginInfo sse_decode_installed_plugin_info(SseDeserializer deserializer);
+  @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
 
-@protected ItemInfo sse_decode_item_info(SseDeserializer deserializer);
+  @protected
+  InstalledPluginInfo sse_decode_installed_plugin_info(
+      SseDeserializer deserializer);
 
-@protected List<String> sse_decode_list_String(SseDeserializer deserializer);
+  @protected
+  ItemInfo sse_decode_item_info(SseDeserializer deserializer);
 
-@protected List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer);
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
 
-@protected List<FeaturedContentInfo> sse_decode_list_featured_content_info(SseDeserializer deserializer);
+  @protected
+  List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer);
 
-@protected List<FileInfo> sse_decode_list_file_info(SseDeserializer deserializer);
+  @protected
+  List<FeaturedContentInfo> sse_decode_list_featured_content_info(
+      SseDeserializer deserializer);
 
-@protected List<ItemInfo> sse_decode_list_item_info(SseDeserializer deserializer);
+  @protected
+  List<FileInfo> sse_decode_list_file_info(SseDeserializer deserializer);
 
-@protected List<List<EpisodeInfo>> sse_decode_list_list_episode_info(SseDeserializer deserializer);
+  @protected
+  List<ItemInfo> sse_decode_list_item_info(SseDeserializer deserializer);
 
-@protected List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer);
+  @protected
+  List<List<EpisodeInfo>> sse_decode_list_list_episode_info(
+      SseDeserializer deserializer);
 
-@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+  @protected
+  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer);
 
-@protected List<(String,InstalledPluginInfo)> sse_decode_list_record_string_installed_plugin_info(SseDeserializer deserializer);
+  @protected
+  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
-@protected List<(BigInt,String)> sse_decode_list_record_u_64_string(SseDeserializer deserializer);
+  @protected
+  List<(String, InstalledPluginInfo)>
+      sse_decode_list_record_string_installed_plugin_info(
+          SseDeserializer deserializer);
 
-@protected List<(BigInt,BigInt)> sse_decode_list_record_u_64_u_64(SseDeserializer deserializer);
+  @protected
+  List<(BigInt, String)> sse_decode_list_record_u_64_string(
+      SseDeserializer deserializer);
 
-@protected List<SearchContentInfo> sse_decode_list_search_content_info(SseDeserializer deserializer);
+  @protected
+  List<(BigInt, BigInt)> sse_decode_list_record_u_64_u_64(
+      SseDeserializer deserializer);
 
-@protected List<SourceInfo> sse_decode_list_source_info(SseDeserializer deserializer);
+  @protected
+  List<SearchContentInfo> sse_decode_list_search_content_info(
+      SseDeserializer deserializer);
 
-@protected List<TorrentInfo> sse_decode_list_torrent_info(SseDeserializer deserializer);
+  @protected
+  List<SourceInfo> sse_decode_list_source_info(SseDeserializer deserializer);
 
-@protected List<TrendingContentInfo> sse_decode_list_trending_content_info(SseDeserializer deserializer);
+  @protected
+  List<TorrentInfo> sse_decode_list_torrent_info(SseDeserializer deserializer);
 
-@protected String? sse_decode_opt_String(SseDeserializer deserializer);
+  @protected
+  List<TrendingContentInfo> sse_decode_list_trending_content_info(
+      SseDeserializer deserializer);
 
-@protected BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
 
-@protected BigInt? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer);
+  @protected
+  BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
 
-@protected Paths sse_decode_paths(SseDeserializer deserializer);
+  @protected
+  BigInt? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer);
 
-@protected PluginInfo sse_decode_plugin_info(SseDeserializer deserializer);
+  @protected
+  Paths sse_decode_paths(SseDeserializer deserializer);
 
-@protected (String,InstalledPluginInfo) sse_decode_record_string_installed_plugin_info(SseDeserializer deserializer);
+  @protected
+  PluginInfo sse_decode_plugin_info(SseDeserializer deserializer);
 
-@protected (BigInt,String) sse_decode_record_u_64_string(SseDeserializer deserializer);
+  @protected
+  (String, InstalledPluginInfo) sse_decode_record_string_installed_plugin_info(
+      SseDeserializer deserializer);
 
-@protected (BigInt,BigInt) sse_decode_record_u_64_u_64(SseDeserializer deserializer);
+  @protected
+  (BigInt, String) sse_decode_record_u_64_string(SseDeserializer deserializer);
 
-@protected SearchContentInfo sse_decode_search_content_info(SseDeserializer deserializer);
+  @protected
+  (BigInt, BigInt) sse_decode_record_u_64_u_64(SseDeserializer deserializer);
 
-@protected Settings sse_decode_settings(SseDeserializer deserializer);
+  @protected
+  SearchContentInfo sse_decode_search_content_info(
+      SseDeserializer deserializer);
 
-@protected SourceInfo sse_decode_source_info(SseDeserializer deserializer);
+  @protected
+  Settings sse_decode_settings(SseDeserializer deserializer);
 
-@protected TorrentInfo sse_decode_torrent_info(SseDeserializer deserializer);
+  @protected
+  SourceInfo sse_decode_source_info(SseDeserializer deserializer);
 
-@protected TorrentMetadata sse_decode_torrent_metadata(SseDeserializer deserializer);
+  @protected
+  TorrentInfo sse_decode_torrent_info(SseDeserializer deserializer);
 
-@protected TrendingContentInfo sse_decode_trending_content_info(SseDeserializer deserializer);
+  @protected
+  TorrentMetadata sse_decode_torrent_metadata(SseDeserializer deserializer);
 
-@protected int sse_decode_u_32(SseDeserializer deserializer);
+  @protected
+  TrendingContentInfo sse_decode_trending_content_info(
+      SseDeserializer deserializer);
 
-@protected BigInt sse_decode_u_64(SseDeserializer deserializer);
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer);
 
-@protected int sse_decode_u_8(SseDeserializer deserializer);
+  @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer);
 
-@protected void sse_decode_unit(SseDeserializer deserializer);
+  @protected
+  int sse_decode_u_8(SseDeserializer deserializer);
 
-@protected BigInt sse_decode_usize(SseDeserializer deserializer);
+  @protected
+  void sse_decode_unit(SseDeserializer deserializer);
 
-@protected ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer);
+  @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer);
 
-@protected int sse_decode_i_32(SseDeserializer deserializer);
+  @protected
+  ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer);
 
-@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
 
-@protected void sse_encode_Map_String_installed_plugin_info_None(Map<String, InstalledPluginInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_AnyhowException(
+      AnyhowException self, SseSerializer serializer);
 
-@protected void sse_encode_Map_u_64_String_None(Map<BigInt, String> self, SseSerializer serializer);
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          ArcDatabase self, SseSerializer serializer);
 
-@protected void sse_encode_Map_u_64_u_64_None(Map<BigInt, BigInt> self, SseSerializer serializer);
+  @protected
+  void sse_encode_Map_String_installed_plugin_info_None(
+      Map<String, InstalledPluginInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_String(String self, SseSerializer serializer);
+  @protected
+  void sse_encode_Map_u_64_String_None(
+      Map<BigInt, String> self, SseSerializer serializer);
 
-@protected void sse_encode_bool(bool self, SseSerializer serializer);
+  @protected
+  void sse_encode_Map_u_64_u_64_None(
+      Map<BigInt, BigInt> self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_item_info(ItemInfo self, SseSerializer serializer);
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          ArcDatabase self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_plugin_info(PluginInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_String(String self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer);
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_item_info(
+      ItemInfo self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_plugin_info(
+      PluginInfo self, SseSerializer serializer);
 
-@protected void sse_encode_category_map(CategoryMap self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer);
 
-@protected void sse_encode_category_order_map(CategoryOrderMap self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
 
-@protected void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer);
 
-@protected void sse_encode_f_32(double self, SseSerializer serializer);
+  @protected
+  void sse_encode_category_map(CategoryMap self, SseSerializer serializer);
 
-@protected void sse_encode_featured_content_info(FeaturedContentInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_category_order_map(
+      CategoryOrderMap self, SseSerializer serializer);
 
-@protected void sse_encode_file_info(FileInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer);
 
-@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+  @protected
+  void sse_encode_f_32(double self, SseSerializer serializer);
 
-@protected void sse_encode_installed_plugin_info(InstalledPluginInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_featured_content_info(
+      FeaturedContentInfo self, SseSerializer serializer);
 
-@protected void sse_encode_item_info(ItemInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_file_info(FileInfo self, SseSerializer serializer);
 
-@protected void sse_encode_list_String(List<String> self, SseSerializer serializer);
+  @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
 
-@protected void sse_encode_list_episode_info(List<EpisodeInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_installed_plugin_info(
+      InstalledPluginInfo self, SseSerializer serializer);
 
-@protected void sse_encode_list_featured_content_info(List<FeaturedContentInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_item_info(ItemInfo self, SseSerializer serializer);
 
-@protected void sse_encode_list_file_info(List<FileInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
 
-@protected void sse_encode_list_item_info(List<ItemInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_episode_info(
+      List<EpisodeInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_list_list_episode_info(List<List<EpisodeInfo>> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_featured_content_info(
+      List<FeaturedContentInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_list_plugin_info(List<PluginInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_file_info(List<FileInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_item_info(List<ItemInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_list_record_string_installed_plugin_info(List<(String,InstalledPluginInfo)> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_list_episode_info(
+      List<List<EpisodeInfo>> self, SseSerializer serializer);
 
-@protected void sse_encode_list_record_u_64_string(List<(BigInt,String)> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_plugin_info(
+      List<PluginInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_list_record_u_64_u_64(List<(BigInt,BigInt)> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_prim_u_8_strict(
+      Uint8List self, SseSerializer serializer);
 
-@protected void sse_encode_list_search_content_info(List<SearchContentInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_record_string_installed_plugin_info(
+      List<(String, InstalledPluginInfo)> self, SseSerializer serializer);
 
-@protected void sse_encode_list_source_info(List<SourceInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_record_u_64_string(
+      List<(BigInt, String)> self, SseSerializer serializer);
 
-@protected void sse_encode_list_torrent_info(List<TorrentInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_record_u_64_u_64(
+      List<(BigInt, BigInt)> self, SseSerializer serializer);
 
-@protected void sse_encode_list_trending_content_info(List<TrendingContentInfo> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_search_content_info(
+      List<SearchContentInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_opt_String(String? self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_source_info(
+      List<SourceInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_torrent_info(
+      List<TorrentInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_opt_box_autoadd_usize(BigInt? self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_trending_content_info(
+      List<TrendingContentInfo> self, SseSerializer serializer);
 
-@protected void sse_encode_paths(Paths self, SseSerializer serializer);
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
-@protected void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
 
-@protected void sse_encode_record_string_installed_plugin_info((String,InstalledPluginInfo) self, SseSerializer serializer);
+  @protected
+  void sse_encode_opt_box_autoadd_usize(BigInt? self, SseSerializer serializer);
 
-@protected void sse_encode_record_u_64_string((BigInt,String) self, SseSerializer serializer);
+  @protected
+  void sse_encode_paths(Paths self, SseSerializer serializer);
 
-@protected void sse_encode_record_u_64_u_64((BigInt,BigInt) self, SseSerializer serializer);
+  @protected
+  void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer);
 
-@protected void sse_encode_search_content_info(SearchContentInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_record_string_installed_plugin_info(
+      (String, InstalledPluginInfo) self, SseSerializer serializer);
 
-@protected void sse_encode_settings(Settings self, SseSerializer serializer);
+  @protected
+  void sse_encode_record_u_64_string(
+      (BigInt, String) self, SseSerializer serializer);
 
-@protected void sse_encode_source_info(SourceInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_record_u_64_u_64(
+      (BigInt, BigInt) self, SseSerializer serializer);
 
-@protected void sse_encode_torrent_info(TorrentInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_search_content_info(
+      SearchContentInfo self, SseSerializer serializer);
 
-@protected void sse_encode_torrent_metadata(TorrentMetadata self, SseSerializer serializer);
+  @protected
+  void sse_encode_settings(Settings self, SseSerializer serializer);
 
-@protected void sse_encode_trending_content_info(TrendingContentInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_source_info(SourceInfo self, SseSerializer serializer);
 
-@protected void sse_encode_u_32(int self, SseSerializer serializer);
+  @protected
+  void sse_encode_torrent_info(TorrentInfo self, SseSerializer serializer);
 
-@protected void sse_encode_u_64(BigInt self, SseSerializer serializer);
+  @protected
+  void sse_encode_torrent_metadata(
+      TorrentMetadata self, SseSerializer serializer);
 
-@protected void sse_encode_u_8(int self, SseSerializer serializer);
+  @protected
+  void sse_encode_trending_content_info(
+      TrendingContentInfo self, SseSerializer serializer);
 
-@protected void sse_encode_unit(void self, SseSerializer serializer);
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer);
 
-@protected void sse_encode_usize(BigInt self, SseSerializer serializer);
+  @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer);
 
-@protected void sse_encode_view_content_info(ViewContentInfo self, SseSerializer serializer);
+  @protected
+  void sse_encode_u_8(int self, SseSerializer serializer);
 
-@protected void sse_encode_i_32(int self, SseSerializer serializer);
-                }
-                
+  @protected
+  void sse_encode_unit(void self, SseSerializer serializer);
 
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_view_content_info(
+      ViewContentInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
+}
 
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
-            RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+  RustLibWire.fromExternalLibrary(ExternalLibrary lib);
 
-            
-        }
-        @JS('wasm_bindgen') external RustLibWasmModule get wasmModule;
+  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          int ptr) =>
+      wasmModule
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+              ptr);
 
-        @JS() @anonymous extension type RustLibWasmModule._(JSObject _) implements JSObject {
-            
-        }
-        
+  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          int ptr) =>
+      wasmModule
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+              ptr);
+}
+
+@JS('wasm_bindgen')
+external RustLibWasmModule get wasmModule;
+
+@JS()
+@anonymous
+extension type RustLibWasmModule._(JSObject _) implements JSObject {
+  external void
+      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          int ptr);
+
+  external void
+      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          int ptr);
+}

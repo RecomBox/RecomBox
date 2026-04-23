@@ -1,21 +1,11 @@
-use std::path::PathBuf;
-use redb::{Database, ReadableDatabase, ReadableTable};
+use redb::{ReadableDatabase, ReadableTable};
 use std::collections::HashMap;
 
 
-use crate::utils::settings::Settings;
-
-use super::{CATEGORY_TABLE, DATABASE_NAME, CategoryMap};
+use super::{get_db, CATEGORY_TABLE, CategoryMap};
 
 pub async fn get_all_category() -> Result<CategoryMap, String> {
-    let settings = Settings::get()
-        .map_err(|e| e.to_string())?;
-
-    let db_path = PathBuf::from(&settings.paths.app_support_dir)
-        .join(DATABASE_NAME);
-
-    let db = Database::create(db_path)
-        .map_err(|e| e.to_string())?;
+    let db = get_db()?;
 
     let read_txn = db.begin_read()
         .map_err(|e| e.to_string())?;

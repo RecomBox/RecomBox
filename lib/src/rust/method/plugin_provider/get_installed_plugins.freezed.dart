@@ -14,6 +14,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$InstalledPluginInfo {
+  String get hashedManifestRepoId;
   String get manifestRepoName;
   String get pluginName;
   String get pluginRepoUrl;
@@ -37,6 +38,8 @@ mixin _$InstalledPluginInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is InstalledPluginInfo &&
+            (identical(other.hashedManifestRepoId, hashedManifestRepoId) ||
+                other.hashedManifestRepoId == hashedManifestRepoId) &&
             (identical(other.manifestRepoName, manifestRepoName) ||
                 other.manifestRepoName == manifestRepoName) &&
             (identical(other.pluginName, pluginName) ||
@@ -53,12 +56,19 @@ mixin _$InstalledPluginInfo {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, manifestRepoName, pluginName,
-      pluginRepoUrl, pluginIconUrl, pluginPath, pluginVersion);
+  int get hashCode => Object.hash(
+      runtimeType,
+      hashedManifestRepoId,
+      manifestRepoName,
+      pluginName,
+      pluginRepoUrl,
+      pluginIconUrl,
+      pluginPath,
+      pluginVersion);
 
   @override
   String toString() {
-    return 'InstalledPluginInfo(manifestRepoName: $manifestRepoName, pluginName: $pluginName, pluginRepoUrl: $pluginRepoUrl, pluginIconUrl: $pluginIconUrl, pluginPath: $pluginPath, pluginVersion: $pluginVersion)';
+    return 'InstalledPluginInfo(hashedManifestRepoId: $hashedManifestRepoId, manifestRepoName: $manifestRepoName, pluginName: $pluginName, pluginRepoUrl: $pluginRepoUrl, pluginIconUrl: $pluginIconUrl, pluginPath: $pluginPath, pluginVersion: $pluginVersion)';
   }
 }
 
@@ -69,7 +79,8 @@ abstract mixin class $InstalledPluginInfoCopyWith<$Res> {
       _$InstalledPluginInfoCopyWithImpl;
   @useResult
   $Res call(
-      {String manifestRepoName,
+      {String hashedManifestRepoId,
+      String manifestRepoName,
       String pluginName,
       String pluginRepoUrl,
       String pluginIconUrl,
@@ -90,6 +101,7 @@ class _$InstalledPluginInfoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? hashedManifestRepoId = null,
     Object? manifestRepoName = null,
     Object? pluginName = null,
     Object? pluginRepoUrl = null,
@@ -98,6 +110,10 @@ class _$InstalledPluginInfoCopyWithImpl<$Res>
     Object? pluginVersion = null,
   }) {
     return _then(_self.copyWith(
+      hashedManifestRepoId: null == hashedManifestRepoId
+          ? _self.hashedManifestRepoId
+          : hashedManifestRepoId // ignore: cast_nullable_to_non_nullable
+              as String,
       manifestRepoName: null == manifestRepoName
           ? _self.manifestRepoName
           : manifestRepoName // ignore: cast_nullable_to_non_nullable
@@ -218,6 +234,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
+            String hashedManifestRepoId,
             String manifestRepoName,
             String pluginName,
             String pluginRepoUrl,
@@ -231,6 +248,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
     switch (_that) {
       case _InstalledPluginInfo() when $default != null:
         return $default(
+            _that.hashedManifestRepoId,
             _that.manifestRepoName,
             _that.pluginName,
             _that.pluginRepoUrl,
@@ -258,6 +276,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
+            String hashedManifestRepoId,
             String manifestRepoName,
             String pluginName,
             String pluginRepoUrl,
@@ -270,6 +289,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
     switch (_that) {
       case _InstalledPluginInfo():
         return $default(
+            _that.hashedManifestRepoId,
             _that.manifestRepoName,
             _that.pluginName,
             _that.pluginRepoUrl,
@@ -294,6 +314,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
+            String hashedManifestRepoId,
             String manifestRepoName,
             String pluginName,
             String pluginRepoUrl,
@@ -306,6 +327,7 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
     switch (_that) {
       case _InstalledPluginInfo() when $default != null:
         return $default(
+            _that.hashedManifestRepoId,
             _that.manifestRepoName,
             _that.pluginName,
             _that.pluginRepoUrl,
@@ -322,7 +344,8 @@ extension InstalledPluginInfoPatterns on InstalledPluginInfo {
 @JsonSerializable()
 class _InstalledPluginInfo implements InstalledPluginInfo {
   const _InstalledPluginInfo(
-      {required this.manifestRepoName,
+      {required this.hashedManifestRepoId,
+      required this.manifestRepoName,
       required this.pluginName,
       required this.pluginRepoUrl,
       required this.pluginIconUrl,
@@ -331,6 +354,8 @@ class _InstalledPluginInfo implements InstalledPluginInfo {
   factory _InstalledPluginInfo.fromJson(Map<String, dynamic> json) =>
       _$InstalledPluginInfoFromJson(json);
 
+  @override
+  final String hashedManifestRepoId;
   @override
   final String manifestRepoName;
   @override
@@ -365,6 +390,8 @@ class _InstalledPluginInfo implements InstalledPluginInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _InstalledPluginInfo &&
+            (identical(other.hashedManifestRepoId, hashedManifestRepoId) ||
+                other.hashedManifestRepoId == hashedManifestRepoId) &&
             (identical(other.manifestRepoName, manifestRepoName) ||
                 other.manifestRepoName == manifestRepoName) &&
             (identical(other.pluginName, pluginName) ||
@@ -381,12 +408,19 @@ class _InstalledPluginInfo implements InstalledPluginInfo {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, manifestRepoName, pluginName,
-      pluginRepoUrl, pluginIconUrl, pluginPath, pluginVersion);
+  int get hashCode => Object.hash(
+      runtimeType,
+      hashedManifestRepoId,
+      manifestRepoName,
+      pluginName,
+      pluginRepoUrl,
+      pluginIconUrl,
+      pluginPath,
+      pluginVersion);
 
   @override
   String toString() {
-    return 'InstalledPluginInfo(manifestRepoName: $manifestRepoName, pluginName: $pluginName, pluginRepoUrl: $pluginRepoUrl, pluginIconUrl: $pluginIconUrl, pluginPath: $pluginPath, pluginVersion: $pluginVersion)';
+    return 'InstalledPluginInfo(hashedManifestRepoId: $hashedManifestRepoId, manifestRepoName: $manifestRepoName, pluginName: $pluginName, pluginRepoUrl: $pluginRepoUrl, pluginIconUrl: $pluginIconUrl, pluginPath: $pluginPath, pluginVersion: $pluginVersion)';
   }
 }
 
@@ -399,7 +433,8 @@ abstract mixin class _$InstalledPluginInfoCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String manifestRepoName,
+      {String hashedManifestRepoId,
+      String manifestRepoName,
       String pluginName,
       String pluginRepoUrl,
       String pluginIconUrl,
@@ -420,6 +455,7 @@ class __$InstalledPluginInfoCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
+    Object? hashedManifestRepoId = null,
     Object? manifestRepoName = null,
     Object? pluginName = null,
     Object? pluginRepoUrl = null,
@@ -428,6 +464,10 @@ class __$InstalledPluginInfoCopyWithImpl<$Res>
     Object? pluginVersion = null,
   }) {
     return _then(_InstalledPluginInfo(
+      hashedManifestRepoId: null == hashedManifestRepoId
+          ? _self.hashedManifestRepoId
+          : hashedManifestRepoId // ignore: cast_nullable_to_non_nullable
+              as String,
       manifestRepoName: null == manifestRepoName
           ? _self.manifestRepoName
           : manifestRepoName // ignore: cast_nullable_to_non_nullable

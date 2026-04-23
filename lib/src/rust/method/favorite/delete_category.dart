@@ -6,10 +6,6 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-
-            
-
-            Future<void>  deleteCategory({required BigInt categoryId }) => RustLib.instance.api.crateMethodFavoriteDeleteCategoryDeleteCategory(categoryId: categoryId);
-
-            
-            
+Future<void> deleteCategory({required BigInt categoryId}) => RustLib
+    .instance.api
+    .crateMethodFavoriteDeleteCategoryDeleteCategory(categoryId: categoryId);

@@ -7,10 +7,7 @@ import '../../frb_generated.dart';
 import '../plugin_provider.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-
-            
-
-            Future<void>  removePlugins({required String source , required PluginInfo pluginInfo }) => RustLib.instance.api.crateMethodPluginProviderRemovePluginRemovePlugins(source: source, pluginInfo: pluginInfo);
-
-            
-            
+Future<void> removePlugins(
+        {required String source, required PluginInfo pluginInfo}) =>
+    RustLib.instance.api.crateMethodPluginProviderRemovePluginRemovePlugins(
+        source: source, pluginInfo: pluginInfo);

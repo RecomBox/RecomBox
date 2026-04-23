@@ -6,7 +6,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
-import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'frb_generated.io.dart'
+    if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'method/favorite.dart';
 import 'method/favorite/add_category.dart';
 import 'method/favorite/delete_category.dart';
@@ -23,6 +24,7 @@ import 'method/get_settings.dart';
 import 'method/init/init_rest_server.dart';
 import 'method/init/init_settings.dart';
 import 'method/init/init_torrent_session.dart';
+import 'method/init/init_worker.dart';
 import 'method/metadata_provider/featured_content.dart';
 import 'method/metadata_provider/search_content.dart';
 import 'method/metadata_provider/trending_content.dart';
@@ -39,1703 +41,2719 @@ import 'method/torrent_provider/get_torrent_metadata.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'utils/settings.dart';
 
+/// Main entrypoint of the Rust API
+class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
+  @internal
+  static final instance = RustLib._();
 
-                /// Main entrypoint of the Rust API
-                class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
-                  @internal
-                  static final instance = RustLib._();
+  RustLib._();
 
-                  RustLib._();
+  /// Initialize flutter_rust_bridge
+  static Future<void> init({
+    RustLibApi? api,
+    BaseHandler? handler,
+    ExternalLibrary? externalLibrary,
+    bool forceSameCodegenVersion = true,
+  }) async {
+    await instance.initImpl(
+      api: api,
+      handler: handler,
+      externalLibrary: externalLibrary,
+      forceSameCodegenVersion: forceSameCodegenVersion,
+    );
+  }
 
-                  /// Initialize flutter_rust_bridge
-                  static Future<void> init({
-                    RustLibApi? api,
-                    BaseHandler? handler,
-                    ExternalLibrary? externalLibrary,
-                    bool forceSameCodegenVersion = true,
-                  }) async {
-                    await instance.initImpl(
-                      api: api,
-                      handler: handler,
-                      externalLibrary: externalLibrary,
-                      forceSameCodegenVersion: forceSameCodegenVersion,
-                    );
-                  }
+  /// Initialize flutter_rust_bridge in mock mode.
+  /// No libraries for FFI are loaded.
+  static void initMock({
+    required RustLibApi api,
+  }) {
+    instance.initMockImpl(
+      api: api,
+    );
+  }
 
-                  /// Initialize flutter_rust_bridge in mock mode.
-                  /// No libraries for FFI are loaded.
-                  static void initMock({
-                    required RustLibApi api,
-                  }) {
-                    instance.initMockImpl(
-                      api: api,
-                    );
-                  }
+  /// Dispose flutter_rust_bridge
+  ///
+  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
+  /// is automatically disposed when the app stops.
+  static void dispose() => instance.disposeImpl();
 
-                  /// Dispose flutter_rust_bridge
-                  ///
-                  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
-                  /// is automatically disposed when the app stops.
-                  static void dispose() => instance.disposeImpl();
+  @override
+  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor =>
+      RustLibApiImpl.new;
 
-                  @override
-                  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
+  @override
+  WireConstructor<RustLibWire> get wireConstructor =>
+      RustLibWire.fromExternalLibrary;
 
-                  @override
-                  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
+  @override
+  Future<void> executeRustInitializers() async {}
 
-                  @override
-                  Future<void> executeRustInitializers() async {
-                    
-                  }
+  @override
+  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
+      kDefaultExternalLibraryLoaderConfig;
 
-                  @override
-                  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig => kDefaultExternalLibraryLoaderConfig;
+  @override
+  String get codegenVersion => '2.12.0';
 
-                  @override
-                  String get codegenVersion => '2.12.0';
+  @override
+  int get rustContentHash => 927892545;
 
-                  @override
-                  int get rustContentHash => 1244406729;
+  static const kDefaultExternalLibraryLoaderConfig =
+      ExternalLibraryLoaderConfig(
+    stem: 'rust_lib_recombox',
+    ioDirectory: 'rust/target/release/',
+    webPrefix: 'pkg/',
+    wasmBindgenName: 'wasm_bindgen',
+  );
+}
 
-                  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
-                    stem: 'rust_lib_recombox',
-                    ioDirectory: 'rust/target/release/',
-                    webPrefix: 'pkg/',
-                    wasmBindgenName: 'wasm_bindgen',
-                  );
-                }
-                
+abstract class RustLibApi extends BaseApi {
+  Future<void> crateMethodFavoriteAddCategoryAddCategory(
+      {required String categoryName});
 
-                abstract class RustLibApi extends BaseApi {
-                  Future<void> crateMethodFavoriteAddCategoryAddCategory({required String categoryName });
+  Future<void> crateMethodFavoriteDeleteCategoryDeleteCategory(
+      {required BigInt categoryId});
 
-Future<void> crateMethodFavoriteDeleteCategoryDeleteCategory({required BigInt categoryId });
+  Future<List<FeaturedContentInfo>>
+      crateMethodMetadataProviderFeaturedContentFeaturedContent(
+          {required String source, required bool fromCache});
 
-Future<List<FeaturedContentInfo>> crateMethodMetadataProviderFeaturedContentFeaturedContent({required String source , required bool fromCache });
+  Future<void> crateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandle(
+      {required BigInt handleId});
 
-Future<void> crateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandle({required BigInt handleId });
+  Future<CategoryMap> crateMethodFavoriteGetAllCategoryGetAllCategory();
 
-Future<CategoryMap> crateMethodFavoriteGetAllCategoryGetAllCategory();
+  Future<CategoryMap>
+      crateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemId(
+          {required ItemInfo itemInfo});
 
-Future<CategoryMap> crateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemId({required ItemInfo itemInfo });
+  Future<List<ItemInfo>>
+      crateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryId(
+          {required BigInt categoryId});
 
-Future<List<ItemInfo>> crateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryId({required BigInt categoryId });
+  Future<CategoryOrderMap>
+      crateMethodFavoriteGetCategoryOrderGetCategoryOrder();
 
-Future<CategoryOrderMap> crateMethodFavoriteGetCategoryOrderGetCategoryOrder();
+  Future<ArcDatabase> crateMethodFavoriteGetDb();
 
-Future<Map<String, InstalledPluginInfo>> crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins({required String source });
+  Future<Map<String, InstalledPluginInfo>>
+      crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins(
+          {required String source});
 
-Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList({required String source });
+  Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList(
+      {required String source});
 
-Future<Settings> crateMethodGetSettingsGetSettings();
+  Future<Settings> crateMethodGetSettingsGetSettings();
 
-Future<List<SourceInfo>> crateMethodPluginProviderGetSourcesGetSources({required String pluginPath , required String source , required String id , required String title , required String titleSecondary , required BigInt season , required BigInt episode , required String search , required BigInt page });
+  Future<List<SourceInfo>> crateMethodPluginProviderGetSourcesGetSources(
+      {required String pluginPath,
+      required String source,
+      required String id,
+      required String title,
+      required String titleSecondary,
+      required BigInt season,
+      required BigInt episode,
+      required String search,
+      required BigInt page});
 
-Future<TorrentMetadata> crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata({required String torrentSource });
+  Future<TorrentMetadata>
+      crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
+          {required String torrentSource});
 
-Future<List<TorrentInfo>> crateMethodPluginProviderGetTorrentsGetTorrents({required String pluginPath , required String source , required String id , required BigInt page });
+  Future<List<TorrentInfo>> crateMethodPluginProviderGetTorrentsGetTorrents(
+      {required String pluginPath,
+      required String source,
+      required String id,
+      required BigInt page});
 
-Future<void> crateMethodInitInitRestServerInitRestServer();
+  Future<void> crateMethodInitInitRestServerInitRestServer();
 
-Future<void> crateMethodInitInitSettingsInitSettings({required Settings settings });
+  Future<void> crateMethodInitInitSettingsInitSettings(
+      {required Settings settings});
 
-Future<void> crateMethodInitInitTorrentSessionInitTorrentSession();
+  Future<void> crateMethodInitInitTorrentSessionInitTorrentSession();
 
-Future<void> crateMethodPluginProviderInstallPluginInstallPlugins({required String source , required PluginInfo pluginInfo });
+  Future<void> crateMethodInitInitWorkerInitWorker();
 
-Future<bool> crateMethodFavoriteIsInCategoryIsInCategory({required ItemInfo itemInfo });
+  Future<void> crateMethodPluginProviderInstallPluginInstallPlugin(
+      {required String source, required PluginInfo pluginInfo});
 
-Future<void> crateMethodPluginProviderRemovePluginRemovePlugins({required String source , required PluginInfo pluginInfo });
+  Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
+      {required ItemInfo itemInfo});
 
-Future<void> crateMethodFavoriteRenameCategoryRenameCategory({required BigInt categoryId , required String newCategoryName });
+  Future<void> crateMethodPluginProviderRemovePluginRemovePlugins(
+      {required String source, required PluginInfo pluginInfo});
 
-Future<List<SearchContentInfo>> crateMethodMetadataProviderSearchContentSearchContent({required String source , required String search , required BigInt sort , required BigInt page });
+  Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
+      {required BigInt categoryId, required String newCategoryName});
 
-Future<void> crateMethodFavoriteSetCategorySetCategory({required BigInt categoryId , required ItemInfo itemInfo });
+  Future<List<SearchContentInfo>>
+      crateMethodMetadataProviderSearchContentSearchContent(
+          {required String source,
+          required String search,
+          required BigInt sort,
+          required BigInt page});
 
-Future<void> crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder({required BigInt categoryId1 , required BigInt categoryId2 });
+  Future<void> crateMethodFavoriteSetCategorySetCategory(
+      {required BigInt categoryId, required ItemInfo itemInfo});
 
-Future<List<TrendingContentInfo>> crateMethodMetadataProviderTrendingContentTrendingContent({required String source , required bool fromCache });
+  Future<void> crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder(
+      {required BigInt categoryId1, required BigInt categoryId2});
 
-Future<void> crateMethodFavoriteUnsetCategoryUnsetCategory({required BigInt categoryId , required ItemInfo itemInfo });
+  Future<List<TrendingContentInfo>>
+      crateMethodMetadataProviderTrendingContentTrendingContent(
+          {required String source, required bool fromCache});
 
-Future<ViewContentInfo> crateMethodMetadataProviderViewContentViewContent({required String source , required String id , required bool fromCache });
+  Future<void> crateMethodFavoriteUnsetCategoryUnsetCategory(
+      {required BigInt categoryId, required ItemInfo itemInfo});
 
+  Future<ViewContentInfo>
+      crateMethodMetadataProviderViewContentViewContentInfoGet(
+          {required String source,
+          required String id,
+          required bool fromCache});
 
-                }
-                
+  Future<void>
+      crateMethodMetadataProviderViewContentViewContentInfoUpdateLastWatch(
+          {required String source,
+          required String id,
+          required BigInt seasonIndex,
+          required BigInt episodeIndex});
 
-                class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
-                  RustLibApiImpl({
-                    required super.handler,
-                    required super.wire,
-                    required super.generalizedFrbRustBinding,
-                    required super.portManager,
-                  });
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_ArcDatabase;
 
-                  @override Future<void> crateMethodFavoriteAddCategoryAddCategory({required String categoryName })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(categoryName, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteAddCategoryAddCategoryConstMeta,
-            argValues: [categoryName],
-            apiImpl: this,
-        )); }
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_ArcDatabase;
 
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ArcDatabasePtr;
+}
 
-        TaskConstMeta get kCrateMethodFavoriteAddCategoryAddCategoryConstMeta => const TaskConstMeta(
-            debugName: "add_category",
-            argNames: ["categoryName"],
-        );
-        
+class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
+  RustLibApiImpl({
+    required super.handler,
+    required super.wire,
+    required super.generalizedFrbRustBinding,
+    required super.portManager,
+  });
 
-@override Future<void> crateMethodFavoriteDeleteCategoryDeleteCategory({required BigInt categoryId })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteDeleteCategoryDeleteCategoryConstMeta,
-            argValues: [categoryId],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodFavoriteAddCategoryAddCategory(
+      {required String categoryName}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(categoryName, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 1, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteAddCategoryAddCategoryConstMeta,
+      argValues: [categoryName],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteAddCategoryAddCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_category",
+        argNames: ["categoryName"],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteDeleteCategoryDeleteCategoryConstMeta => const TaskConstMeta(
-            debugName: "delete_category",
-            argNames: ["categoryId"],
-        );
-        
+  @override
+  Future<void> crateMethodFavoriteDeleteCategoryDeleteCategory(
+      {required BigInt categoryId}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 2, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteDeleteCategoryDeleteCategoryConstMeta,
+      argValues: [categoryId],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<List<FeaturedContentInfo>> crateMethodMetadataProviderFeaturedContentFeaturedContent({required String source , required bool fromCache })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_bool(fromCache, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_featured_content_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodMetadataProviderFeaturedContentFeaturedContentConstMeta,
-            argValues: [source, fromCache],
-            apiImpl: this,
-        )); }
+  TaskConstMeta get kCrateMethodFavoriteDeleteCategoryDeleteCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "delete_category",
+        argNames: ["categoryId"],
+      );
 
+  @override
+  Future<List<FeaturedContentInfo>>
+      crateMethodMetadataProviderFeaturedContentFeaturedContent(
+          {required String source, required bool fromCache}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_bool(fromCache, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 3, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_featured_content_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderFeaturedContentFeaturedContentConstMeta,
+      argValues: [source, fromCache],
+      apiImpl: this,
+    ));
+  }
 
-        TaskConstMeta get kCrateMethodMetadataProviderFeaturedContentFeaturedContentConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodMetadataProviderFeaturedContentFeaturedContentConstMeta =>
+          const TaskConstMeta(
             debugName: "featured_content",
             argNames: ["source", "fromCache"],
-        );
-        
+          );
 
-@override Future<void> crateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandle({required BigInt handleId })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(handleId, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandleConstMeta,
-            argValues: [handleId],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandle(
+      {required BigInt handleId}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(handleId, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandleConstMeta,
+      argValues: [handleId],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandleConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandleConstMeta =>
+          const TaskConstMeta(
             debugName: "free_torrent_handle",
             argNames: ["handleId"],
-        );
-        
+          );
 
-@override Future<CategoryMap> crateMethodFavoriteGetAllCategoryGetAllCategory()  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_category_map,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteGetAllCategoryGetAllCategoryConstMeta,
-            argValues: [],
-            apiImpl: this,
-        )); }
+  @override
+  Future<CategoryMap> crateMethodFavoriteGetAllCategoryGetAllCategory() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 5, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_category_map,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteGetAllCategoryGetAllCategoryConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteGetAllCategoryGetAllCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_all_category",
+        argNames: [],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteGetAllCategoryGetAllCategoryConstMeta => const TaskConstMeta(
-            debugName: "get_all_category",
-            argNames: [],
-        );
-        
+  @override
+  Future<CategoryMap>
+      crateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemId(
+          {required ItemInfo itemInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_item_info(itemInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 6, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_category_map,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemIdConstMeta,
+      argValues: [itemInfo],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<CategoryMap> crateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemId({required ItemInfo itemInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_box_autoadd_item_info(itemInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_category_map,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemIdConstMeta,
-            argValues: [itemInfo],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemIdConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodFavoriteGetAllCategoryByItemIdGetAllCategoryByItemIdConstMeta =>
+          const TaskConstMeta(
             debugName: "get_all_category_by_item_id",
             argNames: ["itemInfo"],
-        );
-        
+          );
 
-@override Future<List<ItemInfo>> crateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryId({required BigInt categoryId })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_item_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryIdConstMeta,
-            argValues: [categoryId],
-            apiImpl: this,
-        )); }
+  @override
+  Future<List<ItemInfo>>
+      crateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryId(
+          {required BigInt categoryId}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 7, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_item_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryIdConstMeta,
+      argValues: [categoryId],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryIdConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodFavoriteGetAllItemByCategoryIdGetAllItemByCategoryIdConstMeta =>
+          const TaskConstMeta(
             debugName: "get_all_item_by_category_id",
             argNames: ["categoryId"],
-        );
-        
+          );
 
-@override Future<CategoryOrderMap> crateMethodFavoriteGetCategoryOrderGetCategoryOrder()  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_category_order_map,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteGetCategoryOrderGetCategoryOrderConstMeta,
-            argValues: [],
-            apiImpl: this,
-        )); }
+  @override
+  Future<CategoryOrderMap>
+      crateMethodFavoriteGetCategoryOrderGetCategoryOrder() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 8, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_category_order_map,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteGetCategoryOrderGetCategoryOrderConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodFavoriteGetCategoryOrderGetCategoryOrderConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodFavoriteGetCategoryOrderGetCategoryOrderConstMeta =>
+          const TaskConstMeta(
             debugName: "get_category_order",
             argNames: [],
-        );
-        
+          );
 
-@override Future<Map<String, InstalledPluginInfo>> crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins({required String source })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_Map_String_installed_plugin_info_None,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderGetInstalledPluginsGetInstalledPluginsConstMeta,
-            argValues: [source],
-            apiImpl: this,
-        )); }
+  @override
+  Future<ArcDatabase> crateMethodFavoriteGetDb() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 9, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteGetDbConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteGetDbConstMeta => const TaskConstMeta(
+        debugName: "get_db",
+        argNames: [],
+      );
 
-        TaskConstMeta get kCrateMethodPluginProviderGetInstalledPluginsGetInstalledPluginsConstMeta => const TaskConstMeta(
+  @override
+  Future<Map<String, InstalledPluginInfo>>
+      crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins(
+          {required String source}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 10, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_Map_String_installed_plugin_info_None,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodPluginProviderGetInstalledPluginsGetInstalledPluginsConstMeta,
+      argValues: [source],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodPluginProviderGetInstalledPluginsGetInstalledPluginsConstMeta =>
+          const TaskConstMeta(
             debugName: "get_installed_plugins",
             argNames: ["source"],
-        );
-        
+          );
 
-@override Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList({required String source })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_plugin_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderGetPluginListGetPluginListConstMeta,
-            argValues: [source],
-            apiImpl: this,
-        )); }
+  @override
+  Future<List<PluginInfo>> crateMethodPluginProviderGetPluginListGetPluginList(
+      {required String source}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 11, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_plugin_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderGetPluginListGetPluginListConstMeta,
+      argValues: [source],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodPluginProviderGetPluginListGetPluginListConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodPluginProviderGetPluginListGetPluginListConstMeta =>
+          const TaskConstMeta(
             debugName: "get_plugin_list",
             argNames: ["source"],
-        );
-        
+          );
 
-@override Future<Settings> crateMethodGetSettingsGetSettings()  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_settings,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodGetSettingsGetSettingsConstMeta,
-            argValues: [],
-            apiImpl: this,
-        )); }
+  @override
+  Future<Settings> crateMethodGetSettingsGetSettings() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 12, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_settings,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodGetSettingsGetSettingsConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodGetSettingsGetSettingsConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_settings",
+        argNames: [],
+      );
 
-        TaskConstMeta get kCrateMethodGetSettingsGetSettingsConstMeta => const TaskConstMeta(
-            debugName: "get_settings",
-            argNames: [],
-        );
-        
+  @override
+  Future<List<SourceInfo>> crateMethodPluginProviderGetSourcesGetSources(
+      {required String pluginPath,
+      required String source,
+      required String id,
+      required String title,
+      required String titleSecondary,
+      required BigInt season,
+      required BigInt episode,
+      required String search,
+      required BigInt page}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(pluginPath, serializer);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_String(title, serializer);
+        sse_encode_String(titleSecondary, serializer);
+        sse_encode_u_64(season, serializer);
+        sse_encode_u_64(episode, serializer);
+        sse_encode_String(search, serializer);
+        sse_encode_u_64(page, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 13, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_source_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderGetSourcesGetSourcesConstMeta,
+      argValues: [
+        pluginPath,
+        source,
+        id,
+        title,
+        titleSecondary,
+        season,
+        episode,
+        search,
+        page
+      ],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<List<SourceInfo>> crateMethodPluginProviderGetSourcesGetSources({required String pluginPath , required String source , required String id , required String title , required String titleSecondary , required BigInt season , required BigInt episode , required String search , required BigInt page })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(pluginPath, serializer);
-sse_encode_String(source, serializer);
-sse_encode_String(id, serializer);
-sse_encode_String(title, serializer);
-sse_encode_String(titleSecondary, serializer);
-sse_encode_u_64(season, serializer);
-sse_encode_u_64(episode, serializer);
-sse_encode_String(search, serializer);
-sse_encode_u_64(page, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_source_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderGetSourcesGetSourcesConstMeta,
-            argValues: [pluginPath, source, id, title, titleSecondary, season, episode, search, page],
-            apiImpl: this,
-        )); }
+  TaskConstMeta get kCrateMethodPluginProviderGetSourcesGetSourcesConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_sources",
+        argNames: [
+          "pluginPath",
+          "source",
+          "id",
+          "title",
+          "titleSecondary",
+          "season",
+          "episode",
+          "search",
+          "page"
+        ],
+      );
 
+  @override
+  Future<TorrentMetadata>
+      crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
+          {required String torrentSource}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(torrentSource, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 14, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_torrent_metadata,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadataConstMeta,
+      argValues: [torrentSource],
+      apiImpl: this,
+    ));
+  }
 
-        TaskConstMeta get kCrateMethodPluginProviderGetSourcesGetSourcesConstMeta => const TaskConstMeta(
-            debugName: "get_sources",
-            argNames: ["pluginPath", "source", "id", "title", "titleSecondary", "season", "episode", "search", "page"],
-        );
-        
-
-@override Future<TorrentMetadata> crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata({required String torrentSource })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(torrentSource, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_torrent_metadata,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadataConstMeta,
-            argValues: [torrentSource],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadataConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadataConstMeta =>
+          const TaskConstMeta(
             debugName: "get_torrent_metadata",
             argNames: ["torrentSource"],
-        );
-        
+          );
 
-@override Future<List<TorrentInfo>> crateMethodPluginProviderGetTorrentsGetTorrents({required String pluginPath , required String source , required String id , required BigInt page })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(pluginPath, serializer);
-sse_encode_String(source, serializer);
-sse_encode_String(id, serializer);
-sse_encode_u_64(page, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_torrent_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderGetTorrentsGetTorrentsConstMeta,
-            argValues: [pluginPath, source, id, page],
-            apiImpl: this,
-        )); }
+  @override
+  Future<List<TorrentInfo>> crateMethodPluginProviderGetTorrentsGetTorrents(
+      {required String pluginPath,
+      required String source,
+      required String id,
+      required BigInt page}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(pluginPath, serializer);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_u_64(page, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 15, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_torrent_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderGetTorrentsGetTorrentsConstMeta,
+      argValues: [pluginPath, source, id, page],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodPluginProviderGetTorrentsGetTorrentsConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_torrents",
+        argNames: ["pluginPath", "source", "id", "page"],
+      );
 
-        TaskConstMeta get kCrateMethodPluginProviderGetTorrentsGetTorrentsConstMeta => const TaskConstMeta(
-            debugName: "get_torrents",
-            argNames: ["pluginPath", "source", "id", "page"],
-        );
-        
+  @override
+  Future<void> crateMethodInitInitRestServerInitRestServer() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 16, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodInitInitRestServerInitRestServerConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<void> crateMethodInitInitRestServerInitRestServer()  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodInitInitRestServerInitRestServerConstMeta,
-            argValues: [],
-            apiImpl: this,
-        )); }
+  TaskConstMeta get kCrateMethodInitInitRestServerInitRestServerConstMeta =>
+      const TaskConstMeta(
+        debugName: "init_rest_server",
+        argNames: [],
+      );
 
+  @override
+  Future<void> crateMethodInitInitSettingsInitSettings(
+      {required Settings settings}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_settings(settings, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 17, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateMethodInitInitSettingsInitSettingsConstMeta,
+      argValues: [settings],
+      apiImpl: this,
+    ));
+  }
 
-        TaskConstMeta get kCrateMethodInitInitRestServerInitRestServerConstMeta => const TaskConstMeta(
-            debugName: "init_rest_server",
-            argNames: [],
-        );
-        
+  TaskConstMeta get kCrateMethodInitInitSettingsInitSettingsConstMeta =>
+      const TaskConstMeta(
+        debugName: "init_settings",
+        argNames: ["settings"],
+      );
 
-@override Future<void> crateMethodInitInitSettingsInitSettings({required Settings settings })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_box_autoadd_settings(settings, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_AnyhowException,
-        )
-        ,
-            constMeta: kCrateMethodInitInitSettingsInitSettingsConstMeta,
-            argValues: [settings],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodInitInitTorrentSessionInitTorrentSession() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 18, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodInitInitTorrentSessionInitTorrentSessionConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodInitInitSettingsInitSettingsConstMeta => const TaskConstMeta(
-            debugName: "init_settings",
-            argNames: ["settings"],
-        );
-        
-
-@override Future<void> crateMethodInitInitTorrentSessionInitTorrentSession()  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodInitInitTorrentSessionInitTorrentSessionConstMeta,
-            argValues: [],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodInitInitTorrentSessionInitTorrentSessionConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodInitInitTorrentSessionInitTorrentSessionConstMeta =>
+          const TaskConstMeta(
             debugName: "init_torrent_session",
             argNames: [],
-        );
-        
+          );
 
-@override Future<void> crateMethodPluginProviderInstallPluginInstallPlugins({required String source , required PluginInfo pluginInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderInstallPluginInstallPluginsConstMeta,
-            argValues: [source, pluginInfo],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodInitInitWorkerInitWorker() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 19, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateMethodInitInitWorkerInitWorkerConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodInitInitWorkerInitWorkerConstMeta =>
+      const TaskConstMeta(
+        debugName: "init_worker",
+        argNames: [],
+      );
 
-        TaskConstMeta get kCrateMethodPluginProviderInstallPluginInstallPluginsConstMeta => const TaskConstMeta(
-            debugName: "install_plugins",
+  @override
+  Future<void> crateMethodPluginProviderInstallPluginInstallPlugin(
+      {required String source, required PluginInfo pluginInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 20, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderInstallPluginInstallPluginConstMeta,
+      argValues: [source, pluginInfo],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodPluginProviderInstallPluginInstallPluginConstMeta =>
+          const TaskConstMeta(
+            debugName: "install_plugin",
             argNames: ["source", "pluginInfo"],
-        );
-        
+          );
 
-@override Future<bool> crateMethodFavoriteIsInCategoryIsInCategory({required ItemInfo itemInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_box_autoadd_item_info(itemInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteIsInCategoryIsInCategoryConstMeta,
-            argValues: [itemInfo],
-            apiImpl: this,
-        )); }
+  @override
+  Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
+      {required ItemInfo itemInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_item_info(itemInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 21, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_bool,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteIsInCategoryIsInCategoryConstMeta,
+      argValues: [itemInfo],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteIsInCategoryIsInCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "is_in_category",
+        argNames: ["itemInfo"],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteIsInCategoryIsInCategoryConstMeta => const TaskConstMeta(
-            debugName: "is_in_category",
-            argNames: ["itemInfo"],
-        );
-        
+  @override
+  Future<void> crateMethodPluginProviderRemovePluginRemovePlugins(
+      {required String source, required PluginInfo pluginInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 22, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta,
+      argValues: [source, pluginInfo],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<void> crateMethodPluginProviderRemovePluginRemovePlugins({required String source , required PluginInfo pluginInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta,
-            argValues: [source, pluginInfo],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodPluginProviderRemovePluginRemovePluginsConstMeta =>
+          const TaskConstMeta(
             debugName: "remove_plugins",
             argNames: ["source", "pluginInfo"],
-        );
-        
+          );
 
-@override Future<void> crateMethodFavoriteRenameCategoryRenameCategory({required BigInt categoryId , required String newCategoryName })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId, serializer);
-sse_encode_String(newCategoryName, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteRenameCategoryRenameCategoryConstMeta,
-            argValues: [categoryId, newCategoryName],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
+      {required BigInt categoryId, required String newCategoryName}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId, serializer);
+        sse_encode_String(newCategoryName, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 23, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteRenameCategoryRenameCategoryConstMeta,
+      argValues: [categoryId, newCategoryName],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteRenameCategoryRenameCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "rename_category",
+        argNames: ["categoryId", "newCategoryName"],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteRenameCategoryRenameCategoryConstMeta => const TaskConstMeta(
-            debugName: "rename_category",
-            argNames: ["categoryId", "newCategoryName"],
-        );
-        
+  @override
+  Future<List<SearchContentInfo>>
+      crateMethodMetadataProviderSearchContentSearchContent(
+          {required String source,
+          required String search,
+          required BigInt sort,
+          required BigInt page}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(search, serializer);
+        sse_encode_u_64(sort, serializer);
+        sse_encode_u_64(page, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 24, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_search_content_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderSearchContentSearchContentConstMeta,
+      argValues: [source, search, sort, page],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<List<SearchContentInfo>> crateMethodMetadataProviderSearchContentSearchContent({required String source , required String search , required BigInt sort , required BigInt page })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_String(search, serializer);
-sse_encode_u_64(sort, serializer);
-sse_encode_u_64(page, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_search_content_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodMetadataProviderSearchContentSearchContentConstMeta,
-            argValues: [source, search, sort, page],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodMetadataProviderSearchContentSearchContentConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodMetadataProviderSearchContentSearchContentConstMeta =>
+          const TaskConstMeta(
             debugName: "search_content",
             argNames: ["source", "search", "sort", "page"],
-        );
-        
+          );
 
-@override Future<void> crateMethodFavoriteSetCategorySetCategory({required BigInt categoryId , required ItemInfo itemInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId, serializer);
-sse_encode_box_autoadd_item_info(itemInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteSetCategorySetCategoryConstMeta,
-            argValues: [categoryId, itemInfo],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodFavoriteSetCategorySetCategory(
+      {required BigInt categoryId, required ItemInfo itemInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId, serializer);
+        sse_encode_box_autoadd_item_info(itemInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 25, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteSetCategorySetCategoryConstMeta,
+      argValues: [categoryId, itemInfo],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteSetCategorySetCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "set_category",
+        argNames: ["categoryId", "itemInfo"],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteSetCategorySetCategoryConstMeta => const TaskConstMeta(
-            debugName: "set_category",
-            argNames: ["categoryId", "itemInfo"],
-        );
-        
+  @override
+  Future<void> crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder(
+      {required BigInt categoryId1, required BigInt categoryId2}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId1, serializer);
+        sse_encode_u_64(categoryId2, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 26, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodFavoriteSwapCategoryOrderSwapCategoryOrderConstMeta,
+      argValues: [categoryId1, categoryId2],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<void> crateMethodFavoriteSwapCategoryOrderSwapCategoryOrder({required BigInt categoryId1 , required BigInt categoryId2 })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId1, serializer);
-sse_encode_u_64(categoryId2, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteSwapCategoryOrderSwapCategoryOrderConstMeta,
-            argValues: [categoryId1, categoryId2],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodFavoriteSwapCategoryOrderSwapCategoryOrderConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodFavoriteSwapCategoryOrderSwapCategoryOrderConstMeta =>
+          const TaskConstMeta(
             debugName: "swap_category_order",
             argNames: ["categoryId1", "categoryId2"],
-        );
-        
+          );
 
-@override Future<List<TrendingContentInfo>> crateMethodMetadataProviderTrendingContentTrendingContent({required String source , required bool fromCache })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_bool(fromCache, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_list_trending_content_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodMetadataProviderTrendingContentTrendingContentConstMeta,
-            argValues: [source, fromCache],
-            apiImpl: this,
-        )); }
+  @override
+  Future<List<TrendingContentInfo>>
+      crateMethodMetadataProviderTrendingContentTrendingContent(
+          {required String source, required bool fromCache}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_bool(fromCache, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 27, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_trending_content_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderTrendingContentTrendingContentConstMeta,
+      argValues: [source, fromCache],
+      apiImpl: this,
+    ));
+  }
 
-
-        TaskConstMeta get kCrateMethodMetadataProviderTrendingContentTrendingContentConstMeta => const TaskConstMeta(
+  TaskConstMeta
+      get kCrateMethodMetadataProviderTrendingContentTrendingContentConstMeta =>
+          const TaskConstMeta(
             debugName: "trending_content",
             argNames: ["source", "fromCache"],
-        );
-        
+          );
 
-@override Future<void> crateMethodFavoriteUnsetCategoryUnsetCategory({required BigInt categoryId , required ItemInfo itemInfo })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_64(categoryId, serializer);
-sse_encode_box_autoadd_item_info(itemInfo, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodFavoriteUnsetCategoryUnsetCategoryConstMeta,
-            argValues: [categoryId, itemInfo],
-            apiImpl: this,
-        )); }
+  @override
+  Future<void> crateMethodFavoriteUnsetCategoryUnsetCategory(
+      {required BigInt categoryId, required ItemInfo itemInfo}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_64(categoryId, serializer);
+        sse_encode_box_autoadd_item_info(itemInfo, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 28, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta: kCrateMethodFavoriteUnsetCategoryUnsetCategoryConstMeta,
+      argValues: [categoryId, itemInfo],
+      apiImpl: this,
+    ));
+  }
 
+  TaskConstMeta get kCrateMethodFavoriteUnsetCategoryUnsetCategoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "unset_category",
+        argNames: ["categoryId", "itemInfo"],
+      );
 
-        TaskConstMeta get kCrateMethodFavoriteUnsetCategoryUnsetCategoryConstMeta => const TaskConstMeta(
-            debugName: "unset_category",
-            argNames: ["categoryId", "itemInfo"],
-        );
-        
+  @override
+  Future<ViewContentInfo>
+      crateMethodMetadataProviderViewContentViewContentInfoGet(
+          {required String source,
+          required String id,
+          required bool fromCache}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_bool(fromCache, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 29, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_view_content_info,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderViewContentViewContentInfoGetConstMeta,
+      argValues: [source, id, fromCache],
+      apiImpl: this,
+    ));
+  }
 
-@override Future<ViewContentInfo> crateMethodMetadataProviderViewContentViewContent({required String source , required String id , required bool fromCache })  { return handler.executeNormal(NormalTask(
-            callFfi: (port_) {
-              
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(source, serializer);
-sse_encode_String(id, serializer);
-sse_encode_bool(fromCache, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
-            
-            },
-            codec: 
-        SseCodec(
-          decodeSuccessData: sse_decode_view_content_info,
-          decodeErrorData: sse_decode_String,
-        )
-        ,
-            constMeta: kCrateMethodMetadataProviderViewContentViewContentConstMeta,
-            argValues: [source, id, fromCache],
-            apiImpl: this,
-        )); }
-
-
-        TaskConstMeta get kCrateMethodMetadataProviderViewContentViewContentConstMeta => const TaskConstMeta(
-            debugName: "view_content",
+  TaskConstMeta
+      get kCrateMethodMetadataProviderViewContentViewContentInfoGetConstMeta =>
+          const TaskConstMeta(
+            debugName: "view_content_info_get",
             argNames: ["source", "id", "fromCache"],
-        );
-        
-
-
-
-                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return AnyhowException(raw as String); }
-
-@protected Map<String, InstalledPluginInfo> dco_decode_Map_String_installed_plugin_info_None(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return Map.fromEntries(dco_decode_list_record_string_installed_plugin_info(raw).map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return Map.fromEntries(dco_decode_list_record_u_64_string(raw).map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected Map<BigInt, BigInt> dco_decode_Map_u_64_u_64_None(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return Map.fromEntries(dco_decode_list_record_u_64_u_64(raw).map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected String dco_decode_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as String; }
-
-@protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as bool; }
-
-@protected ItemInfo dco_decode_box_autoadd_item_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dco_decode_item_info(raw); }
-
-@protected PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dco_decode_plugin_info(raw); }
-
-@protected Settings dco_decode_box_autoadd_settings(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dco_decode_settings(raw); }
-
-@protected BigInt dco_decode_box_autoadd_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dco_decode_u_64(raw); }
-
-@protected BigInt dco_decode_box_autoadd_usize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dco_decode_usize(raw); }
-
-@protected CategoryMap dco_decode_category_map(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 1) throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-                return CategoryMap(field0: dco_decode_Map_u_64_String_None(arr[0]),); }
-
-@protected CategoryOrderMap dco_decode_category_order_map(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 1) throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-                return CategoryOrderMap(field0: dco_decode_Map_u_64_u_64_None(arr[0]),); }
-
-@protected EpisodeInfo dco_decode_episode_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-                return EpisodeInfo(source: dco_decode_String(arr[0]),
-title: dco_decode_String(arr[1]),
-thumbnailUrl: dco_decode_String(arr[2]),); }
-
-@protected double dco_decode_f_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as double; }
-
-@protected FeaturedContentInfo dco_decode_featured_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-                return FeaturedContentInfo(source: dco_decode_String(arr[0]),
-id: dco_decode_String(arr[1]),
-title: dco_decode_String(arr[2]),
-contextual: dco_decode_list_String(arr[3]),
-shortDescription: dco_decode_String(arr[4]),
-bannerUrl: dco_decode_String(arr[5]),); }
-
-@protected FileInfo dco_decode_file_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-                return FileInfo(id: dco_decode_usize(arr[0]),
-path: dco_decode_opt_String(arr[1]),
-length: dco_decode_opt_box_autoadd_usize(arr[2]),
-sha1: dco_decode_opt_String(arr[3]),); }
-
-@protected PlatformInt64 dco_decode_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dcoDecodeI64(raw); }
-
-@protected InstalledPluginInfo dco_decode_installed_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-                return InstalledPluginInfo(manifestRepoName: dco_decode_String(arr[0]),
-pluginName: dco_decode_String(arr[1]),
-pluginRepoUrl: dco_decode_String(arr[2]),
-pluginIconUrl: dco_decode_String(arr[3]),
-pluginPath: dco_decode_String(arr[4]),
-pluginVersion: dco_decode_String(arr[5]),); }
-
-@protected ItemInfo dco_decode_item_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-                return ItemInfo(source: dco_decode_String(arr[0]),
-id: dco_decode_String(arr[1]),); }
-
-@protected List<String> dco_decode_list_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_String).toList(); }
-
-@protected List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_episode_info).toList(); }
-
-@protected List<FeaturedContentInfo> dco_decode_list_featured_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_featured_content_info).toList(); }
-
-@protected List<FileInfo> dco_decode_list_file_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_file_info).toList(); }
-
-@protected List<ItemInfo> dco_decode_list_item_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_item_info).toList(); }
-
-@protected List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_list_episode_info).toList(); }
-
-@protected List<PluginInfo> dco_decode_list_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_plugin_info).toList(); }
-
-@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as Uint8List; }
-
-@protected List<(String,InstalledPluginInfo)> dco_decode_list_record_string_installed_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_record_string_installed_plugin_info).toList(); }
-
-@protected List<(BigInt,String)> dco_decode_list_record_u_64_string(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_record_u_64_string).toList(); }
-
-@protected List<(BigInt,BigInt)> dco_decode_list_record_u_64_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_record_u_64_u_64).toList(); }
-
-@protected List<SearchContentInfo> dco_decode_list_search_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_search_content_info).toList(); }
-
-@protected List<SourceInfo> dco_decode_list_source_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_source_info).toList(); }
-
-@protected List<TorrentInfo> dco_decode_list_torrent_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_torrent_info).toList(); }
-
-@protected List<TrendingContentInfo> dco_decode_list_trending_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return (raw as List<dynamic>).map(dco_decode_trending_content_info).toList(); }
-
-@protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw == null ? null : dco_decode_String(raw); }
-
-@protected BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw == null ? null : dco_decode_box_autoadd_u_64(raw); }
-
-@protected BigInt? dco_decode_opt_box_autoadd_usize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw == null ? null : dco_decode_box_autoadd_usize(raw); }
-
-@protected Paths dco_decode_paths(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-                return Paths(appSupportDir: dco_decode_String(arr[0]),
-appCacheDir: dco_decode_String(arr[1]),
-tempDir: dco_decode_String(arr[2]),); }
-
-@protected PluginInfo dco_decode_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-                return PluginInfo(hashedManifestRepoId: dco_decode_String(arr[0]),
-manifestRepoName: dco_decode_String(arr[1]),
-pluginId: dco_decode_String(arr[2]),
-pluginName: dco_decode_String(arr[3]),
-pluginRepoUrl: dco_decode_String(arr[4]),
-pluginIconUrl: dco_decode_String(arr[5]),); }
-
-@protected (String,InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-            if (arr.length != 2) {
-                throw Exception('Expected 2 elements, got ${arr.length}');
-            }
-            return (dco_decode_String(arr[0]),dco_decode_installed_plugin_info(arr[1]),); }
-
-@protected (BigInt,String) dco_decode_record_u_64_string(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-            if (arr.length != 2) {
-                throw Exception('Expected 2 elements, got ${arr.length}');
-            }
-            return (dco_decode_u_64(arr[0]),dco_decode_String(arr[1]),); }
-
-@protected (BigInt,BigInt) dco_decode_record_u_64_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-            if (arr.length != 2) {
-                throw Exception('Expected 2 elements, got ${arr.length}');
-            }
-            return (dco_decode_u_64(arr[0]),dco_decode_u_64(arr[1]),); }
-
-@protected SearchContentInfo dco_decode_search_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-                return SearchContentInfo(source: dco_decode_String(arr[0]),
-id: dco_decode_String(arr[1]),
-title: dco_decode_String(arr[2]),
-year: dco_decode_String(arr[3]),
-rank: dco_decode_opt_box_autoadd_u_64(arr[4]),
-thumbnailUrl: dco_decode_String(arr[5]),); }
-
-@protected Settings dco_decode_settings(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-                return Settings(port: dco_decode_u_32(arr[0]),
-paths: dco_decode_paths(arr[1]),); }
-
-@protected SourceInfo dco_decode_source_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-                return SourceInfo(id: dco_decode_String(arr[0]),
-title: dco_decode_String(arr[1]),); }
-
-@protected TorrentInfo dco_decode_torrent_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-                return TorrentInfo(title: dco_decode_String(arr[0]),
-torrentUrl: dco_decode_String(arr[1]),); }
-
-@protected TorrentMetadata dco_decode_torrent_metadata(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-                return TorrentMetadata(name: dco_decode_opt_String(arr[0]),
-length: dco_decode_opt_box_autoadd_u_64(arr[1]),
-files: dco_decode_list_file_info(arr[2]),); }
-
-@protected TrendingContentInfo dco_decode_trending_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-                return TrendingContentInfo(source: dco_decode_String(arr[0]),
-id: dco_decode_String(arr[1]),
-title: dco_decode_String(arr[2]),
-year: dco_decode_String(arr[3]),
-rating: dco_decode_f_32(arr[4]),
-thumbnailUrl: dco_decode_String(arr[5]),); }
-
-@protected int dco_decode_u_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as int; }
-
-@protected BigInt dco_decode_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dcoDecodeU64(raw); }
-
-@protected int dco_decode_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return raw as int; }
-
-@protected void dco_decode_unit(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return; }
-
-@protected BigInt dco_decode_usize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-return dcoDecodeU64(raw); }
-
-@protected ViewContentInfo dco_decode_view_content_info(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
-final arr = raw as List<dynamic>;
-                if (arr.length != 13) throw Exception('unexpected arr length: expect 13 but see ${arr.length}');
-                return ViewContentInfo(source: dco_decode_String(arr[0]),
-externalId: dco_decode_String(arr[1]),
-url: dco_decode_String(arr[2]),
-title: dco_decode_String(arr[3]),
-titleSecondary: dco_decode_String(arr[4]),
-thumbnailUrl: dco_decode_String(arr[5]),
-bannerUrl: dco_decode_String(arr[6]),
-contextual: dco_decode_list_String(arr[7]),
-description: dco_decode_String(arr[8]),
-trailerUrl: dco_decode_String(arr[9]),
-countdown: dco_decode_i_64(arr[10]),
-pictures: dco_decode_list_String(arr[11]),
-episodes: dco_decode_list_list_episode_info(arr[12]),); }
-
-@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var inner = sse_decode_String(deserializer);
-        return AnyhowException(inner); }
-
-@protected Map<String, InstalledPluginInfo> sse_decode_Map_String_installed_plugin_info_None(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var inner = sse_decode_list_record_string_installed_plugin_info(deserializer);
-        return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected Map<BigInt, String> sse_decode_Map_u_64_String_None(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var inner = sse_decode_list_record_u_64_string(deserializer);
-        return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected Map<BigInt, BigInt> sse_decode_Map_u_64_u_64_None(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var inner = sse_decode_list_record_u_64_u_64(deserializer);
-        return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2))); }
-
-@protected String sse_decode_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var inner = sse_decode_list_prim_u_8_strict(deserializer);
-        return utf8.decoder.convert(inner); }
-
-@protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getUint8() != 0; }
-
-@protected ItemInfo sse_decode_box_autoadd_item_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return (sse_decode_item_info(deserializer)); }
-
-@protected PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return (sse_decode_plugin_info(deserializer)); }
-
-@protected Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return (sse_decode_settings(deserializer)); }
-
-@protected BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return (sse_decode_u_64(deserializer)); }
-
-@protected BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return (sse_decode_usize(deserializer)); }
-
-@protected CategoryMap sse_decode_category_map(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_field0 = sse_decode_Map_u_64_String_None(deserializer);
-return CategoryMap(field0: var_field0); }
-
-@protected CategoryOrderMap sse_decode_category_order_map(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_field0 = sse_decode_Map_u_64_u_64_None(deserializer);
-return CategoryOrderMap(field0: var_field0); }
-
-@protected EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-var var_thumbnailUrl = sse_decode_String(deserializer);
-return EpisodeInfo(source: var_source, title: var_title, thumbnailUrl: var_thumbnailUrl); }
-
-@protected double sse_decode_f_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getFloat32(); }
-
-@protected FeaturedContentInfo sse_decode_featured_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_id = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-var var_contextual = sse_decode_list_String(deserializer);
-var var_shortDescription = sse_decode_String(deserializer);
-var var_bannerUrl = sse_decode_String(deserializer);
-return FeaturedContentInfo(source: var_source, id: var_id, title: var_title, contextual: var_contextual, shortDescription: var_shortDescription, bannerUrl: var_bannerUrl); }
-
-@protected FileInfo sse_decode_file_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_id = sse_decode_usize(deserializer);
-var var_path = sse_decode_opt_String(deserializer);
-var var_length = sse_decode_opt_box_autoadd_usize(deserializer);
-var var_sha1 = sse_decode_opt_String(deserializer);
-return FileInfo(id: var_id, path: var_path, length: var_length, sha1: var_sha1); }
-
-@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getPlatformInt64(); }
-
-@protected InstalledPluginInfo sse_decode_installed_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_manifestRepoName = sse_decode_String(deserializer);
-var var_pluginName = sse_decode_String(deserializer);
-var var_pluginRepoUrl = sse_decode_String(deserializer);
-var var_pluginIconUrl = sse_decode_String(deserializer);
-var var_pluginPath = sse_decode_String(deserializer);
-var var_pluginVersion = sse_decode_String(deserializer);
-return InstalledPluginInfo(manifestRepoName: var_manifestRepoName, pluginName: var_pluginName, pluginRepoUrl: var_pluginRepoUrl, pluginIconUrl: var_pluginIconUrl, pluginPath: var_pluginPath, pluginVersion: var_pluginVersion); }
-
-@protected ItemInfo sse_decode_item_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_id = sse_decode_String(deserializer);
-return ItemInfo(source: var_source, id: var_id); }
-
-@protected List<String> sse_decode_list_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <String>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_String(deserializer)); }
-        return ans_;
-         }
-
-@protected List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <EpisodeInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_episode_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<FeaturedContentInfo> sse_decode_list_featured_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <FeaturedContentInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_featured_content_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<FileInfo> sse_decode_list_file_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <FileInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_file_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<ItemInfo> sse_decode_list_item_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <ItemInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_item_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<List<EpisodeInfo>> sse_decode_list_list_episode_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <List<EpisodeInfo>>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_list_episode_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <PluginInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_plugin_info(deserializer)); }
-        return ans_;
-         }
-
-@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var len_ = sse_decode_i_32(deserializer);
-                return deserializer.buffer.getUint8List(len_); }
-
-@protected List<(String,InstalledPluginInfo)> sse_decode_list_record_string_installed_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <(String,InstalledPluginInfo)>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_record_string_installed_plugin_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<(BigInt,String)> sse_decode_list_record_u_64_string(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <(BigInt,String)>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_record_u_64_string(deserializer)); }
-        return ans_;
-         }
-
-@protected List<(BigInt,BigInt)> sse_decode_list_record_u_64_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <(BigInt,BigInt)>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_record_u_64_u_64(deserializer)); }
-        return ans_;
-         }
-
-@protected List<SearchContentInfo> sse_decode_list_search_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <SearchContentInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_search_content_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<SourceInfo> sse_decode_list_source_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <SourceInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_source_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<TorrentInfo> sse_decode_list_torrent_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <TorrentInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_torrent_info(deserializer)); }
-        return ans_;
-         }
-
-@protected List<TrendingContentInfo> sse_decode_list_trending_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-        var len_ = sse_decode_i_32(deserializer);
-        var ans_ = <TrendingContentInfo>[];
-        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_trending_content_info(deserializer)); }
-        return ans_;
-         }
-
-@protected String? sse_decode_opt_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-            if (sse_decode_bool(deserializer)) {
-                return (sse_decode_String(deserializer));
-            } else {
-                return null;
-            }
-             }
-
-@protected BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-            if (sse_decode_bool(deserializer)) {
-                return (sse_decode_box_autoadd_u_64(deserializer));
-            } else {
-                return null;
-            }
-             }
-
-@protected BigInt? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-            if (sse_decode_bool(deserializer)) {
-                return (sse_decode_box_autoadd_usize(deserializer));
-            } else {
-                return null;
-            }
-             }
-
-@protected Paths sse_decode_paths(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_appSupportDir = sse_decode_String(deserializer);
-var var_appCacheDir = sse_decode_String(deserializer);
-var var_tempDir = sse_decode_String(deserializer);
-return Paths(appSupportDir: var_appSupportDir, appCacheDir: var_appCacheDir, tempDir: var_tempDir); }
-
-@protected PluginInfo sse_decode_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_hashedManifestRepoId = sse_decode_String(deserializer);
-var var_manifestRepoName = sse_decode_String(deserializer);
-var var_pluginId = sse_decode_String(deserializer);
-var var_pluginName = sse_decode_String(deserializer);
-var var_pluginRepoUrl = sse_decode_String(deserializer);
-var var_pluginIconUrl = sse_decode_String(deserializer);
-return PluginInfo(hashedManifestRepoId: var_hashedManifestRepoId, manifestRepoName: var_manifestRepoName, pluginId: var_pluginId, pluginName: var_pluginName, pluginRepoUrl: var_pluginRepoUrl, pluginIconUrl: var_pluginIconUrl); }
-
-@protected (String,InstalledPluginInfo) sse_decode_record_string_installed_plugin_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_field0 = sse_decode_String(deserializer);
-var var_field1 = sse_decode_installed_plugin_info(deserializer);
-return (var_field0, var_field1); }
-
-@protected (BigInt,String) sse_decode_record_u_64_string(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_field0 = sse_decode_u_64(deserializer);
-var var_field1 = sse_decode_String(deserializer);
-return (var_field0, var_field1); }
-
-@protected (BigInt,BigInt) sse_decode_record_u_64_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_field0 = sse_decode_u_64(deserializer);
-var var_field1 = sse_decode_u_64(deserializer);
-return (var_field0, var_field1); }
-
-@protected SearchContentInfo sse_decode_search_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_id = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-var var_year = sse_decode_String(deserializer);
-var var_rank = sse_decode_opt_box_autoadd_u_64(deserializer);
-var var_thumbnailUrl = sse_decode_String(deserializer);
-return SearchContentInfo(source: var_source, id: var_id, title: var_title, year: var_year, rank: var_rank, thumbnailUrl: var_thumbnailUrl); }
-
-@protected Settings sse_decode_settings(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_port = sse_decode_u_32(deserializer);
-var var_paths = sse_decode_paths(deserializer);
-return Settings(port: var_port, paths: var_paths); }
-
-@protected SourceInfo sse_decode_source_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_id = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-return SourceInfo(id: var_id, title: var_title); }
-
-@protected TorrentInfo sse_decode_torrent_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_title = sse_decode_String(deserializer);
-var var_torrentUrl = sse_decode_String(deserializer);
-return TorrentInfo(title: var_title, torrentUrl: var_torrentUrl); }
-
-@protected TorrentMetadata sse_decode_torrent_metadata(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_name = sse_decode_opt_String(deserializer);
-var var_length = sse_decode_opt_box_autoadd_u_64(deserializer);
-var var_files = sse_decode_list_file_info(deserializer);
-return TorrentMetadata(name: var_name, length: var_length, files: var_files); }
-
-@protected TrendingContentInfo sse_decode_trending_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_id = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-var var_year = sse_decode_String(deserializer);
-var var_rating = sse_decode_f_32(deserializer);
-var var_thumbnailUrl = sse_decode_String(deserializer);
-return TrendingContentInfo(source: var_source, id: var_id, title: var_title, year: var_year, rating: var_rating, thumbnailUrl: var_thumbnailUrl); }
-
-@protected int sse_decode_u_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getUint32(); }
-
-@protected BigInt sse_decode_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getBigUint64(); }
-
-@protected int sse_decode_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getUint8(); }
-
-@protected void sse_decode_unit(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
- }
-
-@protected BigInt sse_decode_usize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getBigUint64(); }
-
-@protected ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-var var_source = sse_decode_String(deserializer);
-var var_externalId = sse_decode_String(deserializer);
-var var_url = sse_decode_String(deserializer);
-var var_title = sse_decode_String(deserializer);
-var var_titleSecondary = sse_decode_String(deserializer);
-var var_thumbnailUrl = sse_decode_String(deserializer);
-var var_bannerUrl = sse_decode_String(deserializer);
-var var_contextual = sse_decode_list_String(deserializer);
-var var_description = sse_decode_String(deserializer);
-var var_trailerUrl = sse_decode_String(deserializer);
-var var_countdown = sse_decode_i_64(deserializer);
-var var_pictures = sse_decode_list_String(deserializer);
-var var_episodes = sse_decode_list_list_episode_info(deserializer);
-return ViewContentInfo(source: var_source, externalId: var_externalId, url: var_url, title: var_title, titleSecondary: var_titleSecondary, thumbnailUrl: var_thumbnailUrl, bannerUrl: var_bannerUrl, contextual: var_contextual, description: var_description, trailerUrl: var_trailerUrl, countdown: var_countdown, pictures: var_pictures, episodes: var_episodes); }
-
-@protected int sse_decode_i_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-return deserializer.buffer.getInt32(); }
-
-@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.message, serializer); }
-
-@protected void sse_encode_Map_String_installed_plugin_info_None(Map<String, InstalledPluginInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_list_record_string_installed_plugin_info(self.entries.map((e) => (e.key, e.value)).toList(), serializer); }
-
-@protected void sse_encode_Map_u_64_String_None(Map<BigInt, String> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_list_record_u_64_string(self.entries.map((e) => (e.key, e.value)).toList(), serializer); }
-
-@protected void sse_encode_Map_u_64_u_64_None(Map<BigInt, BigInt> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_list_record_u_64_u_64(self.entries.map((e) => (e.key, e.value)).toList(), serializer); }
-
-@protected void sse_encode_String(String self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer); }
-
-@protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putUint8(self ? 1 : 0); }
-
-@protected void sse_encode_box_autoadd_item_info(ItemInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_item_info(self, serializer); }
-
-@protected void sse_encode_box_autoadd_plugin_info(PluginInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_plugin_info(self, serializer); }
-
-@protected void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_settings(self, serializer); }
-
-@protected void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_u_64(self, serializer); }
-
-@protected void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_usize(self, serializer); }
-
-@protected void sse_encode_category_map(CategoryMap self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_Map_u_64_String_None(self.field0, serializer);
- }
-
-@protected void sse_encode_category_order_map(CategoryOrderMap self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_Map_u_64_u_64_None(self.field0, serializer);
- }
-
-@protected void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.title, serializer);
-sse_encode_String(self.thumbnailUrl, serializer);
- }
-
-@protected void sse_encode_f_32(double self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putFloat32(self); }
-
-@protected void sse_encode_featured_content_info(FeaturedContentInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.id, serializer);
-sse_encode_String(self.title, serializer);
-sse_encode_list_String(self.contextual, serializer);
-sse_encode_String(self.shortDescription, serializer);
-sse_encode_String(self.bannerUrl, serializer);
- }
-
-@protected void sse_encode_file_info(FileInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_usize(self.id, serializer);
-sse_encode_opt_String(self.path, serializer);
-sse_encode_opt_box_autoadd_usize(self.length, serializer);
-sse_encode_opt_String(self.sha1, serializer);
- }
-
-@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putPlatformInt64(self); }
-
-@protected void sse_encode_installed_plugin_info(InstalledPluginInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.manifestRepoName, serializer);
-sse_encode_String(self.pluginName, serializer);
-sse_encode_String(self.pluginRepoUrl, serializer);
-sse_encode_String(self.pluginIconUrl, serializer);
-sse_encode_String(self.pluginPath, serializer);
-sse_encode_String(self.pluginVersion, serializer);
- }
-
-@protected void sse_encode_item_info(ItemInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.id, serializer);
- }
-
-@protected void sse_encode_list_String(List<String> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_String(item, serializer); } }
-
-@protected void sse_encode_list_episode_info(List<EpisodeInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_episode_info(item, serializer); } }
-
-@protected void sse_encode_list_featured_content_info(List<FeaturedContentInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_featured_content_info(item, serializer); } }
-
-@protected void sse_encode_list_file_info(List<FileInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_file_info(item, serializer); } }
-
-@protected void sse_encode_list_item_info(List<ItemInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_item_info(item, serializer); } }
-
-@protected void sse_encode_list_list_episode_info(List<List<EpisodeInfo>> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_list_episode_info(item, serializer); } }
-
-@protected void sse_encode_list_plugin_info(List<PluginInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_plugin_info(item, serializer); } }
-
-@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-                    serializer.buffer.putUint8List(self); }
-
-@protected void sse_encode_list_record_string_installed_plugin_info(List<(String,InstalledPluginInfo)> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_record_string_installed_plugin_info(item, serializer); } }
-
-@protected void sse_encode_list_record_u_64_string(List<(BigInt,String)> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_record_u_64_string(item, serializer); } }
-
-@protected void sse_encode_list_record_u_64_u_64(List<(BigInt,BigInt)> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_record_u_64_u_64(item, serializer); } }
-
-@protected void sse_encode_list_search_content_info(List<SearchContentInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_search_content_info(item, serializer); } }
-
-@protected void sse_encode_list_source_info(List<SourceInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_source_info(item, serializer); } }
-
-@protected void sse_encode_list_torrent_info(List<TorrentInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_torrent_info(item, serializer); } }
-
-@protected void sse_encode_list_trending_content_info(List<TrendingContentInfo> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_i_32(self.length, serializer);
-        for (final item in self) { sse_encode_trending_content_info(item, serializer); } }
-
-@protected void sse_encode_opt_String(String? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-                sse_encode_bool(self != null, serializer);
-                if (self != null) {
-                    sse_encode_String(self, serializer);
-                }
-                 }
-
-@protected void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-                sse_encode_bool(self != null, serializer);
-                if (self != null) {
-                    sse_encode_box_autoadd_u_64(self, serializer);
-                }
-                 }
-
-@protected void sse_encode_opt_box_autoadd_usize(BigInt? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-
-                sse_encode_bool(self != null, serializer);
-                if (self != null) {
-                    sse_encode_box_autoadd_usize(self, serializer);
-                }
-                 }
-
-@protected void sse_encode_paths(Paths self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.appSupportDir, serializer);
-sse_encode_String(self.appCacheDir, serializer);
-sse_encode_String(self.tempDir, serializer);
- }
-
-@protected void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.hashedManifestRepoId, serializer);
-sse_encode_String(self.manifestRepoName, serializer);
-sse_encode_String(self.pluginId, serializer);
-sse_encode_String(self.pluginName, serializer);
-sse_encode_String(self.pluginRepoUrl, serializer);
-sse_encode_String(self.pluginIconUrl, serializer);
- }
-
-@protected void sse_encode_record_string_installed_plugin_info((String,InstalledPluginInfo) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.$1, serializer);
-sse_encode_installed_plugin_info(self.$2, serializer);
- }
-
-@protected void sse_encode_record_u_64_string((BigInt,String) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_u_64(self.$1, serializer);
-sse_encode_String(self.$2, serializer);
- }
-
-@protected void sse_encode_record_u_64_u_64((BigInt,BigInt) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_u_64(self.$1, serializer);
-sse_encode_u_64(self.$2, serializer);
- }
-
-@protected void sse_encode_search_content_info(SearchContentInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.id, serializer);
-sse_encode_String(self.title, serializer);
-sse_encode_String(self.year, serializer);
-sse_encode_opt_box_autoadd_u_64(self.rank, serializer);
-sse_encode_String(self.thumbnailUrl, serializer);
- }
-
-@protected void sse_encode_settings(Settings self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_u_32(self.port, serializer);
-sse_encode_paths(self.paths, serializer);
- }
-
-@protected void sse_encode_source_info(SourceInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.id, serializer);
-sse_encode_String(self.title, serializer);
- }
-
-@protected void sse_encode_torrent_info(TorrentInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.title, serializer);
-sse_encode_String(self.torrentUrl, serializer);
- }
-
-@protected void sse_encode_torrent_metadata(TorrentMetadata self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_opt_String(self.name, serializer);
-sse_encode_opt_box_autoadd_u_64(self.length, serializer);
-sse_encode_list_file_info(self.files, serializer);
- }
-
-@protected void sse_encode_trending_content_info(TrendingContentInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.id, serializer);
-sse_encode_String(self.title, serializer);
-sse_encode_String(self.year, serializer);
-sse_encode_f_32(self.rating, serializer);
-sse_encode_String(self.thumbnailUrl, serializer);
- }
-
-@protected void sse_encode_u_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putUint32(self); }
-
-@protected void sse_encode_u_64(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putBigUint64(self); }
-
-@protected void sse_encode_u_8(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putUint8(self); }
-
-@protected void sse_encode_unit(void self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
- }
-
-@protected void sse_encode_usize(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putBigUint64(self); }
-
-@protected void sse_encode_view_content_info(ViewContentInfo self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-sse_encode_String(self.source, serializer);
-sse_encode_String(self.externalId, serializer);
-sse_encode_String(self.url, serializer);
-sse_encode_String(self.title, serializer);
-sse_encode_String(self.titleSecondary, serializer);
-sse_encode_String(self.thumbnailUrl, serializer);
-sse_encode_String(self.bannerUrl, serializer);
-sse_encode_list_String(self.contextual, serializer);
-sse_encode_String(self.description, serializer);
-sse_encode_String(self.trailerUrl, serializer);
-sse_encode_i_64(self.countdown, serializer);
-sse_encode_list_String(self.pictures, serializer);
-sse_encode_list_list_episode_info(self.episodes, serializer);
- }
-
-@protected void sse_encode_i_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
-serializer.buffer.putInt32(self); }
-                }
-                
+          );
+
+  @override
+  Future<void>
+      crateMethodMetadataProviderViewContentViewContentInfoUpdateLastWatch(
+          {required String source,
+          required String id,
+          required BigInt seasonIndex,
+          required BigInt episodeIndex}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_u_64(seasonIndex, serializer);
+        sse_encode_u_64(episodeIndex, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 30, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderViewContentViewContentInfoUpdateLastWatchConstMeta,
+      argValues: [source, id, seasonIndex, episodeIndex],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodMetadataProviderViewContentViewContentInfoUpdateLastWatchConstMeta =>
+          const TaskConstMeta(
+            debugName: "view_content_info_update_last_watch",
+            argNames: ["source", "id", "seasonIndex", "episodeIndex"],
+          );
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_ArcDatabase => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_ArcDatabase => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase;
+
+  @protected
+  AnyhowException dco_decode_AnyhowException(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AnyhowException(raw as String);
+  }
+
+  @protected
+  ArcDatabase
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ArcDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Map<String, InstalledPluginInfo>
+      dco_decode_Map_String_installed_plugin_info_None(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(
+        dco_decode_list_record_string_installed_plugin_info(raw)
+            .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(dco_decode_list_record_u_64_string(raw)
+        .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, BigInt> dco_decode_Map_u_64_u_64_None(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(
+        dco_decode_list_record_u_64_u_64(raw).map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  ArcDatabase
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ArcDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  String dco_decode_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as String;
+  }
+
+  @protected
+  bool dco_decode_bool(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as bool;
+  }
+
+  @protected
+  ItemInfo dco_decode_box_autoadd_item_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_item_info(raw);
+  }
+
+  @protected
+  PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_plugin_info(raw);
+  }
+
+  @protected
+  Settings dco_decode_box_autoadd_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_settings(raw);
+  }
+
+  @protected
+  BigInt dco_decode_box_autoadd_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_u_64(raw);
+  }
+
+  @protected
+  BigInt dco_decode_box_autoadd_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_usize(raw);
+  }
+
+  @protected
+  CategoryMap dco_decode_category_map(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return CategoryMap(
+      field0: dco_decode_Map_u_64_String_None(arr[0]),
+    );
+  }
+
+  @protected
+  CategoryOrderMap dco_decode_category_order_map(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return CategoryOrderMap(
+      field0: dco_decode_Map_u_64_u_64_None(arr[0]),
+    );
+  }
+
+  @protected
+  EpisodeInfo dco_decode_episode_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return EpisodeInfo(
+      source: dco_decode_String(arr[0]),
+      title: dco_decode_String(arr[1]),
+      thumbnailUrl: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  double dco_decode_f_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as double;
+  }
+
+  @protected
+  FeaturedContentInfo dco_decode_featured_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return FeaturedContentInfo(
+      source: dco_decode_String(arr[0]),
+      id: dco_decode_String(arr[1]),
+      title: dco_decode_String(arr[2]),
+      contextual: dco_decode_list_String(arr[3]),
+      shortDescription: dco_decode_String(arr[4]),
+      bannerUrl: dco_decode_String(arr[5]),
+    );
+  }
+
+  @protected
+  FileInfo dco_decode_file_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return FileInfo(
+      id: dco_decode_usize(arr[0]),
+      path: dco_decode_opt_String(arr[1]),
+      length: dco_decode_opt_box_autoadd_usize(arr[2]),
+      sha1: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeI64(raw);
+  }
+
+  @protected
+  InstalledPluginInfo dco_decode_installed_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    return InstalledPluginInfo(
+      hashedManifestRepoId: dco_decode_String(arr[0]),
+      manifestRepoName: dco_decode_String(arr[1]),
+      pluginName: dco_decode_String(arr[2]),
+      pluginRepoUrl: dco_decode_String(arr[3]),
+      pluginIconUrl: dco_decode_String(arr[4]),
+      pluginPath: dco_decode_String(arr[5]),
+      pluginVersion: dco_decode_String(arr[6]),
+    );
+  }
+
+  @protected
+  ItemInfo dco_decode_item_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ItemInfo(
+      source: dco_decode_String(arr[0]),
+      id: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  List<String> dco_decode_list_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_episode_info).toList();
+  }
+
+  @protected
+  List<FeaturedContentInfo> dco_decode_list_featured_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_featured_content_info)
+        .toList();
+  }
+
+  @protected
+  List<FileInfo> dco_decode_list_file_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_file_info).toList();
+  }
+
+  @protected
+  List<ItemInfo> dco_decode_list_item_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_item_info).toList();
+  }
+
+  @protected
+  List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_list_episode_info).toList();
+  }
+
+  @protected
+  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_plugin_info).toList();
+  }
+
+  @protected
+  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as Uint8List;
+  }
+
+  @protected
+  List<(String, InstalledPluginInfo)>
+      dco_decode_list_record_string_installed_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_record_string_installed_plugin_info)
+        .toList();
+  }
+
+  @protected
+  List<(BigInt, String)> dco_decode_list_record_u_64_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_u_64_string).toList();
+  }
+
+  @protected
+  List<(BigInt, BigInt)> dco_decode_list_record_u_64_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_u_64_u_64).toList();
+  }
+
+  @protected
+  List<SearchContentInfo> dco_decode_list_search_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_search_content_info).toList();
+  }
+
+  @protected
+  List<SourceInfo> dco_decode_list_source_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_source_info).toList();
+  }
+
+  @protected
+  List<TorrentInfo> dco_decode_list_torrent_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_torrent_info).toList();
+  }
+
+  @protected
+  List<TrendingContentInfo> dco_decode_list_trending_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_trending_content_info)
+        .toList();
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_u_64(raw);
+  }
+
+  @protected
+  BigInt? dco_decode_opt_box_autoadd_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_usize(raw);
+  }
+
+  @protected
+  Paths dco_decode_paths(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return Paths(
+      appSupportDir: dco_decode_String(arr[0]),
+      appCacheDir: dco_decode_String(arr[1]),
+      tempDir: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  PluginInfo dco_decode_plugin_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return PluginInfo(
+      hashedManifestRepoId: dco_decode_String(arr[0]),
+      manifestRepoName: dco_decode_String(arr[1]),
+      pluginId: dco_decode_String(arr[2]),
+      pluginName: dco_decode_String(arr[3]),
+      pluginRepoUrl: dco_decode_String(arr[4]),
+      pluginIconUrl: dco_decode_String(arr[5]),
+    );
+  }
+
+  @protected
+  (String, InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_installed_plugin_info(arr[1]),
+    );
+  }
+
+  @protected
+  (BigInt, String) dco_decode_record_u_64_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_u_64(arr[0]),
+      dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  (BigInt, BigInt) dco_decode_record_u_64_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_u_64(arr[0]),
+      dco_decode_u_64(arr[1]),
+    );
+  }
+
+  @protected
+  SearchContentInfo dco_decode_search_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return SearchContentInfo(
+      source: dco_decode_String(arr[0]),
+      id: dco_decode_String(arr[1]),
+      title: dco_decode_String(arr[2]),
+      year: dco_decode_String(arr[3]),
+      rank: dco_decode_opt_box_autoadd_u_64(arr[4]),
+      thumbnailUrl: dco_decode_String(arr[5]),
+    );
+  }
+
+  @protected
+  Settings dco_decode_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Settings(
+      port: dco_decode_u_32(arr[0]),
+      paths: dco_decode_paths(arr[1]),
+    );
+  }
+
+  @protected
+  SourceInfo dco_decode_source_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SourceInfo(
+      id: dco_decode_String(arr[0]),
+      title: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  TorrentInfo dco_decode_torrent_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return TorrentInfo(
+      title: dco_decode_String(arr[0]),
+      torrentUrl: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  TorrentMetadata dco_decode_torrent_metadata(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return TorrentMetadata(
+      name: dco_decode_opt_String(arr[0]),
+      length: dco_decode_opt_box_autoadd_u_64(arr[1]),
+      files: dco_decode_list_file_info(arr[2]),
+    );
+  }
+
+  @protected
+  TrendingContentInfo dco_decode_trending_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return TrendingContentInfo(
+      source: dco_decode_String(arr[0]),
+      id: dco_decode_String(arr[1]),
+      title: dco_decode_String(arr[2]),
+      year: dco_decode_String(arr[3]),
+      rating: dco_decode_f_32(arr[4]),
+      thumbnailUrl: dco_decode_String(arr[5]),
+    );
+  }
+
+  @protected
+  int dco_decode_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  BigInt dco_decode_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
+  int dco_decode_u_8(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  void dco_decode_unit(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return;
+  }
+
+  @protected
+  BigInt dco_decode_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
+  ViewContentInfo dco_decode_view_content_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 16)
+      throw Exception('unexpected arr length: expect 16 but see ${arr.length}');
+    return ViewContentInfo(
+      source: dco_decode_String(arr[0]),
+      externalId: dco_decode_String(arr[1]),
+      url: dco_decode_String(arr[2]),
+      title: dco_decode_String(arr[3]),
+      titleSecondary: dco_decode_String(arr[4]),
+      thumbnailUrl: dco_decode_String(arr[5]),
+      bannerUrl: dco_decode_String(arr[6]),
+      contextual: dco_decode_list_String(arr[7]),
+      description: dco_decode_String(arr[8]),
+      trailerUrl: dco_decode_String(arr[9]),
+      countdown: dco_decode_i_64(arr[10]),
+      pictures: dco_decode_list_String(arr[11]),
+      episodes: dco_decode_list_list_episode_info(arr[12]),
+      lastWatchSeasonIndex: dco_decode_opt_box_autoadd_u_64(arr[13]),
+      lastWatchEpisodeIndex: dco_decode_opt_box_autoadd_u_64(arr[14]),
+      lastUpdate: dco_decode_opt_String(arr[15]),
+    );
+  }
+
+  @protected
+  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_String(deserializer);
+    return AnyhowException(inner);
+  }
+
+  @protected
+  ArcDatabase
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ArcDatabaseImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Map<String, InstalledPluginInfo>
+      sse_decode_Map_String_installed_plugin_info_None(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner =
+        sse_decode_list_record_string_installed_plugin_info(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, String> sse_decode_Map_u_64_String_None(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_record_u_64_string(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, BigInt> sse_decode_Map_u_64_u_64_None(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_record_u_64_u_64(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  ArcDatabase
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ArcDatabaseImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  String sse_decode_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_prim_u_8_strict(deserializer);
+    return utf8.decoder.convert(inner);
+  }
+
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint8() != 0;
+  }
+
+  @protected
+  ItemInfo sse_decode_box_autoadd_item_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_item_info(deserializer));
+  }
+
+  @protected
+  PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_plugin_info(deserializer));
+  }
+
+  @protected
+  Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_settings(deserializer));
+  }
+
+  @protected
+  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_u_64(deserializer));
+  }
+
+  @protected
+  BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_usize(deserializer));
+  }
+
+  @protected
+  CategoryMap sse_decode_category_map(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_Map_u_64_String_None(deserializer);
+    return CategoryMap(field0: var_field0);
+  }
+
+  @protected
+  CategoryOrderMap sse_decode_category_order_map(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_Map_u_64_u_64_None(deserializer);
+    return CategoryOrderMap(field0: var_field0);
+  }
+
+  @protected
+  EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_thumbnailUrl = sse_decode_String(deserializer);
+    return EpisodeInfo(
+        source: var_source, title: var_title, thumbnailUrl: var_thumbnailUrl);
+  }
+
+  @protected
+  double sse_decode_f_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getFloat32();
+  }
+
+  @protected
+  FeaturedContentInfo sse_decode_featured_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_id = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_contextual = sse_decode_list_String(deserializer);
+    var var_shortDescription = sse_decode_String(deserializer);
+    var var_bannerUrl = sse_decode_String(deserializer);
+    return FeaturedContentInfo(
+        source: var_source,
+        id: var_id,
+        title: var_title,
+        contextual: var_contextual,
+        shortDescription: var_shortDescription,
+        bannerUrl: var_bannerUrl);
+  }
+
+  @protected
+  FileInfo sse_decode_file_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_usize(deserializer);
+    var var_path = sse_decode_opt_String(deserializer);
+    var var_length = sse_decode_opt_box_autoadd_usize(deserializer);
+    var var_sha1 = sse_decode_opt_String(deserializer);
+    return FileInfo(
+        id: var_id, path: var_path, length: var_length, sha1: var_sha1);
+  }
+
+  @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getPlatformInt64();
+  }
+
+  @protected
+  InstalledPluginInfo sse_decode_installed_plugin_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_hashedManifestRepoId = sse_decode_String(deserializer);
+    var var_manifestRepoName = sse_decode_String(deserializer);
+    var var_pluginName = sse_decode_String(deserializer);
+    var var_pluginRepoUrl = sse_decode_String(deserializer);
+    var var_pluginIconUrl = sse_decode_String(deserializer);
+    var var_pluginPath = sse_decode_String(deserializer);
+    var var_pluginVersion = sse_decode_String(deserializer);
+    return InstalledPluginInfo(
+        hashedManifestRepoId: var_hashedManifestRepoId,
+        manifestRepoName: var_manifestRepoName,
+        pluginName: var_pluginName,
+        pluginRepoUrl: var_pluginRepoUrl,
+        pluginIconUrl: var_pluginIconUrl,
+        pluginPath: var_pluginPath,
+        pluginVersion: var_pluginVersion);
+  }
+
+  @protected
+  ItemInfo sse_decode_item_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_id = sse_decode_String(deserializer);
+    return ItemInfo(source: var_source, id: var_id);
+  }
+
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <String>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <EpisodeInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_episode_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<FeaturedContentInfo> sse_decode_list_featured_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <FeaturedContentInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_featured_content_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<FileInfo> sse_decode_list_file_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <FileInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_file_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ItemInfo> sse_decode_list_item_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ItemInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_item_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<List<EpisodeInfo>> sse_decode_list_list_episode_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <List<EpisodeInfo>>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_list_episode_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <PluginInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_plugin_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var len_ = sse_decode_i_32(deserializer);
+    return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  List<(String, InstalledPluginInfo)>
+      sse_decode_list_record_string_installed_plugin_info(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(String, InstalledPluginInfo)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_string_installed_plugin_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<(BigInt, String)> sse_decode_list_record_u_64_string(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(BigInt, String)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_u_64_string(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<(BigInt, BigInt)> sse_decode_list_record_u_64_u_64(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(BigInt, BigInt)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_u_64_u_64(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<SearchContentInfo> sse_decode_list_search_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <SearchContentInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_search_content_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<SourceInfo> sse_decode_list_source_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <SourceInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_source_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<TorrentInfo> sse_decode_list_torrent_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <TorrentInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_torrent_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<TrendingContentInfo> sse_decode_list_trending_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <TrendingContentInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_trending_content_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_u_64(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  BigInt? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_usize(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  Paths sse_decode_paths(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_appSupportDir = sse_decode_String(deserializer);
+    var var_appCacheDir = sse_decode_String(deserializer);
+    var var_tempDir = sse_decode_String(deserializer);
+    return Paths(
+        appSupportDir: var_appSupportDir,
+        appCacheDir: var_appCacheDir,
+        tempDir: var_tempDir);
+  }
+
+  @protected
+  PluginInfo sse_decode_plugin_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_hashedManifestRepoId = sse_decode_String(deserializer);
+    var var_manifestRepoName = sse_decode_String(deserializer);
+    var var_pluginId = sse_decode_String(deserializer);
+    var var_pluginName = sse_decode_String(deserializer);
+    var var_pluginRepoUrl = sse_decode_String(deserializer);
+    var var_pluginIconUrl = sse_decode_String(deserializer);
+    return PluginInfo(
+        hashedManifestRepoId: var_hashedManifestRepoId,
+        manifestRepoName: var_manifestRepoName,
+        pluginId: var_pluginId,
+        pluginName: var_pluginName,
+        pluginRepoUrl: var_pluginRepoUrl,
+        pluginIconUrl: var_pluginIconUrl);
+  }
+
+  @protected
+  (String, InstalledPluginInfo) sse_decode_record_string_installed_plugin_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_installed_plugin_info(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (BigInt, String) sse_decode_record_u_64_string(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_u_64(deserializer);
+    var var_field1 = sse_decode_String(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (BigInt, BigInt) sse_decode_record_u_64_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_u_64(deserializer);
+    var var_field1 = sse_decode_u_64(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  SearchContentInfo sse_decode_search_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_id = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_year = sse_decode_String(deserializer);
+    var var_rank = sse_decode_opt_box_autoadd_u_64(deserializer);
+    var var_thumbnailUrl = sse_decode_String(deserializer);
+    return SearchContentInfo(
+        source: var_source,
+        id: var_id,
+        title: var_title,
+        year: var_year,
+        rank: var_rank,
+        thumbnailUrl: var_thumbnailUrl);
+  }
+
+  @protected
+  Settings sse_decode_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_port = sse_decode_u_32(deserializer);
+    var var_paths = sse_decode_paths(deserializer);
+    return Settings(port: var_port, paths: var_paths);
+  }
+
+  @protected
+  SourceInfo sse_decode_source_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    return SourceInfo(id: var_id, title: var_title);
+  }
+
+  @protected
+  TorrentInfo sse_decode_torrent_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_String(deserializer);
+    var var_torrentUrl = sse_decode_String(deserializer);
+    return TorrentInfo(title: var_title, torrentUrl: var_torrentUrl);
+  }
+
+  @protected
+  TorrentMetadata sse_decode_torrent_metadata(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_opt_String(deserializer);
+    var var_length = sse_decode_opt_box_autoadd_u_64(deserializer);
+    var var_files = sse_decode_list_file_info(deserializer);
+    return TorrentMetadata(
+        name: var_name, length: var_length, files: var_files);
+  }
+
+  @protected
+  TrendingContentInfo sse_decode_trending_content_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_id = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_year = sse_decode_String(deserializer);
+    var var_rating = sse_decode_f_32(deserializer);
+    var var_thumbnailUrl = sse_decode_String(deserializer);
+    return TrendingContentInfo(
+        source: var_source,
+        id: var_id,
+        title: var_title,
+        year: var_year,
+        rating: var_rating,
+        thumbnailUrl: var_thumbnailUrl);
+  }
+
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint32();
+  }
+
+  @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
+  int sse_decode_u_8(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint8();
+  }
+
+  @protected
+  void sse_decode_unit(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+  }
+
+  @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
+  ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_source = sse_decode_String(deserializer);
+    var var_externalId = sse_decode_String(deserializer);
+    var var_url = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_titleSecondary = sse_decode_String(deserializer);
+    var var_thumbnailUrl = sse_decode_String(deserializer);
+    var var_bannerUrl = sse_decode_String(deserializer);
+    var var_contextual = sse_decode_list_String(deserializer);
+    var var_description = sse_decode_String(deserializer);
+    var var_trailerUrl = sse_decode_String(deserializer);
+    var var_countdown = sse_decode_i_64(deserializer);
+    var var_pictures = sse_decode_list_String(deserializer);
+    var var_episodes = sse_decode_list_list_episode_info(deserializer);
+    var var_lastWatchSeasonIndex =
+        sse_decode_opt_box_autoadd_u_64(deserializer);
+    var var_lastWatchEpisodeIndex =
+        sse_decode_opt_box_autoadd_u_64(deserializer);
+    var var_lastUpdate = sse_decode_opt_String(deserializer);
+    return ViewContentInfo(
+        source: var_source,
+        externalId: var_externalId,
+        url: var_url,
+        title: var_title,
+        titleSecondary: var_titleSecondary,
+        thumbnailUrl: var_thumbnailUrl,
+        bannerUrl: var_bannerUrl,
+        contextual: var_contextual,
+        description: var_description,
+        trailerUrl: var_trailerUrl,
+        countdown: var_countdown,
+        pictures: var_pictures,
+        episodes: var_episodes,
+        lastWatchSeasonIndex: var_lastWatchSeasonIndex,
+        lastWatchEpisodeIndex: var_lastWatchEpisodeIndex,
+        lastUpdate: var_lastUpdate);
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  void sse_encode_AnyhowException(
+      AnyhowException self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.message, serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          ArcDatabase self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as ArcDatabaseImpl).frbInternalSseEncode(move: true), serializer);
+  }
+
+  @protected
+  void sse_encode_Map_String_installed_plugin_info_None(
+      Map<String, InstalledPluginInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_string_installed_plugin_info(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void sse_encode_Map_u_64_String_None(
+      Map<BigInt, String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_u_64_string(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void sse_encode_Map_u_64_u_64_None(
+      Map<BigInt, BigInt> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_u_64_u_64(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+          ArcDatabase self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as ArcDatabaseImpl).frbInternalSseEncode(move: null), serializer);
+  }
+
+  @protected
+  void sse_encode_String(String self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
+  }
+
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint8(self ? 1 : 0);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_item_info(
+      ItemInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_item_info(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_plugin_info(
+      PluginInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_plugin_info(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_settings(
+      Settings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_64(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(self, serializer);
+  }
+
+  @protected
+  void sse_encode_category_map(CategoryMap self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Map_u_64_String_None(self.field0, serializer);
+  }
+
+  @protected
+  void sse_encode_category_order_map(
+      CategoryOrderMap self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Map_u_64_u_64_None(self.field0, serializer);
+  }
+
+  @protected
+  void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.thumbnailUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_f_32(double self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putFloat32(self);
+  }
+
+  @protected
+  void sse_encode_featured_content_info(
+      FeaturedContentInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_list_String(self.contextual, serializer);
+    sse_encode_String(self.shortDescription, serializer);
+    sse_encode_String(self.bannerUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_file_info(FileInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(self.id, serializer);
+    sse_encode_opt_String(self.path, serializer);
+    sse_encode_opt_box_autoadd_usize(self.length, serializer);
+    sse_encode_opt_String(self.sha1, serializer);
+  }
+
+  @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putPlatformInt64(self);
+  }
+
+  @protected
+  void sse_encode_installed_plugin_info(
+      InstalledPluginInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.hashedManifestRepoId, serializer);
+    sse_encode_String(self.manifestRepoName, serializer);
+    sse_encode_String(self.pluginName, serializer);
+    sse_encode_String(self.pluginRepoUrl, serializer);
+    sse_encode_String(self.pluginIconUrl, serializer);
+    sse_encode_String(self.pluginPath, serializer);
+    sse_encode_String(self.pluginVersion, serializer);
+  }
+
+  @protected
+  void sse_encode_item_info(ItemInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.id, serializer);
+  }
+
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_episode_info(
+      List<EpisodeInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_episode_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_featured_content_info(
+      List<FeaturedContentInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_featured_content_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_file_info(
+      List<FileInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_file_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_item_info(
+      List<ItemInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_item_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_list_episode_info(
+      List<List<EpisodeInfo>> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_list_episode_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_plugin_info(
+      List<PluginInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_plugin_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_prim_u_8_strict(
+      Uint8List self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    serializer.buffer.putUint8List(self);
+  }
+
+  @protected
+  void sse_encode_list_record_string_installed_plugin_info(
+      List<(String, InstalledPluginInfo)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_string_installed_plugin_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_record_u_64_string(
+      List<(BigInt, String)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_u_64_string(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_record_u_64_u_64(
+      List<(BigInt, BigInt)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_u_64_u_64(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_search_content_info(
+      List<SearchContentInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_search_content_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_source_info(
+      List<SourceInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_source_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_torrent_info(
+      List<TorrentInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_torrent_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_trending_content_info(
+      List<TrendingContentInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_trending_content_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_u_64(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_usize(
+      BigInt? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_usize(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_paths(Paths self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.appSupportDir, serializer);
+    sse_encode_String(self.appCacheDir, serializer);
+    sse_encode_String(self.tempDir, serializer);
+  }
+
+  @protected
+  void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.hashedManifestRepoId, serializer);
+    sse_encode_String(self.manifestRepoName, serializer);
+    sse_encode_String(self.pluginId, serializer);
+    sse_encode_String(self.pluginName, serializer);
+    sse_encode_String(self.pluginRepoUrl, serializer);
+    sse_encode_String(self.pluginIconUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_record_string_installed_plugin_info(
+      (String, InstalledPluginInfo) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_installed_plugin_info(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_u_64_string(
+      (BigInt, String) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_64(self.$1, serializer);
+    sse_encode_String(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_u_64_u_64(
+      (BigInt, BigInt) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_64(self.$1, serializer);
+    sse_encode_u_64(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_search_content_info(
+      SearchContentInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.year, serializer);
+    sse_encode_opt_box_autoadd_u_64(self.rank, serializer);
+    sse_encode_String(self.thumbnailUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_settings(Settings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.port, serializer);
+    sse_encode_paths(self.paths, serializer);
+  }
+
+  @protected
+  void sse_encode_source_info(SourceInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.title, serializer);
+  }
+
+  @protected
+  void sse_encode_torrent_info(TorrentInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.torrentUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_torrent_metadata(
+      TorrentMetadata self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.name, serializer);
+    sse_encode_opt_box_autoadd_u_64(self.length, serializer);
+    sse_encode_list_file_info(self.files, serializer);
+  }
+
+  @protected
+  void sse_encode_trending_content_info(
+      TrendingContentInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.year, serializer);
+    sse_encode_f_32(self.rating, serializer);
+    sse_encode_String(self.thumbnailUrl, serializer);
+  }
+
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint32(self);
+  }
+
+  @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
+  }
+
+  @protected
+  void sse_encode_u_8(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint8(self);
+  }
+
+  @protected
+  void sse_encode_unit(void self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+  }
+
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
+  }
+
+  @protected
+  void sse_encode_view_content_info(
+      ViewContentInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.source, serializer);
+    sse_encode_String(self.externalId, serializer);
+    sse_encode_String(self.url, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.titleSecondary, serializer);
+    sse_encode_String(self.thumbnailUrl, serializer);
+    sse_encode_String(self.bannerUrl, serializer);
+    sse_encode_list_String(self.contextual, serializer);
+    sse_encode_String(self.description, serializer);
+    sse_encode_String(self.trailerUrl, serializer);
+    sse_encode_i_64(self.countdown, serializer);
+    sse_encode_list_String(self.pictures, serializer);
+    sse_encode_list_list_episode_info(self.episodes, serializer);
+    sse_encode_opt_box_autoadd_u_64(self.lastWatchSeasonIndex, serializer);
+    sse_encode_opt_box_autoadd_u_64(self.lastWatchEpisodeIndex, serializer);
+    sse_encode_opt_String(self.lastUpdate, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
+  }
+}
+
+@sealed
+class ArcDatabaseImpl extends RustOpaque implements ArcDatabase {
+  // Not to be used by end users
+  ArcDatabaseImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  ArcDatabaseImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_ArcDatabase,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_ArcDatabase,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_ArcDatabasePtr,
+  );
+}

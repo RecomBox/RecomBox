@@ -75,7 +75,11 @@ class _SelectTorrentState extends State<SelectTorrentScreen> {
               episode: BigInt.from(1)
             );
       });
-      debugPrint(args.toString());
+      
+      debugPrint("--");
+      debugPrint(args!.season.toString());
+      debugPrint(args!.episode.toString());
+      
       initSelectTorrent();
     });
   }
@@ -274,6 +278,7 @@ class _SelectTorrentState extends State<SelectTorrentScreen> {
                               itemCount: filteredTorrentList.length,
                               itemBuilder: (context, index) {
                                 return SelectTorrentTile(
+                                  key: ValueKey(filteredTorrentList[index].torrentUrl),
                                   source: args!.source,
                                   viewID: args!.viewID,
                                   torrentInfo: filteredTorrentList[index],

@@ -40,6 +40,7 @@ class _SetCategoryTileState extends State<SetCategoryTile> {
 
   Future<void> onChange(bool value) async {
     try{
+      debugPrint(widget.itemId);
       if (value) {
         await setCategory(
           categoryId: widget.categoryID, 

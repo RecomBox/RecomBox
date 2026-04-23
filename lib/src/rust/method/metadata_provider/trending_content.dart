@@ -6,19 +6,28 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'trending_content.freezed.dart';part 'trending_content.g.dart';
+part 'trending_content.freezed.dart';
+part 'trending_content.g.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
+Future<List<TrendingContentInfo>> trendingContent(
+        {required String source, required bool fromCache}) =>
+    RustLib.instance.api
+        .crateMethodMetadataProviderTrendingContentTrendingContent(
+            source: source, fromCache: fromCache);
 
-            Future<List<TrendingContentInfo>>  trendingContent({required String source , required bool fromCache }) => RustLib.instance.api.crateMethodMetadataProviderTrendingContentTrendingContent(source: source, fromCache: fromCache);
+@freezed
+sealed class TrendingContentInfo with _$TrendingContentInfo {
+  const factory TrendingContentInfo({
+    required String source,
+    required String id,
+    required String title,
+    required String year,
+    required double rating,
+    required String thumbnailUrl,
+  }) = _TrendingContentInfo;
 
-            @freezed
-sealed class TrendingContentInfo with _$TrendingContentInfo  {
-                
-                const factory TrendingContentInfo({ required  String source, required  String id, required  String title, required  String year, required  double rating, required  String thumbnailUrl,}) = _TrendingContentInfo;
-                
-                factory TrendingContentInfo.fromJson(Map<String, dynamic> json) => _$TrendingContentInfoFromJson(json);
-                
-            }
-            
+  factory TrendingContentInfo.fromJson(Map<String, dynamic> json) =>
+      _$TrendingContentInfoFromJson(json);
+}

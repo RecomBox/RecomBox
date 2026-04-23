@@ -13,6 +13,7 @@ use crate::utils::settings::Settings;
 #[frb(json_serializable)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct InstalledPluginInfo{
+    pub hashed_manifest_repo_id: String,
     pub manifest_repo_name: String,
     pub plugin_name: String,
     pub plugin_repo_url: String,
@@ -52,6 +53,7 @@ pub async fn get_installed_plugins(source: &str) -> Result<HashMap<String, Insta
             (
                 k.clone(),
                 InstalledPluginInfo {
+                    hashed_manifest_repo_id: v.hashed_manifest_repo_id.clone(),
                     manifest_repo_name: manifest_repo_name.to_string(),
                     plugin_name: v.plugin_name.clone(),
                     plugin_repo_url: v.plugin_repo_url.clone(),

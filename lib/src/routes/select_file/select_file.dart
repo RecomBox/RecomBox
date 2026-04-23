@@ -81,7 +81,10 @@ class _SelectFileState extends State<SelectFileScreen> {
               episode: BigInt.from(1)
             );
       });
-      debugPrint(args.toString());
+      debugPrint("--");
+      debugPrint(args!.season.toString());
+      debugPrint(args!.episode.toString());
+
       initSelectFile();
     });
   }
@@ -325,6 +328,7 @@ class _SelectFileState extends State<SelectFileScreen> {
                               itemCount: filteredFileList.length,
                               itemBuilder: (context, index) {
                                 return SelectFileTile(
+                                  key: ValueKey(filteredFileList[index].id),
                                   source: args!.source, 
                                   viewID: args!.viewID, 
                                   torrentSource: args!.torrentSource,

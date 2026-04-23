@@ -1,14 +1,10 @@
-use std::path::PathBuf;
-use redb::Database;
-use crate::utils::settings::Settings;
 
-use super::{CATEGORY_TABLE, DATABASE_NAME};
+
+use super::{get_db, CATEGORY_TABLE};
 
 pub async fn rename_category(category_id: u64, new_category_name: &str) -> Result<(), String> {
-    let settings = Settings::get().map_err(|e| e.to_string())?;
-    let db_path = PathBuf::from(&settings.paths.app_support_dir).join(DATABASE_NAME);
+    let db = get_db()?;
 
-    let db = Database::create(db_path).map_err(|e| e.to_string())?;
     let write_txn = db.begin_write().map_err(|e| e.to_string())?;
 
     {

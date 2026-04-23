@@ -130,6 +130,7 @@ class _SetCategoryDialogState extends State<SetCategoryDialog> {
                     itemCount: allCategoryKeyList.length,
                     itemBuilder: (context, index) {
                       return SetCategoryTile(
+                        key: ValueKey(allCategoryKeyList[index]),
                         selected: itemCategoryMap.field0.containsKey(allCategoryKeyList[index]),
                         source: widget.source,
                         itemId: widget.itemId,

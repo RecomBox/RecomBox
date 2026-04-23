@@ -237,6 +237,7 @@ class _InstallPluginDialogState extends State<InstallPluginDialog> {
                       itemCount: filteredPluginList.length,
                       itemBuilder: (context, index) {
                         return InstallPluginTile(
+                          key: ValueKey(filteredPluginList[index].pluginId),
                           source: widget.source,
                           isInstalled: installedPluginMap[filteredPluginList[index].pluginId] != null,
                           onChange: onChange,

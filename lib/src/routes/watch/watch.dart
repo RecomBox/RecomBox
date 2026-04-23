@@ -22,6 +22,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 
 import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_vertical.dart';
 import 'package:recombox/src/global/widgets/title_bar.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/torrent_provider/free_torrent_handle.dart';
 import 'package:snowflaker/snowflaker.dart';
 import 'package:window_manager/window_manager.dart';
@@ -107,6 +108,11 @@ class _WatchState extends State<WatchScreen> {
   @override
   void dispose() {
     player.dispose();
+    try{
+      freeTorrentHandle(handleId: handleID);
+    }catch(e){
+      debugPrint(e.toString());
+    }
     super.dispose();
   }
 
@@ -123,7 +129,18 @@ class _WatchState extends State<WatchScreen> {
     });
 
     try{
-      
+      try{
+        debugPrint(args!.season.toString());
+        debugPrint(args!.episode.toString());
+        await ViewContentInfo.updateLastWatch(
+          source: args!.source.toString(), 
+          id: args!.viewID, 
+          seasonIndex: args!.season, 
+          episodeIndex: args!.episode
+        );
+      }catch(e){
+        debugPrint(e.toString());
+      }
       final snowflaker = Snowflaker(workerId: 1, datacenterId: 1);
       setState(() {
         handleID = BigInt.from(snowflaker.nextId().toInt());
@@ -192,13 +209,6 @@ class _WatchState extends State<WatchScreen> {
       await windowManager.setFullScreen(false);
     }
     // <-
-
-
-    try{
-      await freeTorrentHandle(handleId: handleID);
-    }catch(e){
-      debugPrint(e.toString());
-    }
 
     if (!ctx.mounted) return;
 

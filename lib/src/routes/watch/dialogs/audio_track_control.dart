@@ -59,10 +59,12 @@ class _AudioTrackControlDialogState extends State<AudioTrackControlDialog> {
             decoration: BoxDecoration(
               color: appColors.primary,
               border: Border(
-                left: BorderSide(
-                  width: 1,
-                  color: appColors.strokePrimary
-                )
+                left: MediaQuery.of(context).size.width >= 600 
+                  ? BorderSide(
+                    width: 1,
+                    color: appColors.strokePrimary
+                  )
+                  : BorderSide.none
               )
             ),
             child: Column(

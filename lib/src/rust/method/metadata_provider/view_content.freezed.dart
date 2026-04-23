@@ -356,6 +356,9 @@ mixin _$ViewContentInfo {
   PlatformInt64 get countdown;
   List<String> get pictures;
   List<List<EpisodeInfo>> get episodes;
+  BigInt? get lastWatchSeasonIndex;
+  BigInt? get lastWatchEpisodeIndex;
+  String? get lastUpdate;
 
   /// Create a copy of ViewContentInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -393,7 +396,13 @@ mixin _$ViewContentInfo {
             (identical(other.countdown, countdown) ||
                 other.countdown == countdown) &&
             const DeepCollectionEquality().equals(other.pictures, pictures) &&
-            const DeepCollectionEquality().equals(other.episodes, episodes));
+            const DeepCollectionEquality().equals(other.episodes, episodes) &&
+            (identical(other.lastWatchSeasonIndex, lastWatchSeasonIndex) ||
+                other.lastWatchSeasonIndex == lastWatchSeasonIndex) &&
+            (identical(other.lastWatchEpisodeIndex, lastWatchEpisodeIndex) ||
+                other.lastWatchEpisodeIndex == lastWatchEpisodeIndex) &&
+            (identical(other.lastUpdate, lastUpdate) ||
+                other.lastUpdate == lastUpdate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -412,11 +421,14 @@ mixin _$ViewContentInfo {
       trailerUrl,
       countdown,
       const DeepCollectionEquality().hash(pictures),
-      const DeepCollectionEquality().hash(episodes));
+      const DeepCollectionEquality().hash(episodes),
+      lastWatchSeasonIndex,
+      lastWatchEpisodeIndex,
+      lastUpdate);
 
   @override
   String toString() {
-    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
+    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes, lastWatchSeasonIndex: $lastWatchSeasonIndex, lastWatchEpisodeIndex: $lastWatchEpisodeIndex, lastUpdate: $lastUpdate)';
   }
 }
 
@@ -439,7 +451,10 @@ abstract mixin class $ViewContentInfoCopyWith<$Res> {
       String trailerUrl,
       PlatformInt64 countdown,
       List<String> pictures,
-      List<List<EpisodeInfo>> episodes});
+      List<List<EpisodeInfo>> episodes,
+      BigInt? lastWatchSeasonIndex,
+      BigInt? lastWatchEpisodeIndex,
+      String? lastUpdate});
 }
 
 /// @nodoc
@@ -468,6 +483,9 @@ class _$ViewContentInfoCopyWithImpl<$Res>
     Object? countdown = null,
     Object? pictures = null,
     Object? episodes = null,
+    Object? lastWatchSeasonIndex = freezed,
+    Object? lastWatchEpisodeIndex = freezed,
+    Object? lastUpdate = freezed,
   }) {
     return _then(_self.copyWith(
       source: null == source
@@ -522,6 +540,18 @@ class _$ViewContentInfoCopyWithImpl<$Res>
           ? _self.episodes
           : episodes // ignore: cast_nullable_to_non_nullable
               as List<List<EpisodeInfo>>,
+      lastWatchSeasonIndex: freezed == lastWatchSeasonIndex
+          ? _self.lastWatchSeasonIndex
+          : lastWatchSeasonIndex // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
+      lastWatchEpisodeIndex: freezed == lastWatchEpisodeIndex
+          ? _self.lastWatchEpisodeIndex
+          : lastWatchEpisodeIndex // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
+      lastUpdate: freezed == lastUpdate
+          ? _self.lastUpdate
+          : lastUpdate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -630,7 +660,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String trailerUrl,
             PlatformInt64 countdown,
             List<String> pictures,
-            List<List<EpisodeInfo>> episodes)?
+            List<List<EpisodeInfo>> episodes,
+            BigInt? lastWatchSeasonIndex,
+            BigInt? lastWatchEpisodeIndex,
+            String? lastUpdate)?
         $default, {
     required TResult orElse(),
   }) {
@@ -650,7 +683,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.trailerUrl,
             _that.countdown,
             _that.pictures,
-            _that.episodes);
+            _that.episodes,
+            _that.lastWatchSeasonIndex,
+            _that.lastWatchEpisodeIndex,
+            _that.lastUpdate);
       case _:
         return orElse();
     }
@@ -684,7 +720,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String trailerUrl,
             PlatformInt64 countdown,
             List<String> pictures,
-            List<List<EpisodeInfo>> episodes)
+            List<List<EpisodeInfo>> episodes,
+            BigInt? lastWatchSeasonIndex,
+            BigInt? lastWatchEpisodeIndex,
+            String? lastUpdate)
         $default,
   ) {
     final _that = this;
@@ -703,7 +742,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.trailerUrl,
             _that.countdown,
             _that.pictures,
-            _that.episodes);
+            _that.episodes,
+            _that.lastWatchSeasonIndex,
+            _that.lastWatchEpisodeIndex,
+            _that.lastUpdate);
     }
   }
 
@@ -734,7 +776,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             String trailerUrl,
             PlatformInt64 countdown,
             List<String> pictures,
-            List<List<EpisodeInfo>> episodes)?
+            List<List<EpisodeInfo>> episodes,
+            BigInt? lastWatchSeasonIndex,
+            BigInt? lastWatchEpisodeIndex,
+            String? lastUpdate)?
         $default,
   ) {
     final _that = this;
@@ -753,7 +798,10 @@ extension ViewContentInfoPatterns on ViewContentInfo {
             _that.trailerUrl,
             _that.countdown,
             _that.pictures,
-            _that.episodes);
+            _that.episodes,
+            _that.lastWatchSeasonIndex,
+            _that.lastWatchEpisodeIndex,
+            _that.lastUpdate);
       case _:
         return null;
     }
@@ -762,7 +810,7 @@ extension ViewContentInfoPatterns on ViewContentInfo {
 
 /// @nodoc
 @JsonSerializable()
-class _ViewContentInfo implements ViewContentInfo {
+class _ViewContentInfo extends ViewContentInfo {
   const _ViewContentInfo(
       {required this.source,
       required this.externalId,
@@ -776,10 +824,14 @@ class _ViewContentInfo implements ViewContentInfo {
       required this.trailerUrl,
       required this.countdown,
       required final List<String> pictures,
-      required final List<List<EpisodeInfo>> episodes})
+      required final List<List<EpisodeInfo>> episodes,
+      this.lastWatchSeasonIndex,
+      this.lastWatchEpisodeIndex,
+      this.lastUpdate})
       : _contextual = contextual,
         _pictures = pictures,
-        _episodes = episodes;
+        _episodes = episodes,
+        super._();
   factory _ViewContentInfo.fromJson(Map<String, dynamic> json) =>
       _$ViewContentInfoFromJson(json);
 
@@ -827,6 +879,13 @@ class _ViewContentInfo implements ViewContentInfo {
     return EqualUnmodifiableListView(_episodes);
   }
 
+  @override
+  final BigInt? lastWatchSeasonIndex;
+  @override
+  final BigInt? lastWatchEpisodeIndex;
+  @override
+  final String? lastUpdate;
+
   /// Create a copy of ViewContentInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -867,7 +926,13 @@ class _ViewContentInfo implements ViewContentInfo {
             (identical(other.countdown, countdown) ||
                 other.countdown == countdown) &&
             const DeepCollectionEquality().equals(other._pictures, _pictures) &&
-            const DeepCollectionEquality().equals(other._episodes, _episodes));
+            const DeepCollectionEquality().equals(other._episodes, _episodes) &&
+            (identical(other.lastWatchSeasonIndex, lastWatchSeasonIndex) ||
+                other.lastWatchSeasonIndex == lastWatchSeasonIndex) &&
+            (identical(other.lastWatchEpisodeIndex, lastWatchEpisodeIndex) ||
+                other.lastWatchEpisodeIndex == lastWatchEpisodeIndex) &&
+            (identical(other.lastUpdate, lastUpdate) ||
+                other.lastUpdate == lastUpdate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -886,11 +951,14 @@ class _ViewContentInfo implements ViewContentInfo {
       trailerUrl,
       countdown,
       const DeepCollectionEquality().hash(_pictures),
-      const DeepCollectionEquality().hash(_episodes));
+      const DeepCollectionEquality().hash(_episodes),
+      lastWatchSeasonIndex,
+      lastWatchEpisodeIndex,
+      lastUpdate);
 
   @override
   String toString() {
-    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes)';
+    return 'ViewContentInfo(source: $source, externalId: $externalId, url: $url, title: $title, titleSecondary: $titleSecondary, thumbnailUrl: $thumbnailUrl, bannerUrl: $bannerUrl, contextual: $contextual, description: $description, trailerUrl: $trailerUrl, countdown: $countdown, pictures: $pictures, episodes: $episodes, lastWatchSeasonIndex: $lastWatchSeasonIndex, lastWatchEpisodeIndex: $lastWatchEpisodeIndex, lastUpdate: $lastUpdate)';
   }
 }
 
@@ -915,7 +983,10 @@ abstract mixin class _$ViewContentInfoCopyWith<$Res>
       String trailerUrl,
       PlatformInt64 countdown,
       List<String> pictures,
-      List<List<EpisodeInfo>> episodes});
+      List<List<EpisodeInfo>> episodes,
+      BigInt? lastWatchSeasonIndex,
+      BigInt? lastWatchEpisodeIndex,
+      String? lastUpdate});
 }
 
 /// @nodoc
@@ -944,6 +1015,9 @@ class __$ViewContentInfoCopyWithImpl<$Res>
     Object? countdown = null,
     Object? pictures = null,
     Object? episodes = null,
+    Object? lastWatchSeasonIndex = freezed,
+    Object? lastWatchEpisodeIndex = freezed,
+    Object? lastUpdate = freezed,
   }) {
     return _then(_ViewContentInfo(
       source: null == source
@@ -998,6 +1072,18 @@ class __$ViewContentInfoCopyWithImpl<$Res>
           ? _self._episodes
           : episodes // ignore: cast_nullable_to_non_nullable
               as List<List<EpisodeInfo>>,
+      lastWatchSeasonIndex: freezed == lastWatchSeasonIndex
+          ? _self.lastWatchSeasonIndex
+          : lastWatchSeasonIndex // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
+      lastWatchEpisodeIndex: freezed == lastWatchEpisodeIndex
+          ? _self.lastWatchEpisodeIndex
+          : lastWatchEpisodeIndex // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
+      lastUpdate: freezed == lastUpdate
+          ? _self.lastUpdate
+          : lastUpdate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }

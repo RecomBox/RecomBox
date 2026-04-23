@@ -52,8 +52,8 @@ class _SelectTorrentTileState extends State<SelectTorrentTile> {
         viewID: widget.viewID, 
         source: widget.source,
         torrentSource: widget.torrentInfo.torrentUrl,
-        season: BigInt.from(1),
-        episode: BigInt.from(1)
+        season: widget.season,
+        episode: widget.episode
 
       )
     );

@@ -6,19 +6,30 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'search_content.freezed.dart';part 'search_content.g.dart';
+part 'search_content.freezed.dart';
+part 'search_content.g.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
+Future<List<SearchContentInfo>> searchContent(
+        {required String source,
+        required String search,
+        required BigInt sort,
+        required BigInt page}) =>
+    RustLib.instance.api.crateMethodMetadataProviderSearchContentSearchContent(
+        source: source, search: search, sort: sort, page: page);
 
-            Future<List<SearchContentInfo>>  searchContent({required String source , required String search , required BigInt sort , required BigInt page }) => RustLib.instance.api.crateMethodMetadataProviderSearchContentSearchContent(source: source, search: search, sort: sort, page: page);
+@freezed
+sealed class SearchContentInfo with _$SearchContentInfo {
+  const factory SearchContentInfo({
+    required String source,
+    required String id,
+    required String title,
+    required String year,
+    BigInt? rank,
+    required String thumbnailUrl,
+  }) = _SearchContentInfo;
 
-            @freezed
-sealed class SearchContentInfo with _$SearchContentInfo  {
-                
-                const factory SearchContentInfo({ required  String source, required  String id, required  String title, required  String year,  BigInt? rank, required  String thumbnailUrl,}) = _SearchContentInfo;
-                
-                factory SearchContentInfo.fromJson(Map<String, dynamic> json) => _$SearchContentInfoFromJson(json);
-                
-            }
-            
+  factory SearchContentInfo.fromJson(Map<String, dynamic> json) =>
+      _$SearchContentInfoFromJson(json);
+}

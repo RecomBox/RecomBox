@@ -41,6 +41,13 @@ _ViewContentInfo _$ViewContentInfoFromJson(Map<String, dynamic> json) =>
               .map((e) => EpisodeInfo.fromJson(e as Map<String, dynamic>))
               .toList())
           .toList(),
+      lastWatchSeasonIndex: json['lastWatchSeasonIndex'] == null
+          ? null
+          : BigInt.parse(json['lastWatchSeasonIndex'] as String),
+      lastWatchEpisodeIndex: json['lastWatchEpisodeIndex'] == null
+          ? null
+          : BigInt.parse(json['lastWatchEpisodeIndex'] as String),
+      lastUpdate: json['lastUpdate'] as String?,
     );
 
 Map<String, dynamic> _$ViewContentInfoToJson(_ViewContentInfo instance) =>
@@ -58,4 +65,7 @@ Map<String, dynamic> _$ViewContentInfoToJson(_ViewContentInfo instance) =>
       'countdown': instance.countdown,
       'pictures': instance.pictures,
       'episodes': instance.episodes,
+      'lastWatchSeasonIndex': instance.lastWatchSeasonIndex?.toString(),
+      'lastWatchEpisodeIndex': instance.lastWatchEpisodeIndex?.toString(),
+      'lastUpdate': instance.lastUpdate,
     };

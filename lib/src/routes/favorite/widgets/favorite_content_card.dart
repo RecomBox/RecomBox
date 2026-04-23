@@ -37,24 +37,28 @@ class _FavoriteContentCardState extends State<FavoriteContentCard> {
 
   Future<void> initFavoriteContentCard() async {
     try{
-      ViewContentInfo viewContentInfoResult = await viewContent(
+      ViewContentInfo viewContentInfoResult = await ViewContentInfo.get_(
         source: widget.source.name,
         id: widget.id, 
         fromCache: true
       );
 
       widget.addTitle(viewContentInfoResult.title);
-      
-      setState(() {
-        title = viewContentInfoResult.title;
-        thumbnailUrl = viewContentInfoResult.thumbnailUrl;
-      });
+      if (context.mounted) {
+        setState(() {
+          title = viewContentInfoResult.title;
+          thumbnailUrl = viewContentInfoResult.thumbnailUrl;
+        });
+      }
     }catch(e){
       debugPrint(e.toString());
-      setState(() {
-        title = "?";
-        thumbnailUrl = "";
-      });
+      if (context.mounted) {
+        setState(() {
+          title = "?";
+          thumbnailUrl = "";
+        });
+      }
+      
     }
     
 
