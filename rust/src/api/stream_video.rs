@@ -22,6 +22,7 @@ use crate::utils::settings::Settings;
 
 #[derive(Deserialize, Serialize)]
 struct InputPayload {
+    torrent_handle_mode: String,
     torrent_source: String,
     mime_type: String,
     file_id: usize,
@@ -46,6 +47,8 @@ pub async fn new(req: HttpRequest, query: web::Query<InputPayload>) -> Result<Ht
         .map_err(|e| actix_web::error::ErrorInternalServerError(e.to_string()))?
         .clone();
 
+    let torrent_handle_mode = TorrentHandleMode::from_str(&query.torrent_handle_mode);
+
     let cache_dir = &settings.paths.app_cache_dir;
 
     let output_dir = PathBuf::from(cache_dir)
@@ -56,7 +59,7 @@ pub async fn new(req: HttpRequest, query: web::Query<InputPayload>) -> Result<Ht
         .join(query.episode.to_string());
 
     let torrent_handle_builder = TorrentHandle{
-        torrent_handle_mode: TorrentHandleMode::Watch,
+        torrent_handle_mode: torrent_handle_mode,
         torrent_source:  query.torrent_source.clone(),
         file_id:  query.file_id as u64,
         output_dir: output_dir

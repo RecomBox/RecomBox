@@ -116,15 +116,17 @@ class DownloadState extends State<DownloadScreen> {
         seasonIndex: allDownloadMap[key]![index].seasonIndex, 
         episodeIndex: allDownloadMap[key]![index].episodeIndex
       ));
-      setState(() {
-        allDownloadMap[key]!.removeAt(index);
-        if (allDownloadMap[key]!.isEmpty){
-          allDownloadMap.remove(key);
-        }
-      });
+      
     }catch(e){
       debugPrint(e.toString());
     }
+
+    setState(() {
+      allDownloadMap[key]!.removeAt(index);
+      if (allDownloadMap[key]!.isEmpty){
+        allDownloadMap.remove(key);
+      }
+    });
   }
 
   @override
@@ -146,80 +148,45 @@ class DownloadState extends State<DownloadScreen> {
                   children: [
                     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
                       TitleBar(),
-                      Expanded(
-                        child: Container(
-                          height: double.infinity,
-                          width: double.infinity,
-                          padding: EdgeInsets.all(15),
-                          child: ListView.separated(
-                              itemCount: allDownloadMap.keys.length,
-                              itemBuilder: (context, index){
-                                return DownloadCard(
-                                  key: ValueKey(allDownloadMap.keys.toList()[index]),
-                                  allDownloadItemKey: allDownloadMap.keys.toList()[index],
-                                  allDownloadItemValueList: allDownloadMap.values.toList()[index],
-                                  onRemoveDownload: onRemoveDownload,
-                                );
-                              }, 
-                              separatorBuilder: (_,__){
-                                return  SizedBox(height: 10,);
-                              }, 
-                            ),
-                          
+                      if (allDownloadMap.isNotEmpty)
+                        Expanded(
+                          child: Container(
+                            height: double.infinity,
+                            width: double.infinity,
+                            padding: EdgeInsets.all(15),
+                            child: ListView.separated(
+                                itemCount: allDownloadMap.keys.length,
+                                itemBuilder: (context, index){
+                                  return DownloadCard(
+                                    key: ValueKey(allDownloadMap.keys.toList()[index]),
+                                    allDownloadItemKey: allDownloadMap.keys.toList()[index],
+                                    allDownloadItemValueList: allDownloadMap.values.toList()[index],
+                                    onRemoveDownload: onRemoveDownload,
+                                  );
+                                }, 
+                                separatorBuilder: (_,__){
+                                  return  SizedBox(height: 10,);
+                                }, 
+                              ),
+                            
+                          )
+                        ),
+                      if (allDownloadMap.isEmpty)
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(15),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "No download found",
+                              style: GoogleFonts.nunito(
+                                fontSize: 24,
+                                color: appColors.textPrimary,
+                                fontWeight: FontWeight(700)
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                          ),
                         )
-                      )
-                      
-
-                    
-                    // Expanded(
-                    //   child: (searchContentResult.isEmpty)
-                    //     ? (isLoading)
-                    //         ? Container(
-                    //           alignment: Alignment.center,
-                    //           child: CircularProgressIndicator(
-                    //             color: appColors.secondary,
-                    //           )
-                    //         )
-                    //         : Container(
-                    //           alignment: Alignment.center,
-                    //           child: Text(
-                    //             "Try searching for something.",
-                    //             style: GoogleFonts.nunito(
-                    //               color: appColors.textPrimary,
-                    //               fontSize: 24,
-                    //               fontWeight: FontWeight(800)
-                    //             ),
-                    //           ),
-                    //         )
-                    //     : SizedBox(
-                    //       width: double.infinity,
-                    //       child: Scrollbar(
-                    //         controller: _scrollController,
-                    //         thickness: (Platform.isWindows ||
-                    //                 Platform.isLinux ||
-                    //                 Platform.isMacOS)
-                    //             ? null
-                    //             : 0,
-                    //         child: ListView.separated(
-                    //           controller: _scrollController,
-                    //           physics: const AlwaysScrollableScrollPhysics(),
-                    //           scrollDirection: Axis.vertical,
-                    //           itemCount: searchContentResult.length,
-                    //           itemBuilder: (context, index) {
-                    //             return SearchTile(
-                    //               key: ValueKey(searchContentResult[index].id),
-                    //               searchContentInfo: searchContentResult[index],
-                    //             );
-                    //           },
-                    //           separatorBuilder: (context, index) {
-                    //             return const SizedBox(width: 18);
-                    //           },
-                    //         )
-                    //       )
-                    //     )
-                        
-                    // )
-                    
                   ],
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
@@ -228,7 +195,8 @@ class DownloadState extends State<DownloadScreen> {
                   )
                   : null
               )
-            )
+            ),
+
           ],
         )
       )

@@ -5,6 +5,7 @@ import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_all_download.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
+import 'package:recombox/src/rust/method/download_provider/get_download_status.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 class EpisodeTile extends StatefulWidget {
@@ -38,6 +39,12 @@ class _EpisodeTileState extends State<EpisodeTile> {
   AppColorsScheme appColors = appColorsNotifier.value;
   bool failLoadThumbnail = false;
   bool isInDownload = false;
+  DownloadStatus downloadStatusResult = DownloadStatus(
+    progressSize: BigInt.from(0), 
+    totalSize: BigInt.from(0), 
+    paused: false, 
+    done: false
+  );
 
   @override
   void initState() {
@@ -48,16 +55,32 @@ class _EpisodeTileState extends State<EpisodeTile> {
 
   Future<void> initEpisode() async {
     try{
-      DownloadItemValue? downloadItemValue = await getDownload(
+      DownloadItemValue? downloadItemValue = await getDownload(downloadItemKey: DownloadItemKey(
         source: widget.source.name, 
         id: widget.viewID, 
         seasonIndex:  widget.season, 
         episodeIndex: widget.episode
-      );
-      if (downloadItemValue != null){
-        setState(() {
-          isInDownload = true;
-        });
+      ));
+
+      var downloadStatus = await getDownloadStatus(downloadItemKey: DownloadItemKey(
+        source: widget.source.name, 
+        id: widget.viewID, 
+        seasonIndex: widget.season,
+        episodeIndex: widget.episode
+      ));
+
+      if (context.mounted){
+        if (downloadItemValue != null){
+          setState(() {
+            isInDownload = true;
+            
+          });
+        }
+        if (downloadStatus != null){
+          setState(() {
+            downloadStatusResult = downloadStatus;
+          });
+        }
       }
     }catch(e){
       debugPrint(e.toString());
@@ -130,29 +153,39 @@ class _EpisodeTileState extends State<EpisodeTile> {
                       size: 32
                     )
                   ),
-                if (isInDownload)
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            valueColor: AlwaysStoppedAnimation<Color>(appColors.secondary),
+                if (isInDownload) ...[
+                  if (!downloadStatusResult.done)
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor: AlwaysStoppedAnimation<Color>(appColors.secondary),
+                            ),
                           ),
-                        ),
-                        Icon(
-                          Icons.download_rounded,
-                          size: 18,
+                          Icon(
+                            Icons.download_rounded,
+                            size: 18,
+                            color: appColors.secondary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (downloadStatusResult.done)
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.save_rounded,
+                          size: 32,
                           color: appColors.secondary,
                         ),
-                      ],
-                    ),
-                  )
-                
+                      )
+                ]
               ],
             ),
           ),

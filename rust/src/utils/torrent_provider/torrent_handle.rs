@@ -24,6 +24,23 @@ pub enum TorrentHandleMode{
     Download
 }
 
+impl TorrentHandleMode {
+    pub fn to_string(&self) -> String {
+        match self {
+            TorrentHandleMode::Watch => "watch".to_string(),
+            TorrentHandleMode::Download => "download".to_string()
+        }
+    }
+
+    pub fn from_str(s: &str) -> TorrentHandleMode {
+        match s.to_lowercase().as_str() {
+            "watch" => TorrentHandleMode::Watch,
+            "download" => TorrentHandleMode::Download,
+            _ => TorrentHandleMode::Watch
+        }
+    }
+}
+
 #[frb(json_serializable)]
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TorrentHandle {

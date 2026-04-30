@@ -121,22 +121,36 @@ class _DownloadTileState extends State<DownloadTile> {
         child: Row(
           spacing: 8,
           children: [
-            IconButton(
-              mouseCursor: SystemMouseCursors.click,
-              onPressed: onChangePause, 
-              icon: Icon(
-                downloadStatusResult.paused ? Icons.play_arrow : Icons.pause
+
+            if (downloadStatusResult.done)
+              Icon(
+                Icons.download_done_rounded,
+                size: 32,
+                color: appColors.secondary,
               ),
-              color: downloadStatusResult.paused ? Color(0xFF00FFFF): appColors.secondary,
+              
+
+            if (!downloadStatusResult.done)
+              IconButton(
+                mouseCursor: SystemMouseCursors.click,
+                onPressed: onChangePause, 
+                icon: Icon(
+                  downloadStatusResult.paused ? Icons.play_arrow : Icons.pause
+                ),
+                color: downloadStatusResult.paused ? Color(0xFF00FFFF): appColors.secondary,
+              ),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 100),
+              child: Text(
+                SourceExtension.fromString(widget.allDownloadItemKey.source) == Source.movies ? "Full" : "S${(widget.allDownloadItemValue.seasonIndex + BigInt.from(1)).toString().padLeft(2, '0')}E${(widget.allDownloadItemValue.episodeIndex + BigInt.from(1)).toString().padLeft(2, '0')}",
+                style: GoogleFonts.nunito(
+                  color: appColors.textPrimary,
+                  fontSize: 18
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             
-            Text(
-              SourceExtension.fromString(widget.allDownloadItemKey.source) == Source.movies ? "Full" : "S${(widget.allDownloadItemValue.seasonIndex + BigInt.from(1)).toString().padLeft(2, '0')}E${(widget.allDownloadItemValue.episodeIndex + BigInt.from(1)).toString().padLeft(2, '0')}",
-              style: GoogleFonts.nunito(
-                color: appColors.textPrimary,
-                fontSize: 18
-              )
-            ),
 
             Expanded(
               child: Container(
@@ -145,12 +159,13 @@ class _DownloadTileState extends State<DownloadTile> {
                 height: 5,
                 child: LinearProgressIndicator(
                   value: downloadStatusResult.progressSize.toDouble() / downloadStatusResult.totalSize.toDouble(),
+                  color: appColors.accentSecondary,
                 ),
               )
             ),
 
             Text(
-              "${formatBytes(downloadStatusResult.progressSize)}/${formatBytes(downloadStatusResult.totalSize)}",
+              "${((downloadStatusResult.progressSize/downloadStatusResult.totalSize).toDouble() * 100).toStringAsFixed(2)}% | ${formatBytes(downloadStatusResult.totalSize)}",
               style: GoogleFonts.nunito(
                 color: appColors.textPrimary,
                 fontSize: 18

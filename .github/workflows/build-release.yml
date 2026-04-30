@@ -1,0 +1,144 @@
+name: Build & Release Flutter App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Get pubspec name & version
+        id: pkg
+        run: |
+          NAME=$(grep '^name:' pubspec.yaml | sed 's/name: //')
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build Flutter (Desktop)
+        run: |
+          flutter pub get
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            flutter build windows
+            flutter pub run msix:create
+            mv build/windows/runner/Release/*.msix ${{ steps.pkg.outputs.name }}-windows.msix
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            flutter build macos
+            zip -r ${{ steps.pkg.outputs.name }}-macos.zip build/macos/Build/Products/Release/*.app
+          else
+            flutter build linux
+            tar -czf ${{ steps.pkg.outputs.name }}-linux.tar.gz build/linux/x64/release/bundle/${{ steps.pkg.outputs.name }}
+          fi
+
+      - name: Upload desktop binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: ${{ steps.pkg.outputs.name }}-*
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build Android (split APKs)
+        run: |
+          flutter pub get
+          flutter build apk --split-per-abi
+          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk ${{ steps.pkg.outputs.name }}-android-armeabi-v7a.apk
+          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ${{ steps.pkg.outputs.name }}-android-arm64-v8a.apk
+          mv build/app/outputs/flutter-apk/app-x86_64-release.apk ${{ steps.pkg.outputs.name }}-android-x86_64.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-android
+          path: ${{ steps.pkg.outputs.name }}-android-*.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build iOS (unsigned)
+        run: |
+          flutter pub get
+          flutter build ios --no-codesign
+      - name: Package unsigned IPA
+        run: |
+          mkdir Payload
+          cp -r build/ios/iphoneos/*.app Payload/
+          zip -r ${{ steps.pkg.outputs.name }}-ios.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-ios
+          path: ${{ steps.pkg.outputs.name }}-ios.ipa
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build, android, ios]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: Release v${{ needs.build.outputs.version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate latest.json
+        run: |
+          jq -n \
+            --arg version "${{ needs.build.outputs.version }}" \
+            --arg app "${{ needs.build.outputs.name }}" \
+            '{
+              version: $version,
+              release: {
+                "windows": { "x86_64": "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-windows.msix" },
+                "macos":   { "x86_64": "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-macos.zip" },
+                "linux":   { "x86_64": "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-linux.tar.gz" },
+                "android": {
+                  "armeabi-v7a": "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-android-armeabi-v7a.apk",
+                  "arm64-v8a":   "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-android-arm64-v8a.apk",
+                  "x86_64":      "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-android-x86_64.apk"
+                },
+                "ios":     { "aarch64": "https://github.com/${{ github.repository }}/releases/download/v\($version)/\($app)-ios.ipa" }
+              }
+            }' > latest.json
+
+      - name: Upload latest.json to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: latest.json
+          tag: v${{ needs.build.outputs.version }}
+          overwrite: true
+          draft: true

@@ -8,7 +8,7 @@ import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/routes/watch/watch.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
-import 'package:recombox/src/rust/method/download_provider/add_download.dart';
+import 'package:recombox/src/rust/method/download_provider/set_download.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/favorite/set_last_watch_torrent.dart';
 import 'package:recombox/src/rust/method/plugin_provider.dart';
@@ -63,9 +63,8 @@ class _SelectFileTileState extends State<SelectFileTile> {
 
   Future<void> onSelectFile() async {
     final ctx = context;
+    final mimeType = lookupMimeType(widget.fileInfo.path??"")??"application/octet-stream";
     if (widget.selectFileMode == SelectFileMode.watch){
-      final mimeType = lookupMimeType(widget.fileInfo.path??"")??"application/octet-stream";
-
       try{
         await setLastWatchTorrent(
           source: widget.source.name, 
@@ -106,7 +105,7 @@ class _SelectFileTileState extends State<SelectFileTile> {
       }
     }else if (widget.selectFileMode == SelectFileMode.download){
       try{
-        await addDownload(
+        await setDownload(
           downloadItemKey: DownloadItemKey(
             source: widget.source.name, 
             id: widget.viewID, 
@@ -116,7 +115,8 @@ class _SelectFileTileState extends State<SelectFileTile> {
           downloadItemValue: DownloadItemValue(
             torrentSource: widget.torrentSource, 
             fileId: widget.fileInfo.id, 
-            filePath: widget.fileInfo.path!
+            filePath: "",
+            mimeType: mimeType,
           )
         );
 

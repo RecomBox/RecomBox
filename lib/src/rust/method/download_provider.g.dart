@@ -27,6 +27,7 @@ _DownloadItemValue _$DownloadItemValueFromJson(Map<String, dynamic> json) =>
       torrentSource: json['torrentSource'] as String,
       fileId: BigInt.parse(json['fileId'] as String),
       filePath: json['filePath'] as String,
+      mimeType: json['mimeType'] as String,
     );
 
 Map<String, dynamic> _$DownloadItemValueToJson(_DownloadItemValue instance) =>
@@ -34,6 +35,7 @@ Map<String, dynamic> _$DownloadItemValueToJson(_DownloadItemValue instance) =>
       'torrentSource': instance.torrentSource,
       'fileId': instance.fileId.toString(),
       'filePath': instance.filePath,
+      'mimeType': instance.mimeType,
     };
 
 _DownloadStatus _$DownloadStatusFromJson(Map<String, dynamic> json) =>

@@ -8,12 +8,6 @@ import '../download_provider.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<DownloadItemValue?> getDownload(
-        {required String source,
-        required String id,
-        required BigInt seasonIndex,
-        required BigInt episodeIndex}) =>
+        {required DownloadItemKey downloadItemKey}) =>
     RustLib.instance.api.crateMethodDownloadProviderGetDownloadGetDownload(
-        source: source,
-        id: id,
-        seasonIndex: seasonIndex,
-        episodeIndex: episodeIndex);
+        downloadItemKey: downloadItemKey);

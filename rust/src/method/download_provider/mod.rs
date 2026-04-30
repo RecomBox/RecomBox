@@ -1,4 +1,4 @@
-pub mod add_download;
+pub mod set_download;
 pub mod get_download;
 pub mod remove_download;
 
@@ -40,6 +40,7 @@ pub struct DownloadItemValue{
     pub torrent_source: String,
     pub file_id: u64,
     pub file_path: String,
+    pub mime_type: String,
 }
 
 

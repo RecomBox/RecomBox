@@ -33,11 +33,15 @@ class _SubtitleTrackControlDialogState extends State<SubtitleTrackControlDialog>
   }
 
   void onSubtitleTrackChange(SubtitleTrack track){
-    widget.player.setSubtitleTrack(track);
+    if (context.mounted){
+      widget.player.setSubtitleTrack(track);
+    }
   }
 
   void onDisableSubtitle(){
-    widget.player.setSubtitleTrack(SubtitleTrack.no());
+    if (context.mounted){
+      widget.player.setSubtitleTrack(SubtitleTrack.no());
+    }
   }
 
   void onClose(){

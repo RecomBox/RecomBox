@@ -380,6 +380,7 @@ mixin _$DownloadItemValue {
   String get torrentSource;
   BigInt get fileId;
   String get filePath;
+  String get mimeType;
 
   /// Create a copy of DownloadItemValue
   /// with the given fields replaced by the non-null parameter values.
@@ -401,16 +402,19 @@ mixin _$DownloadItemValue {
                 other.torrentSource == torrentSource) &&
             (identical(other.fileId, fileId) || other.fileId == fileId) &&
             (identical(other.filePath, filePath) ||
-                other.filePath == filePath));
+                other.filePath == filePath) &&
+            (identical(other.mimeType, mimeType) ||
+                other.mimeType == mimeType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, torrentSource, fileId, filePath);
+  int get hashCode =>
+      Object.hash(runtimeType, torrentSource, fileId, filePath, mimeType);
 
   @override
   String toString() {
-    return 'DownloadItemValue(torrentSource: $torrentSource, fileId: $fileId, filePath: $filePath)';
+    return 'DownloadItemValue(torrentSource: $torrentSource, fileId: $fileId, filePath: $filePath, mimeType: $mimeType)';
   }
 }
 
@@ -420,7 +424,8 @@ abstract mixin class $DownloadItemValueCopyWith<$Res> {
           DownloadItemValue value, $Res Function(DownloadItemValue) _then) =
       _$DownloadItemValueCopyWithImpl;
   @useResult
-  $Res call({String torrentSource, BigInt fileId, String filePath});
+  $Res call(
+      {String torrentSource, BigInt fileId, String filePath, String mimeType});
 }
 
 /// @nodoc
@@ -439,6 +444,7 @@ class _$DownloadItemValueCopyWithImpl<$Res>
     Object? torrentSource = null,
     Object? fileId = null,
     Object? filePath = null,
+    Object? mimeType = null,
   }) {
     return _then(_self.copyWith(
       torrentSource: null == torrentSource
@@ -452,6 +458,10 @@ class _$DownloadItemValueCopyWithImpl<$Res>
       filePath: null == filePath
           ? _self.filePath
           : filePath // ignore: cast_nullable_to_non_nullable
+              as String,
+      mimeType: null == mimeType
+          ? _self.mimeType
+          : mimeType // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -548,14 +558,16 @@ extension DownloadItemValuePatterns on DownloadItemValue {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String torrentSource, BigInt fileId, String filePath)?
+    TResult Function(String torrentSource, BigInt fileId, String filePath,
+            String mimeType)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _DownloadItemValue() when $default != null:
-        return $default(_that.torrentSource, _that.fileId, _that.filePath);
+        return $default(
+            _that.torrentSource, _that.fileId, _that.filePath, _that.mimeType);
       case _:
         return orElse();
     }
@@ -576,13 +588,15 @@ extension DownloadItemValuePatterns on DownloadItemValue {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String torrentSource, BigInt fileId, String filePath)
+    TResult Function(String torrentSource, BigInt fileId, String filePath,
+            String mimeType)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _DownloadItemValue():
-        return $default(_that.torrentSource, _that.fileId, _that.filePath);
+        return $default(
+            _that.torrentSource, _that.fileId, _that.filePath, _that.mimeType);
     }
   }
 
@@ -600,13 +614,15 @@ extension DownloadItemValuePatterns on DownloadItemValue {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String torrentSource, BigInt fileId, String filePath)?
+    TResult? Function(String torrentSource, BigInt fileId, String filePath,
+            String mimeType)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _DownloadItemValue() when $default != null:
-        return $default(_that.torrentSource, _that.fileId, _that.filePath);
+        return $default(
+            _that.torrentSource, _that.fileId, _that.filePath, _that.mimeType);
       case _:
         return null;
     }
@@ -619,7 +635,8 @@ class _DownloadItemValue implements DownloadItemValue {
   const _DownloadItemValue(
       {required this.torrentSource,
       required this.fileId,
-      required this.filePath});
+      required this.filePath,
+      required this.mimeType});
   factory _DownloadItemValue.fromJson(Map<String, dynamic> json) =>
       _$DownloadItemValueFromJson(json);
 
@@ -629,6 +646,8 @@ class _DownloadItemValue implements DownloadItemValue {
   final BigInt fileId;
   @override
   final String filePath;
+  @override
+  final String mimeType;
 
   /// Create a copy of DownloadItemValue
   /// with the given fields replaced by the non-null parameter values.
@@ -654,16 +673,19 @@ class _DownloadItemValue implements DownloadItemValue {
                 other.torrentSource == torrentSource) &&
             (identical(other.fileId, fileId) || other.fileId == fileId) &&
             (identical(other.filePath, filePath) ||
-                other.filePath == filePath));
+                other.filePath == filePath) &&
+            (identical(other.mimeType, mimeType) ||
+                other.mimeType == mimeType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, torrentSource, fileId, filePath);
+  int get hashCode =>
+      Object.hash(runtimeType, torrentSource, fileId, filePath, mimeType);
 
   @override
   String toString() {
-    return 'DownloadItemValue(torrentSource: $torrentSource, fileId: $fileId, filePath: $filePath)';
+    return 'DownloadItemValue(torrentSource: $torrentSource, fileId: $fileId, filePath: $filePath, mimeType: $mimeType)';
   }
 }
 
@@ -675,7 +697,8 @@ abstract mixin class _$DownloadItemValueCopyWith<$Res>
       __$DownloadItemValueCopyWithImpl;
   @override
   @useResult
-  $Res call({String torrentSource, BigInt fileId, String filePath});
+  $Res call(
+      {String torrentSource, BigInt fileId, String filePath, String mimeType});
 }
 
 /// @nodoc
@@ -694,6 +717,7 @@ class __$DownloadItemValueCopyWithImpl<$Res>
     Object? torrentSource = null,
     Object? fileId = null,
     Object? filePath = null,
+    Object? mimeType = null,
   }) {
     return _then(_DownloadItemValue(
       torrentSource: null == torrentSource
@@ -707,6 +731,10 @@ class __$DownloadItemValueCopyWithImpl<$Res>
       filePath: null == filePath
           ? _self.filePath
           : filePath // ignore: cast_nullable_to_non_nullable
+              as String,
+      mimeType: null == mimeType
+          ? _self.mimeType
+          : mimeType // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }

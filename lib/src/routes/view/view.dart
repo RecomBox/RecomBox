@@ -7,6 +7,8 @@ import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/routes/view/widgets/episode_tile.dart';
 import 'package:recombox/src/routes/watch/watch.dart';
+import 'package:recombox/src/rust/method/download_provider.dart';
+import 'package:recombox/src/rust/method/download_provider/get_download.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/favorite/get_last_watch_torrent.dart';
 import 'package:recombox/src/rust/method/favorite/is_in_category.dart';
@@ -41,9 +43,11 @@ class _ViewState extends State<ViewScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      isLoading = true;
-    });
+    if (context.mounted){
+      setState(() {
+        isLoading = true;
+      });
+    }
 
     // Defer until after build context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -107,24 +111,29 @@ class _ViewState extends State<ViewScreen> with RouteAware {
 
   
   Future<void> initViewContentInfo({bool fromCache=true}) async {
+    if (!context.mounted) return;
     countdownTimer?.cancel();
-    setState(() {
-      isLoading = true;
-    });
+    if (context.mounted){
+      setState(() {
+        isLoading = true;
+      });
+    }
     try{
       var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache);
-      debugPrint(data.lastWatchSeasonIndex.toString());
-
-      debugPrint(data.lastWatchEpisodeIndex.toString());
-      setState(() {
-        viewContentInfoResult = data;
-        currentSeasonIndex = (data.lastWatchSeasonIndex??BigInt.from(0)).toInt();
-      });
+      if (context.mounted){
+        
+        setState(() {
+          viewContentInfoResult = data;
+          currentSeasonIndex = (data.lastWatchSeasonIndex??BigInt.from(0)).toInt();
+        });
+      }
     }catch(e){
       debugPrint(e.toString());
-      setState(() {
-        isError = true;
-      });
+      if (context.mounted){
+        setState(() {
+          isError = true;
+        });
+      }
       return;
     }
     
@@ -137,10 +146,11 @@ class _ViewState extends State<ViewScreen> with RouteAware {
 
     onFavoriteUpdate();
     
-    
-    setState(() {
-      isLoading = false;
-    });
+    if (context.mounted){
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void updateCountdown() {
@@ -152,14 +162,16 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     DateTime now = DateTime.now().toUtc();
     Duration diff = future.difference(now);
 
-    setState(() {
-      countdown = [
-        diff.inDays,
-        diff.inHours.remainder(24),
-        diff.inMinutes.remainder(60),
-        diff.inSeconds.remainder(60),
-      ];
-    });
+    if (context.mounted){
+      setState(() {
+        countdown = [
+          diff.inDays,
+          diff.inHours.remainder(24),
+          diff.inMinutes.remainder(60),
+          diff.inSeconds.remainder(60),
+        ];
+      });
+    }
 
     // Reached the end
     if (diff.isNegative || diff.inSeconds <= 0) {
@@ -173,15 +185,19 @@ class _ViewState extends State<ViewScreen> with RouteAware {
         source: args.source.name, 
         id: args.id,
     );
-    setState(() {
-      isInFavorite = inFavorite;
-    });
+    if (context.mounted){
+      setState(() {
+        isInFavorite = inFavorite;
+      });
+    }
   }
 
   void onSeasonChange(int index){
-    setState(() {
-      currentSeasonIndex = index;
-    });
+    if (context.mounted){
+      setState(() {
+        currentSeasonIndex = index;
+      });
+    }
   }
 
   List<EpisodeInfo> onFilterChange() {
@@ -212,6 +228,42 @@ class _ViewState extends State<ViewScreen> with RouteAware {
 
   Future<void> onNavigateWatch(BigInt seasonIndex, BigInt episodeIndex) async{
     final ctx = context;
+    // -> Get downloaded
+    try{
+      final download_info = await getDownload(downloadItemKey: DownloadItemKey(
+        source: args.source.name, 
+        id: args.id, 
+        seasonIndex: seasonIndex, 
+        episodeIndex: episodeIndex
+      ));
+
+      if (download_info != null){
+        WatchScreenArguments watchScreenArgs = WatchScreenArguments(
+          selectFileMode: SelectFileMode.watch,
+          source: args.source, 
+          viewID: args.id, 
+          externalID: viewContentInfoResult!.externalId, 
+          title: viewContentInfoResult!.title, 
+          titleSecondary: viewContentInfoResult!.titleSecondary, 
+          torrentSource: download_info.torrentSource, 
+          mimeType: download_info.mimeType, 
+          fileID: download_info.fileId, 
+          season: seasonIndex,
+          episode: episodeIndex
+        );
+        if (ctx.mounted){
+          Navigator.pushNamed(
+            ctx,
+            '/watch',
+            arguments: watchScreenArgs,
+          );
+        }
+      }
+    }catch(e){
+      debugPrint(e.toString());
+    }
+    // <-
+
     try{
       LastWatchTorrentInfo? lastWatchTorrentInfo = await getLastWatchTorrent(
         source: args.source.name, 
@@ -795,9 +847,11 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                           for (var entry in tabList.asMap().entries)
                             ElevatedButton.icon(
                               onPressed: (){
-                                setState(() {
-                                  currentTabIndex = entry.key;
-                                });
+                                if (context.mounted){
+                                  setState(() {
+                                    currentTabIndex = entry.key;
+                                  });
+                                }
                               },
                               icon: Icon(entry.value["icon"] as IconData),
                               label: Text(entry.value["label"] as String),
@@ -864,11 +918,13 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                         child: TextField(
                                           controller: _textEditingController,
                                           onChanged: (_){
+                                            if (!context.mounted) return;
                                             setState(() {
                                               filteredEpisodes = onFilterChange();
                                             });
                                           },
                                           onSubmitted: (value){
+                                            if (!context.mounted) return;
                                             setState(() {
                                               filteredEpisodes = onFilterChange();
                                             });

@@ -30,7 +30,9 @@ class _AudioTrackControlDialogState extends State<AudioTrackControlDialog> {
   }
 
   void onAudioTrackChange(AudioTrack track){
-    widget.player.setAudioTrack(track);
+    if (context.mounted){
+      widget.player.setAudioTrack(track);
+    }
   }
 
   void onClose(){

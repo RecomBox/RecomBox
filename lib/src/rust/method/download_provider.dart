@@ -36,6 +36,7 @@ sealed class DownloadItemValue with _$DownloadItemValue {
     required String torrentSource,
     required BigInt fileId,
     required String filePath,
+    required String mimeType,
   }) = _DownloadItemValue;
 
   factory DownloadItemValue.fromJson(Map<String, dynamic> json) =>

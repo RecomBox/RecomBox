@@ -58,12 +58,7 @@ pub async fn set_download_status(
     write_txn.commit().map_err(|e| e.to_string())?;
 
     if download_status.paused {
-        let download_info = get_download(
-            &download_item_key.source, 
-            &download_item_key.id, 
-            download_item_key.season_index, 
-            download_item_key.episode_index
-        ).await?;
+        let download_info = get_download(&download_item_key).await?;
 
         let settings = Settings::get()
             .map_err(|e| e.to_string())?;

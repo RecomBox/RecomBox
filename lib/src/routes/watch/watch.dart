@@ -1,35 +1,30 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:mime/mime.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
-import 'package:recombox/src/routes/home/widgets/content_section.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/routes/watch/dialogs/audio_track_control.dart';
 import 'package:recombox/src/routes/watch/dialogs/subtitle_track_control%20.dart';
+import 'package:recombox/src/rust/method/download_provider.dart';
+import 'package:recombox/src/rust/method/download_provider/get_download.dart';
+import 'package:recombox/src/rust/method/download_provider/get_download_status.dart';
 import 'package:recombox/src/rust/method/get_settings.dart';
 import 'package:recombox/src/rust/method/metadata_provider/featured_content.dart';
 import 'package:recombox/src/rust/method/metadata_provider/trending_content.dart';
-import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_horizontal.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'dart:math';
-import 'package:media_kit_video/media_kit_video.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path/path.dart' as path;
 
-
-
-import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_vertical.dart';
 import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/torrent_provider/free_torrent_handle.dart';
 import 'package:recombox/src/rust/utils/torrent_provider/torrent_handle.dart';
-import 'package:snowflaker/snowflaker.dart';
 import 'package:window_manager/window_manager.dart';
 
 
@@ -81,6 +76,7 @@ class _WatchState extends State<WatchScreen> {
   AppColorsScheme appColors = appColorsNotifier.value;
 
   WatchScreenArguments? args;
+  TorrentHandleMode torrentHandleMode = TorrentHandleMode.watch;
 
   late final player = Player();
   late final controller = VideoController(
@@ -106,25 +102,28 @@ class _WatchState extends State<WatchScreen> {
     // Defer until after build context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final rawArgs = ModalRoute.of(context)?.settings.arguments;
-      setState(() {
-        args = rawArgs is  WatchScreenArguments
-            ? rawArgs
-            :  WatchScreenArguments(
-              selectFileMode: SelectFileMode.watch,
-              viewID: "72673844%20loki-test",
-              externalID: "tt123",
-              source: Source.tv,
-              title: "One Piece",
-              titleSecondary: "One Piece",
-              torrentSource: "magnet:?xt=urn:btih:b130fefafb59f52390650a758b5c2810d4333e5c&dn=%5BToonsHub%5D%20One%20Piece%20S01E01-16%201080p%20NF%20WEB-DL%20MULTi%20AAC2.0%20H.264%20%28REMASTERED%2C%20Multi-Audio%2C%20Multi-Subs%29%20%5BBATCH%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce",
-              mimeType: "video/mp4",
-              fileID: BigInt.from(0),
-              season: BigInt.from(1),
-              episode: BigInt.from(1)
-            );
-      });
-      debugPrint(args.toString());
-      initWatch();
+      if (context.mounted){
+
+        setState(() {
+          args = rawArgs is  WatchScreenArguments
+              ? rawArgs
+              :  WatchScreenArguments(
+                selectFileMode: SelectFileMode.watch,
+                viewID: "72673844%20loki-test",
+                externalID: "tt123",
+                source: Source.tv,
+                title: "One Piece",
+                titleSecondary: "One Piece",
+                torrentSource: "magnet:?xt=urn:btih:b130fefafb59f52390650a758b5c2810d4333e5c&dn=%5BToonsHub%5D%20One%20Piece%20S01E01-16%201080p%20NF%20WEB-DL%20MULTi%20AAC2.0%20H.264%20%28REMASTERED%2C%20Multi-Audio%2C%20Multi-Subs%29%20%5BBATCH%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce",
+                mimeType: "video/mp4",
+                fileID: BigInt.from(0),
+                season: BigInt.from(1),
+                episode: BigInt.from(1)
+              );
+        });
+        debugPrint(args.toString());
+        initWatch();
+      }
     });
 
     
@@ -135,9 +134,9 @@ class _WatchState extends State<WatchScreen> {
     player.dispose();
     try{
       freeTorrentHandle(
-        torrentHandleMode: TorrentHandleMode.watch,
+        torrentHandleMode: torrentHandleMode,
         torrentSource: args!.torrentSource,
-        deleteFiles: true
+        deleteFiles: torrentHandleMode == TorrentHandleMode.watch ? true : false
       );
     }catch(e){
       debugPrint(e.toString());
@@ -145,8 +144,6 @@ class _WatchState extends State<WatchScreen> {
     super.dispose();
   }
 
-
-  BigInt handleID = BigInt.from(0);
 
   Future<void> initWatch({bool fromCache=true}) async {
     if (!context.mounted) return;
@@ -170,36 +167,90 @@ class _WatchState extends State<WatchScreen> {
       }catch(e){
         debugPrint(e.toString());
       }
-      final snowflaker = Snowflaker(workerId: 1, datacenterId: 1);
-      setState(() {
-        handleID = BigInt.from(snowflaker.nextId().toInt());
-      });
       
       final settings = await getSettings();
 
       final port = settings.port;
-      debugPrint(port.toString());
-      final uri = Uri(
-        scheme: 'http',
-        host: '127.0.0.1',
-        port: port,
-        path: 'stream_video',
-        queryParameters: {
-          'torrent_source': args!.torrentSource,
-          'mime_type': args!.mimeType,
-          'file_id': args!.fileID.toString(),
-          'view_id': args!.viewID,
-          'season': args!.season.toString(),
-          'episode': args!.episode.toString()
-        },
-      );
-
-      debugPrint(uri.toString());
-
-      player.open(Media(uri.toString()));
-      // player.open(Media("https://github.com/ietf-wg-cellar/matroska-test-files/raw/refs/heads/master/test_files/test5.mkv"));
       
-      debugPrint(handleID.toString());
+
+      final currentDownloadStatus = await getDownloadStatus(downloadItemKey: DownloadItemKey(
+        source: args!.source.name, 
+        id: args!.viewID, 
+        seasonIndex: args!.season, 
+        episodeIndex: args!.episode
+      ));
+      final downloadInfo = await getDownload(downloadItemKey: DownloadItemKey(
+        source: args!.source.name, 
+        id: args!.viewID, 
+        seasonIndex: args!.season, 
+        episodeIndex: args!.episode
+      ));
+
+      debugPrint(currentDownloadStatus.toString());
+
+      var useLocal = false;
+      torrentHandleMode = TorrentHandleMode.watch;
+
+      
+      if (currentDownloadStatus != null && downloadInfo != null){
+        if (!currentDownloadStatus.paused){
+          torrentHandleMode = TorrentHandleMode.download;
+        }
+
+        if (currentDownloadStatus.done){
+          final downloadItemInfo = await getDownload(downloadItemKey: DownloadItemKey(
+            source: args!.source.name, 
+            id: args!.viewID, 
+            seasonIndex: args!.season, 
+            episodeIndex: args!.episode
+          ));
+          if (downloadItemInfo != null){
+            final filePath = path.join(
+              settings.paths.appSupportDir,
+              "download",
+              args!.source.name,
+              args!.viewID,
+              downloadItemInfo.filePath
+            );
+
+            debugPrint(args!.viewID);
+
+            debugPrint(Uri.file(filePath).toString());
+            useLocal = true;
+
+            if (context.mounted){
+              player.open(Media(Uri.file(filePath).toString()));
+            }
+          }
+        }
+      }
+      
+      
+      
+
+      if (!useLocal){
+        final uri = Uri(
+          scheme: 'http',
+          host: '127.0.0.1',
+          port: port,
+          path: 'stream_video',
+          queryParameters: {
+            'torrent_handle_mode': torrentHandleMode.name,
+            'torrent_source': args!.torrentSource,
+            'mime_type': args!.mimeType,
+            'file_id': args!.fileID.toString(),
+            'view_id': args!.viewID,
+            'season': args!.season.toString(),
+            'episode': args!.episode.toString()
+          },
+        );
+
+        
+        if (context.mounted){
+          player.open(Media(uri.toString()));
+        }
+      }
+      
     }catch(e){
       debugPrint(e.toString());
     }
@@ -283,19 +334,19 @@ class _WatchState extends State<WatchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen to audio tracks
-    player.stream.tracks.listen((tracks) {
-      for (final a in tracks.audio) {
-        debugPrint('Audio track: ${a.id} ${a.language} ${a.codec}');
-      }
-    });
+    // // Listen to audio tracks
+    // player.stream.tracks.listen((tracks) {
+    //   for (final a in tracks.audio) {
+    //     debugPrint('Audio track: ${a.id} ${a.language} ${a.codec}');
+    //   }
+    // });
 
-    player.stream.tracks.listen((tracks) {
-      // Print all subtitle tracks
-      for (final subtitle in tracks.subtitle) {
-        debugPrint('Subtitle: id=${subtitle.id}, title=${subtitle.title}, language=${subtitle.language}');
-      }
-    });
+    // player.stream.tracks.listen((tracks) {
+    //   // Print all subtitle tracks
+    //   for (final subtitle in tracks.subtitle) {
+    //     debugPrint('Subtitle: id=${subtitle.id}, title=${subtitle.title}, language=${subtitle.language}');
+    //   }
+    // });
 
   List<Widget> topButtonBar = [
     IconButton(

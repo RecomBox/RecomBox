@@ -9,8 +9,13 @@ pub async fn get_download_status(
     let db = get_db()?;
     let read_txn = db.begin_read().map_err(|e| e.to_string())?;
 
-    let table = read_txn.open_table(DOWNLOAD_STATUS_TABLE)
-        .map_err(|e| e.to_string())?;
+    let table = match read_txn.open_table(DOWNLOAD_STATUS_TABLE) {
+        Ok(t) => t,
+        Err(e) => {
+            println!("[{}:{}] {}", file!(), line!(), e);
+            return Ok(None);
+        },
+    };
 
     // Encode the key as an array (same style as add_download)
     let encoded_key = serde_json::to_vec(&[

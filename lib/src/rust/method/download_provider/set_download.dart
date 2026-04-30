@@ -7,8 +7,8 @@ import '../../frb_generated.dart';
 import '../download_provider.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<void> addDownload(
+Future<void> setDownload(
         {required DownloadItemKey downloadItemKey,
         required DownloadItemValue downloadItemValue}) =>
-    RustLib.instance.api.crateMethodDownloadProviderAddDownloadAddDownload(
+    RustLib.instance.api.crateMethodDownloadProviderSetDownloadSetDownload(
         downloadItemKey: downloadItemKey, downloadItemValue: downloadItemValue);
