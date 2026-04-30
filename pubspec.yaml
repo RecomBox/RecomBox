@@ -130,6 +130,7 @@ msix_config:
   display_name: RecomBox
   publisher_display_name: io.github.RecomBox
   identity_name: io.github.RecomBox.RecomBox
+  publisher: CN=RecomBox
   logo_path: assets/icon/icon-transparent.png
-  install_certificate: true
+  install_certificate: false
   capabilities: runFullTrust
