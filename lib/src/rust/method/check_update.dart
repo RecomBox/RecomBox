@@ -5,23 +5,30 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'check_update.freezed.dart';
-part 'check_update.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `eq`, `fmt`
 
-@freezed
-sealed class CheckUpdate with _$CheckUpdate {
-  const CheckUpdate._();
-  const factory CheckUpdate({
-    required String latestVersion,
-    required String downloadUrl,
-  }) = _CheckUpdate;
+class CheckUpdate {
+  final String latestVersion;
+  final String downloadUrl;
+
+  const CheckUpdate({
+    required this.latestVersion,
+    required this.downloadUrl,
+  });
+
   // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
   static Future<CheckUpdate?> newInstance() =>
       RustLib.instance.api.crateMethodCheckUpdateCheckUpdateNew();
 
-  factory CheckUpdate.fromJson(Map<String, dynamic> json) =>
-      _$CheckUpdateFromJson(json);
+  @override
+  int get hashCode => latestVersion.hashCode ^ downloadUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CheckUpdate &&
+          runtimeType == other.runtimeType &&
+          latestVersion == other.latestVersion &&
+          downloadUrl == other.downloadUrl;
 }

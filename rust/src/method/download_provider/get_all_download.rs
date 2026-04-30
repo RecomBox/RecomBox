@@ -30,8 +30,13 @@ pub async fn get_all_download() -> Result<HashMap<AllDownloadItemKey,Vec<AllDown
     let db = get_db()?;
     let read_txn = db.begin_read().map_err(|e| e.to_string())?;
 
-    let table = read_txn.open_table(DOWNLOAD_TABLE)
-        .map_err(|e| e.to_string())?;
+    let table = match read_txn.open_table(DOWNLOAD_TABLE) {
+        Ok(table) => table,
+        Err(e) => {
+            println!("[{}:{}] Failed to open table: {}", file!(),  line!(), e);
+            return Ok(HashMap::new());
+        },
+    };
 
     let mut result: HashMap<AllDownloadItemKey, Vec<AllDownloadItemValue>> = HashMap::new();
 
