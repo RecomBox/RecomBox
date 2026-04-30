@@ -67,10 +67,11 @@ if ! sudo curl -Lf "$ICON_URL" -o "$INSTALL_DIR/icon.png"; then
     echo "⚠️  Warning: Icon download failed, but the app was installed."
 fi
 
-# FIX: Create the applications directory if it doesn't exist
-sudo mkdir -p /usr/local/share/applications/
+# Ensure the applications directory exists
+sudo mkdir -p /usr/share/applications/
 
-sudo bash -c "cat > /usr/local/share/applications/${BINARY_NAME}.desktop" <<EOF
+# FIX: Using 'tee' to handle redirection with sudo privileges
+cat <<EOF | sudo tee "/usr/share/applications/${BINARY_NAME}.desktop" > /dev/null
 [Desktop Entry]
 Type=Application
 Name=$APP_NAME
