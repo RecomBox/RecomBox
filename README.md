@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/github/v/release/RecomBox/RecomBox" />
     </a>
     <a href="https://github.com/RecomBox/RecomBox/releases">
-        <img src="https://img.shields.io/github/downloads/GoodDay360/HyperionBox/total?color=green" />
+        <img src="https://img.shields.io/github/downloads/RecomBox/RecomBox/total?color=green" />
     </a>
     <a href="https://github.com/RecomBox/RecomBox">
         <img src="https://img.shields.io/badge/human-coded-purple?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1wZXJzb24tc3RhbmRpbmctaWNvbiBsdWNpZGUtcGVyc29uLXN0YW5kaW5nIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjUiIHI9IjEiLz48cGF0aCBkPSJtOSAyMCAzLTYgMyA2Ii8+PHBhdGggZD0ibTYgOCA2IDIgNi0yIi8+PHBhdGggZD0iTTEyIDEwdjQiLz48L3N2Zz4=" />
