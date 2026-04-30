@@ -201,6 +201,7 @@ class _WatchState extends State<WatchScreen> {
         }
 
         if (currentDownloadStatus.done){
+          torrentHandleMode = TorrentHandleMode.download;
           final downloadItemInfo = await getDownload(downloadItemKey: DownloadItemKey(
             source: args!.source.name, 
             id: args!.viewID, 
