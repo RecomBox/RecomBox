@@ -70,15 +70,10 @@ jobs:
         if: matrix.target == 'windows'
         shell: pwsh
         run: |
-          # 1. Extract metadata
           $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
-          $buildDir = Resolve-Path "build/windows/x64/release/runner"
-          
+          $buildDir = (Resolve-Path "build/windows/x64/release/runner").Path
           mkdir -p dist
-
-          # 2. Compile NSIS Installer
-          # makensis is pre-installed on windows-latest
-          makensis /DAPP_NAME="$appName" /DBUILD_DIR="$buildDir" windows.nsi
+          makensis /DAPP_NAME="$appName" "/DBUILD_DIR=$buildDir" windows.nsi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -116,17 +111,12 @@ jobs:
         run: |
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
-          
-          # Windows (Now .exe)
           find artifacts -name "*.exe" -exec cp {} dist/ \;
-          
-          # Android
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
           find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
           find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
           
-          # iOS
           IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
           if [ -d "$IOS_APP_PATH" ]; then
             mkdir -p Payload
@@ -135,7 +125,6 @@ jobs:
             rm -rf Payload
           fi
 
-          # macOS
           MAC_APP_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
           if [ -d "$MAC_APP_PATH" ]; then
             sudo apt-get update && sudo apt-get install -y genisoimage
@@ -145,7 +134,6 @@ jobs:
             rm -rf mac_dmg_folder
           fi
 
-          # Linux
           LINUX_PATH=$(find artifacts -type d -name "bundle" | head -n 1)
           if [ -d "$LINUX_PATH" ]; then
             tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .

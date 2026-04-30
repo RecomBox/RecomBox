@@ -1,15 +1,19 @@
 !include "MUI2.nsh"
 
-Name "${APP_NAME}"
+# Use "RecomBox" for the installer UI and folder naming
+Name "RecomBox"
 OutFile "dist\${APP_NAME}-windows-x86_64.exe"
-InstallDir "$PROGRAMFILES64\${APP_NAME}"
+InstallDir "$PROGRAMFILES64\RecomBox"
 RequestExecutionLevel admin
 
+# App Icon
 !define MUI_ICON "windows\runner\resources\app_icon.ico"
 
+# Pages
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
+# Uninstaller pages
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -18,19 +22,34 @@ RequestExecutionLevel admin
 Section "MainSection" SEC01
     SetOutPath "$INSTDIR"
     
-    # This grabs EVERYTHING in the build folder recursively
+    # Grabs all flutter build files
     File /r "${BUILD_DIR}\*"
     
-    # Create Shortcuts
-    CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${APP_NAME}.exe"
-    CreateDirectory "$SMPROGRAMS\${APP_NAME}"
-    CreateShortCut "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" "$INSTDIR\${APP_NAME}.exe"
+    # --- SHORTCUTS ---
+    # This creates the icon on the Desktop named "RecomBox"
+    CreateShortCut "$DESKTOP\RecomBox.lnk" "$INSTDIR\recombox.exe"
+    
+    # This creates the Start Menu folder and shortcut named "RecomBox"
+    CreateDirectory "$SMPROGRAMS\RecomBox"
+    CreateShortCut "$SMPROGRAMS\RecomBox\RecomBox.lnk" "$INSTDIR\recombox.exe"
+    
+    # --- REGISTRY FOR UNINSTALLER ---
+    # This makes "RecomBox" appear in the Windows Control Panel / Settings
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayName" "RecomBox"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "UninstallString" "$INSTDIR\uninstall.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayIcon" "$INSTDIR\recombox.exe"
     
     WriteUninstaller "$INSTDIR\uninstall.exe"
 SectionEnd
 
 Section "Uninstall"
-    Delete "$DESKTOP\${APP_NAME}.lnk"
-    RMDir /r "$SMPROGRAMS\${APP_NAME}"
+    # Clean up shortcuts
+    Delete "$DESKTOP\RecomBox.lnk"
+    RMDir /r "$SMPROGRAMS\RecomBox"
+    
+    # Clean up files and folder
     RMDir /r "$INSTDIR"
+    
+    # Clean up registry
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox"
 SectionEnd
