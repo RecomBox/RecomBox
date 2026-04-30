@@ -49,7 +49,7 @@ impl CheckUpdate {
 
 
         let latest_version = Version::parse(raw_latest_version)?;
-        if latest_version >= current_version {
+        if latest_version > current_version {
             return Ok(Some(CheckUpdate{
                 latest_version: raw_latest_version.to_string(),
                 download_url
