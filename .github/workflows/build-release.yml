@@ -48,16 +48,6 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Rust build
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "rust -> target"
-          cache-targets: true
-
-      - name: Install WiX (Stable)
-        if: matrix.target == 'windows'
-        uses: wixtoolset/install-wix@v2
-
       - name: Build Project
         shell: bash
         run: |
@@ -76,11 +66,21 @@ jobs:
             flutter build windows --release
           fi
 
-      - name: Package Windows MSI
+      - name: Package Windows MSI (Native WiX)
         if: matrix.target == 'windows'
         shell: pwsh
         run: |
-          # Extract metadata from pubspec
+          # 1. Dynamically find WiX path
+          $wixBin = Get-ChildItem -Path "C:\Program Files (x86)\WiX Toolset*" -Filter "bin" -Recurse | Select-Object -First 1
+          if ($wixBin) {
+              $env:PATH += ";$($wixBin.FullName)"
+              Write-Host "Using WiX from: $($wixBin.FullName)"
+          } else {
+              Write-Error "WiX Toolset not found."
+              exit 1
+          }
+
+          # 2. Extract metadata
           $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
           $version = (Select-String -Pattern "^version: " -Path pubspec.yaml).ToString().Split(":")[1].Split("+")[0].Trim()
           $upgradeCode = (Select-String -Pattern "upgrade_code: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
@@ -88,13 +88,11 @@ jobs:
           
           mkdir -p dist
 
-          # 1. Harvest DLLs and Assets (suppress registry/COM to stay stable)
+          # 3. Harvest DLLs and Assets
           heat dir "$buildDir" -cg AppFiles -gg -scom -sreg -sfrag -srd -dr INSTALLFOLDER -out "harvest.wxs"
 
-          # 2. Compile
+          # 4. Compile and Link
           candle windows.wxs harvest.wxs -dAppName="$appName" -dAppVersion="$version" -dUpgradeCode="$upgradeCode" -dBuildDir="$buildDir"
-
-          # 3. Link
           light -ext WixUIExtension -out "dist/$appName-windows-x86_64.msi" windows.wixobj harvest.wixobj
 
       - name: Upload Artifacts
@@ -143,7 +141,7 @@ jobs:
           find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
           find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
           
-          # iOS IPA
+          # iOS
           IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
           if [ -d "$IOS_APP_PATH" ]; then
             mkdir -p Payload
@@ -152,7 +150,7 @@ jobs:
             rm -rf Payload
           fi
 
-          # macOS DMG
+          # macOS
           MAC_APP_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
           if [ -d "$MAC_APP_PATH" ]; then
             sudo apt-get update && sudo apt-get install -y genisoimage
