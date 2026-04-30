@@ -92,23 +92,26 @@ jobs:
         if: matrix.target == 'macos'
         run: flutter build macos --release
 
-      # This step extracts the name and version from pubspec.yaml to avoid hardcoding.
-      # It then uses npx msi-packager to wrap the Flutter build output into an MSI.
       - name: Build Windows & MSI
         if: matrix.target == 'windows'
         shell: bash
         run: |
           flutter build windows --release
           
+          # Extract metadata from pubspec.yaml
           APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs)
           VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs)
           
+          # Extract the custom upgrade_code you added to pubspec.yaml
+          UPGRADE_CODE=$(grep 'upgrade_code:' pubspec.yaml | sed 's/upgrade_code: //' | xargs)
+          
           mkdir -p dist
-          npx msi-packager build/windows/x64/release/runner dist/$APP_NAME-windows.msi \
+          npx msi-packager build/windows/x64/release/runner dist/$APP_NAME-windows-x86_64.msi \
             --name "$APP_NAME" \
             --version "$VERSION" \
             --manufacturer "$APP_NAME" \
-            --executable "$APP_NAME.exe"
+            --executable "$APP_NAME.exe" \
+            --upgrade-code "$UPGRADE_CODE"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -142,13 +145,12 @@ jobs:
           echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # Searches all downloaded job artifacts for the specific extensions and renames them.
       - name: Prepare and Rename Assets
         run: |
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
           
-          find artifacts -name "*.msi" -exec cp {} dist/$NAME-windows-x86_64.msi \;
+          find artifacts -name "$NAME-windows-x86_64.msi" -exec cp {} dist/ \;
           
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
@@ -177,7 +179,6 @@ jobs:
             tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
           fi
 
-      # Dynamically generates the JSON file for update logic using the same naming scheme as the assets.
       - name: Create latest.json
         shell: bash
         run: |
