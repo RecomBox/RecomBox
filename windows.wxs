@@ -40,7 +40,7 @@
 
     <Fragment>
         <ComponentGroup Id="AppFiles">
-            <!-- Filled by heat.exe -->
+            <!-- Automatically populated by heat.exe during build -->
         </ComponentGroup>
     </Fragment>
 </Wix>
