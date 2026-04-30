@@ -80,7 +80,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   integration_test:
     sdk: flutter
-  msix: ^3.16.13
 
 
 # For information on the generic Dart part of this file, see the
@@ -126,11 +125,3 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-msix_config:
-  display_name: RecomBox
-  publisher_display_name: io.github.RecomBox
-  identity_name: io.github.RecomBox.RecomBox
-  publisher: CN=RecomBox
-  logo_path: assets/icon/icon-transparent.png
-  install_certificate: false
-  capabilities: runFullTrust

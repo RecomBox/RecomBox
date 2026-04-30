@@ -92,11 +92,23 @@ jobs:
         if: matrix.target == 'macos'
         run: flutter build macos --release
 
-      - name: Build Windows & MSIX
+      # This step extracts the name and version from pubspec.yaml to avoid hardcoding.
+      # It then uses npx msi-packager to wrap the Flutter build output into an MSI.
+      - name: Build Windows & MSI
         if: matrix.target == 'windows'
+        shell: bash
         run: |
           flutter build windows --release
-          dart run msix:create --install-certificate false
+          
+          APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs)
+          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs)
+          
+          mkdir -p dist
+          npx msi-packager build/windows/x64/release/runner dist/$APP_NAME-windows.msi \
+            --name "$APP_NAME" \
+            --version "$VERSION" \
+            --manufacturer "$APP_NAME" \
+            --executable "$APP_NAME.exe"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -107,9 +119,7 @@ jobs:
             build/ios/iphoneos/*.app
             build/linux/x64/release/bundle/*
             build/macos/Build/Products/Release/*.app
-            build/windows/**/*.msix
-          # This is the key: it ignores the missing Android/iOS files 
-          # on Windows and just uploads whatever it finds.
+            dist/*.msi
           if-no-files-found: warn
 
   release:
@@ -132,21 +142,19 @@ jobs:
           echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      # Searches all downloaded job artifacts for the specific extensions and renames them.
       - name: Prepare and Rename Assets
         run: |
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
           
-          # Android
+          find artifacts -name "*.msi" -exec cp {} dist/$NAME-windows-x86_64.msi \;
+          
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
           find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
           find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
           
-          # Windows
-          find artifacts -name "*.msix" -exec cp {} dist/$NAME-windows-x86_64.msix \;
-          
-          # iOS -> IPA
           IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
           if [ -d "$IOS_APP_PATH" ]; then
             mkdir -p Payload
@@ -155,7 +163,6 @@ jobs:
             rm -rf Payload
           fi
 
-          # macOS -> DMG
           MAC_APP_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
           if [ -d "$MAC_APP_PATH" ]; then
             sudo apt-get update && sudo apt-get install -y genisoimage
@@ -165,12 +172,12 @@ jobs:
             rm -rf mac_dmg_folder
           fi
 
-          # Linux
           LINUX_PATH=$(find artifacts -type d -name "bundle" | head -n 1)
           if [ -d "$LINUX_PATH" ]; then
             tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
           fi
 
+      # Dynamically generates the JSON file for update logic using the same naming scheme as the assets.
       - name: Create latest.json
         shell: bash
         run: |
@@ -180,7 +187,7 @@ jobs:
           jq -n \
             --arg version "${{ steps.meta.outputs.version }}" \
             --arg name "$NAME" \
-            --arg win_x64 "$BASE_URL/$NAME-windows-x86_64.msix" \
+            --arg win_x64 "$BASE_URL/$NAME-windows-x86_64.msi" \
             --arg lin_x64 "$BASE_URL/$NAME-linux-x86_64.tar.gz" \
             --arg mac_arm "$BASE_URL/$NAME-macos-aarch64.dmg" \
             --arg ios_arm "$BASE_URL/$NAME-ios-aarch64.ipa" \
