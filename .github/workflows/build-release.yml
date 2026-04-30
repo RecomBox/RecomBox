@@ -97,7 +97,8 @@ jobs:
         if: matrix.target == 'windows'
         run: |
           flutter build windows --release
-          dart run msix:create
+          # FIX: Added flag to prevent interactive certificate prompt crash
+          dart run msix:create --install-certificate false
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -135,29 +136,39 @@ jobs:
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
           
-          # Android - Search recursively for the APKs
+          # Android
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
           find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
           find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
           
-          # Windows - Search recursively for the MSIX
+          # Windows
           find artifacts -name "*.msix" -exec cp {} dist/$NAME-windows-x86_64.msix \;
           
-          # Linux - We expect the bundle files
-          # Note: Adjusting paths to find where download-artifact actually put them
+          # iOS -> IPA (Payload structure)
+          IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
+          if [ -d "$IOS_APP_PATH" ]; then
+            mkdir -p Payload
+            cp -r "$IOS_APP_PATH" Payload/
+            zip -r dist/$NAME-ios-aarch64.ipa Payload
+            rm -rf Payload
+          fi
+
+          # macOS -> DMG (Using genisoimage on Linux)
+          MAC_APP_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
+          if [ -d "$MAC_APP_PATH" ]; then
+            sudo apt-get update && sudo apt-get install -y genisoimage
+            mkdir -p mac_dmg_folder
+            cp -r "$MAC_APP_PATH" mac_dmg_folder/
+            genisoimage -V "$NAME" -D -R -apple -o dist/$NAME-macos-aarch64.dmg mac_dmg_folder/
+            rm -rf mac_dmg_folder
+          fi
+
+          # Linux
           LINUX_PATH=$(find artifacts -type d -name "bundle" | head -n 1)
           if [ -d "$LINUX_PATH" ]; then
             tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
           fi
-
-          # macOS & iOS
-          # Using similar logic to find the app bundles
-          MAC_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
-          [ -d "$MAC_PATH" ] && tar -czf dist/$NAME-macos-aarch64.tar.gz -C "$(dirname "$MAC_PATH")" .
-          
-          IOS_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
-          [ -d "$IOS_PATH" ] && tar -czf dist/$NAME-ios-aarch64.tar.gz -C "$(dirname "$IOS_PATH")" .
 
       - name: Create latest.json
         shell: bash
@@ -170,8 +181,8 @@ jobs:
             --arg name "$NAME" \
             --arg win_x64 "$BASE_URL/$NAME-windows-x86_64.msix" \
             --arg lin_x64 "$BASE_URL/$NAME-linux-x86_64.tar.gz" \
-            --arg mac_arm "$BASE_URL/$NAME-macos-aarch64.tar.gz" \
-            --arg ios_arm "$BASE_URL/$NAME-ios-aarch64.tar.gz" \
+            --arg mac_arm "$BASE_URL/$NAME-macos-aarch64.dmg" \
+            --arg ios_arm "$BASE_URL/$NAME-ios-aarch64.ipa" \
             --arg and_univ "$BASE_URL/$NAME-android-universal.apk" \
             --arg and_arm "$BASE_URL/$NAME-android-arm.apk" \
             --arg and_arm64 "$BASE_URL/$NAME-android-aarch64.apk" \
