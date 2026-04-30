@@ -48,6 +48,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
+      # --- Rust Caching ---
       - name: Cache rustup toolchains
         uses: actions/cache@v4
         with:
@@ -74,13 +75,14 @@ jobs:
       - name: Install Flutter Pub Dependencies
         run: flutter pub get
 
-      - name: Build Android (Unsigned)
+      # --- Build Process ---
+      - name: Build Android
         if: matrix.target == 'android'
         run: |
           flutter build apk --release --no-tree-shake-icons
           flutter build apk --release --split-per-abi --no-tree-shake-icons
 
-      - name: Build iOS (Unsigned)
+      - name: Build iOS
         if: matrix.target == 'ios'
         run: flutter build ios --release --no-codesign --no-tree-shake-icons
 
@@ -121,46 +123,51 @@ jobs:
         with:
           path: artifacts
 
-      - name: Get Version
-        id: pkg
+      - name: Get App Metadata
+        id: meta
         run: |
-          VERSION=$(grep 'version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1)
+          # Extract name and version from pubspec.yaml
+          APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs)
+          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs)
+          echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Prepare and Rename Assets
         run: |
           mkdir -p dist
+          NAME="${{ steps.meta.outputs.app_name }}"
           
-          # Android Renaming
-          [ -f artifacts/build-android/app-release.apk ] && cp artifacts/build-android/app-release.apk dist/recombox-android-universal.apk
-          [ -f artifacts/build-android/app-armeabi-v7a-release.apk ] && cp artifacts/build-android/app-armeabi-v7a-release.apk dist/recombox-android-armv7.apk
-          [ -f artifacts/build-android/app-arm64-v8a-release.apk ] && cp artifacts/build-android/app-arm64-v8a-release.apk dist/recombox-android-arm64.apk
-          [ -f artifacts/build-android/app-x86_64-release.apk ] && cp artifacts/build-android/app-x86_64-release.apk dist/recombox-android-x64.apk
+          # Android
+          [ -f artifacts/build-android/app-release.apk ] && cp artifacts/build-android/app-release.apk dist/$NAME-android-universal.apk
+          [ -f artifacts/build-android/app-armeabi-v7a-release.apk ] && cp artifacts/build-android/app-armeabi-v7a-release.apk dist/$NAME-android-armv7.apk
+          [ -f artifacts/build-android/app-arm64-v8a-release.apk ] && cp artifacts/build-android/app-arm64-v8a-release.apk dist/$NAME-android-arm64.apk
+          [ -f artifacts/build-android/app-x86_64-release.apk ] && cp artifacts/build-android/app-x86_64-release.apk dist/$NAME-android-x64.apk
           
-          # Windows Renaming
-          find artifacts/build-windows -name "*.msix" -exec cp {} dist/recombox-windows-x64.msix \;
+          # Windows
+          find artifacts/build-windows -name "*.msix" -exec cp {} dist/$NAME-windows-x64.msix \;
           
-          # Linux & macOS (Zipped)
-          tar -czf dist/recombox-linux-x64.tar.gz -C artifacts/build-linux .
-          tar -czf dist/recombox-macos-universal.tar.gz -C artifacts/build-macos .
-          
-          # iOS (App folder zipped as it is unsigned)
-          tar -czf dist/recombox-ios-unsigned.tar.gz -C artifacts/build-ios .
+          # Desktop Bundles
+          tar -czf dist/$NAME-linux-x64.tar.gz -C artifacts/build-linux .
+          tar -czf dist/$NAME-macos-universal.tar.gz -C artifacts/build-macos .
+          tar -czf dist/$NAME-ios-unsigned.tar.gz -C artifacts/build-ios .
 
       - name: Create latest.json
         shell: bash
         run: |
-          BASE_URL="https://github.com/${{ github.repository }}/releases/download/v${{ steps.pkg.outputs.version }}"
+          BASE_URL="https://github.com/${{ github.repository }}/releases/download/v${{ steps.meta.outputs.version }}"
+          NAME="${{ steps.meta.outputs.app_name }}"
           
           jq -n \
-            --arg version "${{ steps.pkg.outputs.version }}" \
-            --arg win "$BASE_URL/recombox-windows-x64.msix" \
-            --arg apk "$BASE_URL/recombox-android-universal.apk" \
-            --arg arm "$BASE_URL/recombox-android-armv7.apk" \
-            --arg arm64 "$BASE_URL/recombox-android-arm64.apk" \
-            --arg x64 "$BASE_URL/recombox-android-x64.apk" \
+            --arg version "${{ steps.meta.outputs.version }}" \
+            --arg name "$NAME" \
+            --arg win "$BASE_URL/$NAME-windows-x64.msix" \
+            --arg apk "$BASE_URL/$NAME-android-universal.apk" \
+            --arg arm "$BASE_URL/$NAME-android-armv7.apk" \
+            --arg arm64 "$BASE_URL/$NAME-android-arm64.apk" \
+            --arg x64 "$BASE_URL/$NAME-android-x64.apk" \
             '{
               version: $version,
+              name: $name,
               release: {
                 windows: { x64: $win },
                 android: { 
@@ -180,7 +187,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           file_glob: true
-          tag: v${{ steps.pkg.outputs.version }}
+          tag: v${{ steps.meta.outputs.version }}
           overwrite: true
-          release_name: "Release v${{ steps.pkg.outputs.version }}"
+          release_name: "${{ steps.meta.outputs.app_name }} v${{ steps.meta.outputs.version }}"
           draft: true
