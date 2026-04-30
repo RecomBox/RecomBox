@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="$(var.AppName)" Language="1033" Version="$(var.AppVersion)" 
+             Manufacturer="$(var.AppName)" UpgradeCode="$(var.UpgradeCode)">
+        
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+
+        <Icon Id="app_icon.ico" SourceFile="windows/runner/resources/app_icon.ico"/>
+        <Property Id="ARPPRODUCTICON" Value="app_icon.ico" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFiles64Folder">
+                <Directory Id="INSTALLFOLDER" Name="$(var.AppName)" />
+            </Directory>
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="$(var.AppName)"/>
+            </Directory>
+            <Directory Id="DesktopFolder" Name="Desktop" />
+        </Directory>
+
+        <DirectoryRef Id="INSTALLFOLDER">
+            <Component Id="MainExecutable" Guid="*">
+                <File Id="AppEXE" Source="$(var.BuildDir)\$(var.AppName).exe" KeyPath="yes" Checksum="yes">
+                    <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="$(var.AppName)" 
+                              WorkingDirectory="INSTALLFOLDER" Icon="app_icon.ico" Advertise="yes" />
+                    <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="$(var.AppName)" 
+                              WorkingDirectory="INSTALLFOLDER" Icon="app_icon.ico" Advertise="yes" />
+                </File>
+            </Component>
+        </DirectoryRef>
+
+        <Feature Id="MainFeature" Title="Main Application" Level="1">
+            <ComponentRef Id="MainExecutable" />
+            <ComponentGroupRef Id="AppFiles" />
+        </Feature>
+    </Product>
+
+    <Fragment>
+        <ComponentGroup Id="AppFiles">
+            <!-- Filled by heat.exe -->
+        </ComponentGroup>
+    </Fragment>
+</Wix>

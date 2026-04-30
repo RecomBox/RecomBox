@@ -48,72 +48,54 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache rustup toolchains
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.rustup
-            ~/.cargo/bin
-          key: rustup-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            rustup-${{ runner.os }}-
-
       - name: Cache Rust build
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: "rust -> target"
           cache-targets: true
-          cache-on-failure: true
 
-      - name: Install Linux Dependencies
-        if: matrix.target == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 libmpv-dev mpv
-
-      - name: Install Flutter Pub Dependencies
-        run: flutter pub get
-
-      - name: Build Android
-        if: matrix.target == 'android'
-        run: |
-          flutter build apk --release --no-tree-shake-icons
-          flutter build apk --release --split-per-abi --no-tree-shake-icons
-
-      - name: Build iOS (Unsigned)
-        if: matrix.target == 'ios'
-        run: flutter build ios --release --no-codesign --no-tree-shake-icons
-
-      - name: Build Linux
-        if: matrix.target == 'linux'
-        run: flutter build linux --release
-
-      - name: Build macOS
-        if: matrix.target == 'macos'
-        run: flutter build macos --release
-
-      - name: Build Windows & MSI
+      - name: Install WiX (Stable)
         if: matrix.target == 'windows'
+        uses: wixtoolset/install-wix@v2
+
+      - name: Build Project
         shell: bash
         run: |
-          flutter build windows --release
-          
-          # Cleanly extract metadata and remove carriage returns (\r)
-          APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs | tr -d '\r')
-          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs | tr -d '\r')
-          UPGRADE_CODE=$(grep 'upgrade_code:' pubspec.yaml | sed 's/upgrade_code: //' | xargs | tr -d '\r')
-          ICON_PATH="windows/runner/resources/app_icon.ico"
+          flutter pub get
+          if [ "${{ matrix.target }}" == "android" ]; then
+            flutter build apk --release --no-tree-shake-icons
+            flutter build apk --release --split-per-abi --no-tree-shake-icons
+          elif [ "${{ matrix.target }}" == "ios" ]; then
+            flutter build ios --release --no-codesign --no-tree-shake-icons
+          elif [ "${{ matrix.target }}" == "linux" ]; then
+            sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 libmpv-dev mpv
+            flutter build linux --release
+          elif [ "${{ matrix.target }}" == "macos" ]; then
+            flutter build macos --release
+          elif [ "${{ matrix.target }}" == "windows" ]; then
+            flutter build windows --release
+          fi
+
+      - name: Package Windows MSI
+        if: matrix.target == 'windows'
+        shell: pwsh
+        run: |
+          # Extract metadata from pubspec
+          $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
+          $version = (Select-String -Pattern "^version: " -Path pubspec.yaml).ToString().Split(":")[1].Split("+")[0].Trim()
+          $upgradeCode = (Select-String -Pattern "upgrade_code: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
+          $buildDir = "build/windows/x64/release/runner"
           
           mkdir -p dist
-          
-          # Use quotes for all arguments to handle spaces and ensure flags are recognized
-          npx msi-packager "build/windows/x64/release/runner" "dist/$APP_NAME-windows-x86_64.msi" \
-            --name "$APP_NAME" \
-            --version "$VERSION" \
-            --manufacturer "$APP_NAME" \
-            --executable "$APP_NAME.exe" \
-            --upgrade-code "$UPGRADE_CODE" \
-            --icon "$ICON_PATH"
+
+          # 1. Harvest DLLs and Assets (suppress registry/COM to stay stable)
+          heat dir "$buildDir" -cg AppFiles -gg -scom -sreg -sfrag -srd -dr INSTALLFOLDER -out "harvest.wxs"
+
+          # 2. Compile
+          candle windows.wxs harvest.wxs -dAppName="$appName" -dAppVersion="$version" -dUpgradeCode="$upgradeCode" -dBuildDir="$buildDir"
+
+          # 3. Link
+          light -ext WixUIExtension -out "dist/$appName-windows-x86_64.msi" windows.wixobj harvest.wixobj
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -142,8 +124,8 @@ jobs:
       - name: Get App Metadata
         id: meta
         run: |
-          APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs | tr -d '\r')
-          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs | tr -d '\r')
+          APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs)
+          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs)
           echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -152,13 +134,16 @@ jobs:
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
           
-          find artifacts -name "$NAME-windows-x86_64.msi" -exec cp {} dist/ \;
+          # MSI
+          find artifacts -name "*.msi" -exec cp {} dist/ \;
           
+          # Android
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
           find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
           find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
           
+          # iOS IPA
           IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
           if [ -d "$IOS_APP_PATH" ]; then
             mkdir -p Payload
@@ -167,6 +152,7 @@ jobs:
             rm -rf Payload
           fi
 
+          # macOS DMG
           MAC_APP_PATH=$(find artifacts -type d -name "*.app" | grep "macos" | head -n 1)
           if [ -d "$MAC_APP_PATH" ]; then
             sudo apt-get update && sudo apt-get install -y genisoimage
@@ -176,17 +162,16 @@ jobs:
             rm -rf mac_dmg_folder
           fi
 
+          # Linux
           LINUX_PATH=$(find artifacts -type d -name "bundle" | head -n 1)
           if [ -d "$LINUX_PATH" ]; then
             tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
           fi
 
       - name: Create latest.json
-        shell: bash
         run: |
           BASE_URL="https://github.com/${{ github.repository }}/releases/download/v${{ steps.meta.outputs.version }}"
           NAME="${{ steps.meta.outputs.app_name }}"
-          
           jq -n \
             --arg version "${{ steps.meta.outputs.version }}" \
             --arg name "$NAME" \
@@ -213,9 +198,7 @@ jobs:
                   x86_64: $and_x64
                 }
               }
-            }' > latest.json
-          
-          cp latest.json dist/
+            }' > dist/latest.json
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
