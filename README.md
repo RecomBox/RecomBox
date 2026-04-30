@@ -24,16 +24,8 @@
 </div>
 
 
-<a href="https://www.star-history.com/?repos=RecomBox%2FRecomBox&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left" />
- </picture>
-</a>
-
 # Download
-
+[![Download](https://img.shields.io/badge/Download-GitHub-blue?style=for-the-badge&logo=github)](https://github.com/GoodDay360/HyperionBox/releases/latest)
 
 # What's RecomBox?
 An open-source cross-platform torrent streaming app for Anime, Movies, and TV with cross-device watch progress tracking. 
@@ -59,23 +51,21 @@ An open-source cross-platform torrent streaming app for Anime, Movies, and TV wi
 
 # 📸 Screenshot
 ### Home
-<img width="1920" height="1080" alt="Screenshot (551)" src="https://github.com/user-attachments/assets/a8f41e0e-1430-4243-89e1-727f556abf2a" />
+<img width="1920" height="1080" alt="Screenshot (551)" src="https://github.com/user-attachments/assets/ca13e8a7-837b-4a08-b0db-c83d7d63338a" />
 
 ### View
-<img width="1920" height="1080" alt="Screenshot (552)" src="https://github.com/user-attachments/assets/b6455082-1b4c-48ec-958b-26d0270fd468" />
+<img width="1920" height="1080" alt="Screenshot (552)" src="https://github.com/user-attachments/assets/886a6bc0-b86f-46ff-bad5-e167005e5169" />
 
 ### Search
-<img width="1920" height="1080" alt="Screenshot (553)" src="https://github.com/user-attachments/assets/f926264a-b776-4c39-b77b-959382ce91ff" />
+<img width="1920" height="1080" alt="Screenshot (553)" src="https://github.com/user-attachments/assets/c4d57d17-370f-4d23-ab1c-1900eb446128" />
 
 ### Download
-<img width="1920" height="1080" alt="Screenshot (554)" src="https://github.com/user-attachments/assets/fb96d09d-dec6-4099-89f4-f1dbaa401cfd" />
-
+<img width="1920" height="1080" alt="Screenshot (554)" src="https://github.com/user-attachments/assets/a6b7a1cb-68c7-4498-bef4-0345308b341d" />
 
 ### Watch
-<img width="1920" height="1080" alt="Screenshot (555)" src="https://github.com/user-attachments/assets/9f8c7c83-2682-4ff6-9dc7-abc7461e578c" />
+<img width="1920" height="1080" alt="Screenshot (555)" src="https://github.com/user-attachments/assets/bf674089-1809-44cf-aac6-5b8463b5156d" />
 
 # Contribution Guide
-
 
 
 
