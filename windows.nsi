@@ -1,12 +1,12 @@
 !include "MUI2.nsh"
 
-# Use "RecomBox" for the installer UI and folder naming
+# Basic metadata
 Name "RecomBox"
 OutFile "dist\${APP_NAME}-windows-x86_64.exe"
 InstallDir "$PROGRAMFILES64\RecomBox"
 RequestExecutionLevel admin
 
-# App Icon
+# Use the app icon
 !define MUI_ICON "windows\runner\resources\app_icon.ico"
 
 # Pages
@@ -22,19 +22,15 @@ RequestExecutionLevel admin
 Section "MainSection" SEC01
     SetOutPath "$INSTDIR"
     
-    # Grabs all flutter build files
+    # Grabs all flutter build files recursively
     File /r "${BUILD_DIR}\*"
     
-    # --- SHORTCUTS ---
-    # This creates the icon on the Desktop named "RecomBox"
+    # Create Shortcuts with clean "RecomBox" naming
     CreateShortCut "$DESKTOP\RecomBox.lnk" "$INSTDIR\recombox.exe"
-    
-    # This creates the Start Menu folder and shortcut named "RecomBox"
     CreateDirectory "$SMPROGRAMS\RecomBox"
     CreateShortCut "$SMPROGRAMS\RecomBox\RecomBox.lnk" "$INSTDIR\recombox.exe"
     
-    # --- REGISTRY FOR UNINSTALLER ---
-    # This makes "RecomBox" appear in the Windows Control Panel / Settings
+    # Add to Windows Add/Remove Programs
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayName" "RecomBox"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "UninstallString" "$INSTDIR\uninstall.exe"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayIcon" "$INSTDIR\recombox.exe"
@@ -43,13 +39,8 @@ Section "MainSection" SEC01
 SectionEnd
 
 Section "Uninstall"
-    # Clean up shortcuts
     Delete "$DESKTOP\RecomBox.lnk"
     RMDir /r "$SMPROGRAMS\RecomBox"
-    
-    # Clean up files and folder
     RMDir /r "$INSTDIR"
-    
-    # Clean up registry
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox"
 SectionEnd
