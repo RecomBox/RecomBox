@@ -74,7 +74,7 @@ Future<void> checkUpdateWorker() async {
                   onPressed: () {
                     launchUrl(
                       Uri.parse(checkResult.downloadUrl),
-                      mode: LaunchMode.externalApplication,
+                      mode: LaunchMode.platformDefault,
                     )
                       .then((value) => debugPrint(value.toString()))
                       .catchError((error) => debugPrint(error.toString()));
