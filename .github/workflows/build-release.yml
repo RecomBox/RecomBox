@@ -74,8 +74,10 @@ jobs:
         if: matrix.target == 'windows'
         shell: pwsh
         run: |
-          $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
+          # 1. Extract metadata - FIX: Use .Line to get only the value
+          $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).Line.Split(":")[1].Trim()
           
+          # 2. Locate build directory
           $buildDir = ""
           $pathsToTry = @(
             "build/windows/x64/runner/Release",
@@ -90,9 +92,14 @@ jobs:
               }
           }
 
-          if (-not $buildDir) { exit 1 }
+          if (-not $buildDir) { 
+            Write-Error "Build directory not found"
+            exit 1 
+          }
+          
           if (!(Test-Path "dist")) { New-Item -ItemType Directory -Force -Path "dist" }
 
+          # 3. Compile NSIS Installer
           & "C:\Program Files (x86)\NSIS\makensis.exe" /DAPP_NAME="$appName" "/DBUILD_DIR=$buildDir" windows.nsi
 
       - name: Upload Artifacts
@@ -122,7 +129,6 @@ jobs:
       - name: Get App Metadata
         id: meta
         run: |
-          # Pulls lowercase name directly from pubspec
           APP_NAME=$(grep '^name: ' pubspec.yaml | sed 's/name: //' | xargs)
           VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d '+' -f 1 | xargs)
           echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
@@ -133,7 +139,6 @@ jobs:
           mkdir -p dist
           NAME="${{ steps.meta.outputs.app_name }}"
           
-          # Use lowercase NAME for all file outputs
           find artifacts -name "*.exe" -exec cp {} dist/ \;
           find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
           find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
