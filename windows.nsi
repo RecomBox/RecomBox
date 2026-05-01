@@ -2,7 +2,7 @@
 
 # Basic metadata
 Name "RecomBox"
-OutFile "dist\${APP_NAME}-windows-x86_64.exe"
+OutFile "dist\RecomBox-windows-x86_64.exe"
 InstallDir "$PROGRAMFILES64\RecomBox"
 RequestExecutionLevel admin
 
@@ -25,15 +25,15 @@ Section "MainSection" SEC01
     # Grabs all flutter build files recursively
     File /r "${BUILD_DIR}\*"
     
-    # Create Shortcuts with clean "RecomBox" naming
-    CreateShortCut "$DESKTOP\RecomBox.lnk" "$INSTDIR\recombox.exe"
+    # Create Shortcuts - "RecomBox" for display, lowercase for target exe
+    CreateShortCut "$DESKTOP\RecomBox.lnk" "$INSTDIR\${APP_NAME}.exe"
     CreateDirectory "$SMPROGRAMS\RecomBox"
-    CreateShortCut "$SMPROGRAMS\RecomBox\RecomBox.lnk" "$INSTDIR\recombox.exe"
+    CreateShortCut "$SMPROGRAMS\RecomBox\RecomBox.lnk" "$INSTDIR\${APP_NAME}.exe"
     
     # Add to Windows Add/Remove Programs
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayName" "RecomBox"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "UninstallString" "$INSTDIR\uninstall.exe"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayIcon" "$INSTDIR\recombox.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RecomBox" "DisplayIcon" "$INSTDIR\${APP_NAME}.exe"
     
     WriteUninstaller "$INSTDIR\uninstall.exe"
 SectionEnd

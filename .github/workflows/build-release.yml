@@ -66,14 +66,18 @@ jobs:
             flutter build windows --release
           fi
 
+      - name: Install NSIS
+        if: matrix.target == 'windows'
+        run: choco install nsis -y
+
       - name: Package Windows EXE (NSIS)
         if: matrix.target == 'windows'
         shell: pwsh
         run: |
-          # 1. Extract metadata
+          # 1. Extract metadata (lowercase name from pubspec)
           $appName = (Select-String -Pattern "^name: " -Path pubspec.yaml).ToString().Split(":")[1].Trim()
           
-          # 2. Search for the build directory to handle case/path variations
+          # 2. Locate build directory
           $buildDir = ""
           $pathsToTry = @(
             "build/windows/x64/runner/Release",
@@ -93,11 +97,10 @@ jobs:
               exit 1
           }
           
-          Write-Host "Found build directory at: $buildDir"
-          mkdir -p dist
+          if (!(Test-Path "dist")) { New-Item -ItemType Directory -Force -Path "dist" }
 
-          # 3. Compile NSIS Installer
-          makensis /DAPP_NAME="$appName" "/DBUILD_DIR=$buildDir" windows.nsi
+          # 3. Compile NSIS Installer using absolute path
+          & "C:\Program Files (x86)\NSIS\makensis.exe" /DAPP_NAME="$appName" "/DBUILD_DIR=$buildDir" windows.nsi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -134,18 +137,25 @@ jobs:
       - name: Prepare and Rename Assets
         run: |
           mkdir -p dist
-          NAME="${{ steps.meta.outputs.app_name }}"
+          # Internal name for files
+          FILE_NAME="${{ steps.meta.outputs.app_name }}"
+          # Display name for final assets
+          DISPLAY_NAME="RecomBox"
+          
           find artifacts -name "*.exe" -exec cp {} dist/ \;
-          find artifacts -name "app-release.apk" -exec cp {} dist/$NAME-android-universal.apk \;
-          find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$NAME-android-arm.apk \;
-          find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$NAME-android-aarch64.apk \;
-          find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$NAME-android-x86_64.apk \;
+          find artifacts -name "app-release.apk" -exec cp {} dist/$DISPLAY_NAME-android-universal.apk \;
+          find artifacts -name "app-armeabi-v7a-release.apk" -exec cp {} dist/$DISPLAY_NAME-android-arm.apk \;
+          find artifacts -name "app-arm64-v8a-release.apk" -exec cp {} dist/$DISPLAY_NAME-android-aarch64.apk \;
+          find artifacts -name "app-x86_64-release.apk" -exec cp {} dist/$DISPLAY_NAME-android-x86_64.apk \;
+          
+          # iOS / macOS / Linux logic...
+          # (Keeping your original logic but ensuring $DISPLAY_NAME is used for output files)
           
           IOS_APP_PATH=$(find artifacts -type d -name "*.app" | grep "iphoneos" | head -n 1)
           if [ -d "$IOS_APP_PATH" ]; then
             mkdir -p Payload
             cp -r "$IOS_APP_PATH" Payload/
-            zip -r dist/$NAME-ios-aarch64.ipa Payload
+            zip -r dist/$DISPLAY_NAME-ios-aarch64.ipa Payload
             rm -rf Payload
           fi
 
@@ -154,19 +164,19 @@ jobs:
             sudo apt-get update && sudo apt-get install -y genisoimage
             mkdir -p mac_dmg_folder
             cp -r "$MAC_APP_PATH" mac_dmg_folder/
-            genisoimage -V "$NAME" -D -R -apple -o dist/$NAME-macos-aarch64.dmg mac_dmg_folder/
+            genisoimage -V "$DISPLAY_NAME" -D -R -apple -o dist/$DISPLAY_NAME-macos-aarch64.dmg mac_dmg_folder/
             rm -rf mac_dmg_folder
           fi
 
           LINUX_PATH=$(find artifacts -type d -name "bundle" | head -n 1)
           if [ -d "$LINUX_PATH" ]; then
-            tar -czf dist/$NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
+            tar -czf dist/$DISPLAY_NAME-linux-x86_64.tar.gz -C "$LINUX_PATH" .
           fi
 
       - name: Create latest.json
         run: |
           BASE_URL="https://github.com/${{ github.repository }}/releases/download/v${{ steps.meta.outputs.version }}"
-          NAME="${{ steps.meta.outputs.app_name }}"
+          NAME="RecomBox"
           jq -n \
             --arg version "${{ steps.meta.outputs.version }}" \
             --arg name "$NAME" \
@@ -203,5 +213,5 @@ jobs:
           file_glob: true
           tag: v${{ steps.meta.outputs.version }}
           overwrite: true
-          release_name: "${{ steps.meta.outputs.app_name }} v${{ steps.meta.outputs.version }}"
+          release_name: "RecomBox v${{ steps.meta.outputs.version }}"
           draft: true
