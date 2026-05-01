@@ -2,7 +2,7 @@
 
 # Basic metadata
 Name "RecomBox"
-OutFile "dist\RecomBox-windows-x86_64.exe"
+OutFile "dist\${APP_NAME}-windows-x86_64.exe"
 InstallDir "$PROGRAMFILES64\RecomBox"
 RequestExecutionLevel admin
 
