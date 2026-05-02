@@ -28,5 +28,14 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Required for peer discovery and local streaming.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Required to store and stream media files.</string>
 </dict>
 </plist>
