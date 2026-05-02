@@ -1,4 +1,5 @@
 # Miscellaneous
+.env
 recombox_temp/
 tmp/
 rust/tmp/

@@ -7,6 +7,7 @@ import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/rust/method/download_provider/get_all_download.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'dart:io';
+import 'dart:math';
 
 class DownloadCard extends StatefulWidget {
   const DownloadCard({
@@ -133,7 +134,7 @@ class _DownloadCardState extends State<DownloadCard> {
           ),
           Container(
             width: double.infinity,
-            height: 500,
+            height: max(300, MediaQuery.of(context).size.height * 0.35),
             alignment: Alignment.topLeft,
             decoration: BoxDecoration(
               color: appColors.primary,

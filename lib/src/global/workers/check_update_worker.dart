@@ -78,7 +78,6 @@ Future<void> checkUpdateWorker() async {
                     )
                       .then((value) => debugPrint(value.toString()))
                       .catchError((error) => debugPrint(error.toString()));
-                    Navigator.pop(context);
                   },
                 ),
               ],

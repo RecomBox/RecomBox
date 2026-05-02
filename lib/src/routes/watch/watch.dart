@@ -24,6 +24,9 @@ import 'package:path/path.dart' as path;
 import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/torrent_provider/free_torrent_handle.dart';
+import 'package:recombox/src/rust/method/watch_state.dart';
+import 'package:recombox/src/rust/method/watch_state/get_watch_state.dart';
+import 'package:recombox/src/rust/method/watch_state/set_watch_state.dart';
 import 'package:recombox/src/rust/utils/torrent_provider/torrent_handle.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -85,6 +88,9 @@ class _WatchState extends State<WatchScreen> {
       enableHardwareAcceleration: true
     )
   );
+
+  StreamSubscription? _positionSubscription;
+
   final List<BoxFit> boxFitList = [
     BoxFit.contain,
     BoxFit.cover,
@@ -132,6 +138,7 @@ class _WatchState extends State<WatchScreen> {
   @override
   void dispose() {
     player.dispose();
+    _positionSubscription?.cancel();
     try{
       if (torrentHandleMode == TorrentHandleMode.watch) {
         freeTorrentHandle(
@@ -253,7 +260,15 @@ class _WatchState extends State<WatchScreen> {
           player.open(Media(uri.toString()));
         }
       }
+
+      if (context.mounted){
+        setState(() {
+          isLoading = false;
+        });
+      }
       
+      await initWatchState();
+      initPlayerListener();
     }catch(e){
       debugPrint(e.toString());
     }
@@ -264,6 +279,61 @@ class _WatchState extends State<WatchScreen> {
       });
     }
     
+  }
+
+  Future<void> initWatchState() async {
+    try {
+      final watchState = await getWatchState(
+        watchStateKey: WatchStateKey(
+            source: args!.source.name, 
+            id: args!.viewID, 
+            seasonIndex: args!.season, 
+            episodeIndex: args!.episode
+          ), 
+      );
+
+      debugPrint("WT ${watchState?.position.toString()}");
+
+      if (watchState != null) {
+        await player.stream.buffer.firstWhere((b) => b.inMilliseconds > 0);
+        await player.seek(Duration(milliseconds: (watchState.position??BigInt.from(0)).toInt()));
+      }
+    }catch(e){
+      debugPrint(e.toString());
+    }
+      
+  }
+
+  void initPlayerListener() async {
+    _positionSubscription = player.stream.position
+    .distinct((prev, next) {
+      // Define your delay right here
+      const int delay = 3; 
+      
+      // Calculate which 'slot' the time falls into
+      final int prevSlot = prev.inSeconds ~/ delay;
+      final int nextSlot = next.inSeconds ~/ delay;
+      
+      // If the slots are identical, the 'distinct' check is true (skip)
+      return prevSlot == nextSlot;
+    })
+    .listen((pos) async {
+      try{
+        await setWatchState(
+          watchStateKey: WatchStateKey(
+            source: args!.source.name, 
+            id: args!.viewID, 
+            seasonIndex: args!.season, 
+            episodeIndex: args!.episode
+          ), 
+          watchStateValue: WatchStateValue(
+            position: BigInt.from(pos.inMilliseconds)
+          )
+        );
+      }catch(e){
+        debugPrint(e.toString());
+      }
+    });
   }
 
   void onToggleFitBox() {

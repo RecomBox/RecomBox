@@ -12,4 +12,5 @@ pub mod download_provider;
 pub mod favorite;
 pub mod get_settings;
 pub mod check_update;
+pub mod watch_state;
 
