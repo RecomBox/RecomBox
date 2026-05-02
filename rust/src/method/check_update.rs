@@ -29,11 +29,11 @@ impl CheckUpdate {
             .ok_or(anyhow::Error::msg(format!("[{}:{}] unable to find version", file!(), line!())))?;
         
         let download_url = match data.get("release").and_then(|f| f.get(OS)).and_then(|f| f.get(ARCH)) {
-            Some(url) => url.to_string(),
+            Some(url) => url.as_str().ok_or("Download Url Not Found").map_err(|e| anyhow::anyhow!(e))?,
             None => {
                 if OS == "android" {
                     match data.get("release").and_then(|f| f.get(OS)).and_then(|f| f.get("universal")) {
-                        Some(url) => url.to_string(),
+                        Some(url) => url.as_str().ok_or("Download Url Not Found").map_err(|e| anyhow::anyhow!(e))?,
                         None => return Err(anyhow::Error::msg(format!("[{}:{}] unable to find download url", file!(), line!())))
                     }
                 }else{
@@ -46,7 +46,7 @@ impl CheckUpdate {
         let current_version = Version::parse(&Settings::get()?.version)?;
 
         let latest_version = Version::parse(raw_latest_version)?;
-        if latest_version > current_version {
+        if latest_version < current_version {
             if ["linux", "ios"].contains(&OS){
                 return Ok(Some(CheckUpdate{
                     latest_version: raw_latest_version.to_string(),
@@ -55,7 +55,7 @@ impl CheckUpdate {
             }else{
                 return Ok(Some(CheckUpdate{
                     latest_version: raw_latest_version.to_string(),
-                    download_url
+                    download_url: download_url.to_string(),
                 }));
             }
             
