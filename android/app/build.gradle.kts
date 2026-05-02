@@ -55,6 +55,10 @@ android {
                 if (File(keystoreName).isAbsolute) file(keystoreName) else file("../$keystoreName")
             } else null
         }
+
+        getByName("debug") {
+            // No extra config needed, it uses the default ~/.android/debug.keystore
+        }
     }
 
     buildTypes {
@@ -63,6 +67,15 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+
+        getByName("debug") {
+            // Use the default debug keys
+            signingConfig = signingConfigs.getByName("debug")
+            
+            // Debug builds usually don't need minification
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
