@@ -24,9 +24,21 @@ impl TorrentSession {
         let cache_session_dir = PathBuf::from(&settings.paths.app_cache_dir)
             .join("torrent_session_cache");
 
+        if !cache_session_dir.exists() {
+            std::fs::create_dir_all(&cache_session_dir)
+                .map_err(|e| anyhow::Error::msg(e.to_string()))?;
+        }
+
+        let dht_state_dir = PathBuf::from(&settings.paths.app_support_dir)
+            .join("state");
+
+        if !dht_state_dir.exists() {
+            std::fs::create_dir_all(&dht_state_dir)
+                .map_err(|e| anyhow::Error::msg(e.to_string()))?;
+        }
 
         let segments_dir = cache_session_dir.join("default");
-        let dht_file = cache_session_dir.join("dht.dat");
+        let dht_file = dht_state_dir.join("dht.dat");
 
         let dht_config = PersistentDhtConfig {
             dump_interval: Some(std::time::Duration::from_secs(60)),
