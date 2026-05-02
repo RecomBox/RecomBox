@@ -614,7 +614,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                       onPressed: () {
                                         launchUrl(
                                           Uri.parse(viewContentInfoResult!.trailerUrl),
-                                          mode: LaunchMode.externalApplication,
+                                          mode: LaunchMode.platformDefault,
                                         )
                                           .then((value) => debugPrint(value.toString()))
                                           .catchError((error) => debugPrint(error.toString()));
@@ -672,7 +672,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                       onPressed: () {
                                         launchUrl(
                                           Uri.parse(viewContentInfoResult!.url),
-                                          mode: LaunchMode.externalApplication,
+                                          mode: LaunchMode.platformDefault,
                                         )
                                           .then((value) => debugPrint(value.toString()))
                                           .catchError((error) => debugPrint(error.toString()));
