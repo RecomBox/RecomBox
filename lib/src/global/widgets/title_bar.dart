@@ -47,13 +47,14 @@ class _TitleBarState extends State<TitleBar> {
               children: [
                 TextButton(
                   onPressed: minimize,
-                  style: ButtonStyle(
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
+                  style: TextButton.styleFrom(
+                    
+                    backgroundColor: appColors.tertiary.withAlpha(125),
+                    shape: RoundedRectangleBorder(
                         borderRadius:
                             BorderRadius.zero, // <-- change radius here
                       ),
-                    ),
+                    
                   ),
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -65,12 +66,14 @@ class _TitleBarState extends State<TitleBar> {
                 ),
                 TextButton(
                   onPressed: fullscreen,
-                  style: ButtonStyle(
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+                  style: TextButton.styleFrom(
+                    
+                    backgroundColor: appColors.tertiary.withAlpha(125),
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.zero, // <-- change radius here
                       ),
-                    ),
+                    
                   ),
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -82,20 +85,13 @@ class _TitleBarState extends State<TitleBar> {
                 ),
                 TextButton(
                   onPressed: close,
-                  style: ButtonStyle(
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                      ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: appColors.tertiary.withAlpha(125),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
-                    overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                      (states) {
-                        if (states.contains(WidgetState.hovered)) {
-                          return Colors.red; // hover color
-                        }
-                        return null; // default
-                      },
-                    ),
+                    
+                    overlayColor: Colors.red.withAlpha(255),
                   ),
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,

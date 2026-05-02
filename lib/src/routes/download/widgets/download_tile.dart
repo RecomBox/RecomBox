@@ -116,67 +116,86 @@ class _DownloadTileState extends State<DownloadTile> {
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(10),
-        child: Row(
-          spacing: 8,
+        child: Column(
           children: [
+            
+            Row(
+              spacing: 8,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ConstrainedBox(
+                  
+                  constraints: BoxConstraints(maxWidth: 100),
+                  child: Text(
+                    SourceExtension.fromString(widget.allDownloadItemKey.source) == Source.movies ? "Full" : "S${(widget.allDownloadItemValue.seasonIndex + BigInt.from(1)).toString().padLeft(2, '0')}E${(widget.allDownloadItemValue.episodeIndex + BigInt.from(1)).toString().padLeft(2, '0')}",
+                    style: GoogleFonts.nunito(
+                      color: appColors.textPrimary,
+                      fontSize: 18
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                
 
-            if (downloadStatusResult.done)
-              Icon(
-                Icons.download_done_rounded,
-                size: 32,
-                color: appColors.secondary,
-              ),
+
+                Text(
+                  "${((downloadStatusResult.progressSize/downloadStatusResult.totalSize).toDouble() * 100).toStringAsFixed(2)}% | ${formatBytes(downloadStatusResult.totalSize)}",
+                  style: GoogleFonts.nunito(
+                    color: appColors.textPrimary,
+                    fontSize: 18
+                  )
+                ),
+
+              ],
               
+            ),
 
-            if (!downloadStatusResult.done)
-              IconButton(
-                mouseCursor: SystemMouseCursors.click,
-                onPressed: onChangePause, 
-                icon: Icon(
-                  downloadStatusResult.paused ? Icons.play_arrow : Icons.pause
+            Row(
+              spacing: 8,
+              children: [
+
+                if (downloadStatusResult.done)
+                  Icon(
+                    Icons.download_done_rounded,
+                    size: 32,
+                    color: appColors.secondary,
+                  ),
+                  
+
+                if (!downloadStatusResult.done)
+                  IconButton(
+                    mouseCursor: SystemMouseCursors.click,
+                    onPressed: onChangePause, 
+                    icon: Icon(
+                      downloadStatusResult.paused ? Icons.play_arrow : Icons.pause
+                    ),
+                    color: downloadStatusResult.paused ? Color(0xFF00FFFF): appColors.secondary,
+                  ),
+
+                
+
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    width: double.infinity,
+                    height: 5,
+                    child: LinearProgressIndicator(
+                      value: downloadStatusResult.progressSize.toDouble() / downloadStatusResult.totalSize.toDouble(),
+                      color: appColors.accentSecondary,
+                    ),
+                  )
                 ),
-                color: downloadStatusResult.paused ? Color(0xFF00FFFF): appColors.secondary,
-              ),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 100),
-              child: Text(
-                SourceExtension.fromString(widget.allDownloadItemKey.source) == Source.movies ? "Full" : "S${(widget.allDownloadItemValue.seasonIndex + BigInt.from(1)).toString().padLeft(2, '0')}E${(widget.allDownloadItemValue.episodeIndex + BigInt.from(1)).toString().padLeft(2, '0')}",
-                style: GoogleFonts.nunito(
-                  color: appColors.textPrimary,
-                  fontSize: 18
+
+                IconButton(
+                  mouseCursor: SystemMouseCursors.click,
+                  onPressed: widget.onRemoveDownload, 
+                  icon: Icon(Icons.delete_forever),
+                  color: Colors.red,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
+                
+              ],
+              
             ),
-            
-
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                width: double.infinity,
-                height: 5,
-                child: LinearProgressIndicator(
-                  value: downloadStatusResult.progressSize.toDouble() / downloadStatusResult.totalSize.toDouble(),
-                  color: appColors.accentSecondary,
-                ),
-              )
-            ),
-
-            Text(
-              "${((downloadStatusResult.progressSize/downloadStatusResult.totalSize).toDouble() * 100).toStringAsFixed(2)}% | ${formatBytes(downloadStatusResult.totalSize)}",
-              style: GoogleFonts.nunito(
-                color: appColors.textPrimary,
-                fontSize: 18
-              )
-            ),
-
-            IconButton(
-              mouseCursor: SystemMouseCursors.click,
-              onPressed: widget.onRemoveDownload, 
-              icon: Icon(Icons.delete_forever),
-              color: Colors.red,
-            ),
-            
           ],
         )
       )

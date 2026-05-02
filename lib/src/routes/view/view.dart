@@ -217,7 +217,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     initViewContentInfo(fromCache: false);
   }
 
-  void onBack(){
+  void onNavigateBack(){
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     } else {
@@ -368,7 +368,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                       children: [
                         IconButton(
                           mouseCursor: SystemMouseCursors.click,
-                          onPressed: onBack,
+                          onPressed: onNavigateBack,
                           icon: Icon(
                             Icons.arrow_back_rounded,
                             color: appColors.secondary,
@@ -479,9 +479,12 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    IconButton(
+                                    IconButton.filled(
                                       mouseCursor: SystemMouseCursors.click,
-                                      onPressed: onBack,
+                                      onPressed: onNavigateBack,
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.black.withAlpha(130)
+                                      ),
                                       icon: Icon(
                                         Icons.arrow_back_rounded,
                                         color: appColors.secondary,
@@ -490,6 +493,9 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                     IconButton(
                                       mouseCursor: SystemMouseCursors.click,
                                       onPressed: onRefresh,
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.black.withAlpha(130)
+                                      ),
                                       icon: Icon(
                                         Icons.refresh_rounded,
                                         color: appColors.secondary,
@@ -1029,10 +1035,14 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
                     children: [
-                      IconButton(
+                      IconButton.filled(
                         mouseCursor: SystemMouseCursors.click,
-                        onPressed: onBack,
+                        onPressed: onNavigateBack,
+                        style: IconButton.styleFrom(
+                          backgroundColor: appColors.tertiary.withAlpha(125)
+                        ),
                         icon: Icon(
                           Icons.arrow_back_rounded,
                           color: appColors.secondary,
@@ -1041,6 +1051,9 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                       IconButton(
                         mouseCursor: SystemMouseCursors.click,
                         onPressed: onRefresh,
+                        style: IconButton.styleFrom(
+                          backgroundColor: appColors.tertiary.withAlpha(125)
+                        ),
                         icon: Icon(
                           Icons.refresh_rounded,
                           color: appColors.secondary,

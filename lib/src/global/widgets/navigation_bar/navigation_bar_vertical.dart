@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/widgets/navigation_bar/navigate_handler.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_items.dart';
 import 'dart:io';
 
 class NavigationBarVertical extends StatefulWidget {
-  const NavigationBarVertical(
-      {
-        super.key, required, 
-        required this.currentIndex,
-      });
+  const NavigationBarVertical({
+    super.key,
+    required this.currentIndex,
+  });
 
   final int currentIndex;
 
@@ -20,9 +18,9 @@ class NavigationBarVertical extends StatefulWidget {
 }
 
 class _NavigationBarVerticalState extends State<NavigationBarVertical> {
-  late int currentIndex = 0;
-
+  late int currentIndex;
   late AppColorsScheme appColors = appColorsNotifier.value;
+
 
   @override
   void initState() {
@@ -42,6 +40,7 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Draggable Window Header
         GestureDetector(
           onPanStart: (_) async {
             if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -49,7 +48,7 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+            padding: const EdgeInsets.all(15),
             child: Image.asset(
               'assets/icon/icon-transparent-white.png',
               width: 30,
@@ -61,74 +60,32 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
         
         Expanded(
           child: Container(
-            padding: EdgeInsets.only(left: 8, right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: NavigationRail(
-              // -> Styles
               labelType: NavigationRailLabelType.all,
               backgroundColor: appColors.primary,
-
-              unselectedIconTheme: IconThemeData(color: appColors.secondary),
-
-              selectedIconTheme: IconThemeData(
-                color: appColors.primary,
-              ),
-
-              selectedLabelTextStyle: TextStyle(
-                color: appColors.textPrimary,
-              ),
-              unselectedLabelTextStyle: TextStyle(
-                color: appColors.textPrimary,
-              ),
               indicatorColor: appColors.secondary,
-              // <-
-
+              unselectedIconTheme: IconThemeData(color: appColors.secondary),
+              selectedIconTheme: IconThemeData(color: appColors.primary),
+              selectedLabelTextStyle: TextStyle(color: appColors.textPrimary),
+              unselectedLabelTextStyle: TextStyle(color: appColors.textPrimary),
+              
               selectedIndex: currentIndex,
               onDestinationSelected: navigate,
-              destinations: const [
-                NavigationRailDestination(
+              
+              // 2. Render destinations from the list
+              destinations: navigationItems.map((item) {
+                return NavigationRailDestination(
                   icon: MouseRegion(
                     cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.home),
+                    child: Icon(item['icon']),
                   ),
-                  label: Text('Home'),
-                ),
-                NavigationRailDestination(
-                  icon: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.search),
-                  ),
-                  label: Text('Search'),
-                ),
-                NavigationRailDestination(
-                  icon: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.favorite_outline_rounded),
-                  ),
-                  selectedIcon: Icon(Icons.favorite_rounded),
-                  label: Text('Favorite'),
-                ),
-
-                NavigationRailDestination(
-                  icon: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.download_outlined),
-                  ),
-                  selectedIcon: Icon(Icons.download_rounded),
-                  label: Text('Download'),
-                ),
-                
-                NavigationRailDestination(
-                  icon: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.settings),
-                  ),
-                  label: Text('Settings'),
-                ),
-              ],
+                  selectedIcon: Icon(item['selectedIcon']),
+                  label: Text(item['label']),
+                );
+              }).toList(),
             ),
-          
-          
-          )
+          ),
         ),
       ],
     );

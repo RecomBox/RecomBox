@@ -47,6 +47,9 @@ import 'method/plugin_provider/install_plugin.dart';
 import 'method/plugin_provider/remove_plugin.dart';
 import 'method/torrent_provider/free_torrent_handle.dart';
 import 'method/torrent_provider/get_torrent_metadata.dart';
+import 'method/watch_state.dart';
+import 'method/watch_state/get_watch_state.dart';
+import 'method/watch_state/set_watch_state.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 import 'utils/settings.dart';
 import 'utils/torrent_provider/torrent_handle.dart';
@@ -130,6 +133,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt dco_decode_box_autoadd_usize(dynamic raw);
+
+  @protected
+  WatchStateKey dco_decode_box_autoadd_watch_state_key(dynamic raw);
+
+  @protected
+  WatchStateValue dco_decode_box_autoadd_watch_state_value(dynamic raw);
 
   @protected
   CategoryMap dco_decode_category_map(dynamic raw);
@@ -255,6 +264,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt? dco_decode_opt_box_autoadd_usize(dynamic raw);
 
   @protected
+  WatchStateValue? dco_decode_opt_box_autoadd_watch_state_value(dynamic raw);
+
+  @protected
   Paths dco_decode_paths(dynamic raw);
 
   @protected
@@ -313,6 +325,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ViewContentInfo dco_decode_view_content_info(dynamic raw);
+
+  @protected
+  WatchStateKey dco_decode_watch_state_key(dynamic raw);
+
+  @protected
+  WatchStateValue dco_decode_watch_state_value(dynamic raw);
 
   @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
@@ -389,6 +407,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer);
+
+  @protected
+  WatchStateKey sse_decode_box_autoadd_watch_state_key(
+      SseDeserializer deserializer);
+
+  @protected
+  WatchStateValue sse_decode_box_autoadd_watch_state_value(
+      SseDeserializer deserializer);
 
   @protected
   CategoryMap sse_decode_category_map(SseDeserializer deserializer);
@@ -528,6 +554,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer);
 
   @protected
+  WatchStateValue? sse_decode_opt_box_autoadd_watch_state_value(
+      SseDeserializer deserializer);
+
+  @protected
   Paths sse_decode_paths(SseDeserializer deserializer);
 
   @protected
@@ -589,6 +619,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer);
+
+  @protected
+  WatchStateKey sse_decode_watch_state_key(SseDeserializer deserializer);
+
+  @protected
+  WatchStateValue sse_decode_watch_state_value(SseDeserializer deserializer);
 
   @protected
   void sse_encode_AnyhowException(
@@ -667,6 +703,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_watch_state_key(
+      WatchStateKey self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_watch_state_value(
+      WatchStateValue self, SseSerializer serializer);
 
   @protected
   void sse_encode_category_map(CategoryMap self, SseSerializer serializer);
@@ -815,6 +859,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_box_autoadd_usize(BigInt? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_watch_state_value(
+      WatchStateValue? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_paths(Paths self, SseSerializer serializer);
 
   @protected
@@ -880,6 +928,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_view_content_info(
       ViewContentInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_watch_state_key(WatchStateKey self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_watch_state_value(
+      WatchStateValue self, SseSerializer serializer);
 }
 
 // Section: wire_class
