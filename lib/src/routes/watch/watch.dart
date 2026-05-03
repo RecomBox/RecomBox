@@ -156,7 +156,8 @@ class _WatchState extends State<WatchScreen> {
 
 
   Future<void> initWatch({bool fromCache=true}) async {
-    if (!context.mounted) return;
+    final ctx = context;
+    if (!ctx.mounted) return;
 
     if (isLoading) return;
 
@@ -228,8 +229,8 @@ class _WatchState extends State<WatchScreen> {
             debugPrint(Uri.file(filePath).toString());
             useLocal = true;
 
-            if (context.mounted){
-              player.open(Media(Uri.file(filePath).toString()));
+            if (ctx.mounted){
+              player.open(Media(Uri.file(filePath).toString()), play: true);
             }
           }
         }
@@ -256,12 +257,12 @@ class _WatchState extends State<WatchScreen> {
         );
 
         
-        if (context.mounted){
-          player.open(Media(uri.toString()));
+        if (ctx.mounted){
+          player.open(Media(uri.toString()), play: true);
         }
       }
 
-      if (context.mounted){
+      if (ctx.mounted){
         setState(() {
           isLoading = false;
         });
@@ -273,7 +274,7 @@ class _WatchState extends State<WatchScreen> {
       debugPrint(e.toString());
     }
 
-    if (context.mounted){
+    if (ctx.mounted){
       setState(() {
         isLoading = false;
       });
@@ -294,8 +295,11 @@ class _WatchState extends State<WatchScreen> {
 
       debugPrint("WT ${watchState?.position.toString()}");
 
-      if (watchState != null) {
-        await player.stream.buffer.firstWhere((b) => b.inMilliseconds > 0);
+      if (watchState != null ) {
+
+        await player.stream.buffering.firstWhere((isBuffering) => isBuffering == false);
+        await player.stream.position.firstWhere((d) => d.inMilliseconds > 0);
+        
         await player.seek(Duration(milliseconds: (watchState.position??BigInt.from(0)).toInt()));
       }
     }catch(e){
@@ -318,6 +322,8 @@ class _WatchState extends State<WatchScreen> {
       return prevSlot == nextSlot;
     })
     .listen((pos) async {
+        debugPrint("3 It go here");
+
       try{
         await setWatchState(
           watchStateKey: WatchStateKey(
