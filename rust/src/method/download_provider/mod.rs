@@ -9,7 +9,6 @@ pub mod set_download_status;
 pub use redb::Database;
 use redb::{TableDefinition};
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
 use std::path::PathBuf;
 use std::sync::{RwLock, Arc};
 use once_cell::sync::Lazy;
@@ -25,7 +24,7 @@ const DOWNLOAD_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("down
 const DOWNLOAD_STATUS_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("download_status");
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash, Clone)]
 pub struct DownloadItemKey{
     pub source: String,
@@ -34,7 +33,7 @@ pub struct DownloadItemKey{
     pub episode_index: u64,
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash, Clone)]
 pub struct DownloadItemValue{
     pub torrent_source: String,
@@ -44,7 +43,7 @@ pub struct DownloadItemValue{
 }
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DownloadStatus{
     pub progress_size: u64,

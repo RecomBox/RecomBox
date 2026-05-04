@@ -176,7 +176,7 @@ class _WatchState extends State<WatchScreen> {
           episodeIndex: args!.episode
         );
       }catch(e){
-        debugPrint(e.toString());
+        debugPrint("[Failed to update Last Watch]${e.toString()}");
       }
       
       final settings = await getSettings();

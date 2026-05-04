@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_all_download.freezed.dart';
-part 'get_all_download.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `assert_receiver_is_total_eq`, `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`, `hash`, `hash`
 
@@ -15,24 +12,44 @@ Future<Map<AllDownloadItemKey, List<AllDownloadItemValue>>> getAllDownload() =>
     RustLib.instance.api
         .crateMethodDownloadProviderGetAllDownloadGetAllDownload();
 
-@freezed
-sealed class AllDownloadItemKey with _$AllDownloadItemKey {
-  const factory AllDownloadItemKey({
-    required String source,
-    required String id,
-  }) = _AllDownloadItemKey;
+class AllDownloadItemKey {
+  final String source;
+  final String id;
 
-  factory AllDownloadItemKey.fromJson(Map<String, dynamic> json) =>
-      _$AllDownloadItemKeyFromJson(json);
+  const AllDownloadItemKey({
+    required this.source,
+    required this.id,
+  });
+
+  @override
+  int get hashCode => source.hashCode ^ id.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AllDownloadItemKey &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id;
 }
 
-@freezed
-sealed class AllDownloadItemValue with _$AllDownloadItemValue {
-  const factory AllDownloadItemValue({
-    required BigInt seasonIndex,
-    required BigInt episodeIndex,
-  }) = _AllDownloadItemValue;
+class AllDownloadItemValue {
+  final BigInt seasonIndex;
+  final BigInt episodeIndex;
 
-  factory AllDownloadItemValue.fromJson(Map<String, dynamic> json) =>
-      _$AllDownloadItemValueFromJson(json);
+  const AllDownloadItemValue({
+    required this.seasonIndex,
+    required this.episodeIndex,
+  });
+
+  @override
+  int get hashCode => seasonIndex.hashCode ^ episodeIndex.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AllDownloadItemValue &&
+          runtimeType == other.runtimeType &&
+          seasonIndex == other.seasonIndex &&
+          episodeIndex == other.episodeIndex;
 }

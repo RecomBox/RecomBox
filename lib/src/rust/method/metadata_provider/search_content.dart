@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'search_content.freezed.dart';
-part 'search_content.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
@@ -19,17 +16,41 @@ Future<List<SearchContentInfo>> searchContent(
     RustLib.instance.api.crateMethodMetadataProviderSearchContentSearchContent(
         source: source, search: search, sort: sort, page: page);
 
-@freezed
-sealed class SearchContentInfo with _$SearchContentInfo {
-  const factory SearchContentInfo({
-    required String source,
-    required String id,
-    required String title,
-    required String year,
-    BigInt? rank,
-    required String thumbnailUrl,
-  }) = _SearchContentInfo;
+class SearchContentInfo {
+  final String source;
+  final String id;
+  final String title;
+  final String year;
+  final BigInt? rank;
+  final String thumbnailUrl;
 
-  factory SearchContentInfo.fromJson(Map<String, dynamic> json) =>
-      _$SearchContentInfoFromJson(json);
+  const SearchContentInfo({
+    required this.source,
+    required this.id,
+    required this.title,
+    required this.year,
+    this.rank,
+    required this.thumbnailUrl,
+  });
+
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      id.hashCode ^
+      title.hashCode ^
+      year.hashCode ^
+      rank.hashCode ^
+      thumbnailUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SearchContentInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id &&
+          title == other.title &&
+          year == other.year &&
+          rank == other.rank &&
+          thumbnailUrl == other.thumbnailUrl;
 }

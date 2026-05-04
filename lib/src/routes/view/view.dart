@@ -120,6 +120,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     }
     try{
       var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache);
+      debugPrint(data.toString());
       if (context.mounted){
         
         setState(() {
@@ -550,8 +551,10 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                               );
                             },
                             label: Text(
-                              (((viewContentInfoResult?.lastWatchSeasonIndex??BigInt.from(0)) > BigInt.from(0)) && ((viewContentInfoResult?.lastWatchEpisodeIndex??BigInt.from(0)) > BigInt.from(0)))
-                              ? "Continue Watching"
+                              (((viewContentInfoResult?.lastWatchSeasonIndex??BigInt.from(0)) > BigInt.from(0)) || ((viewContentInfoResult?.lastWatchEpisodeIndex??BigInt.from(0)) > BigInt.from(0)))
+                              ? SourceExtension.fromString(viewContentInfoResult?.source??"") == Source.tv
+                                ? "Continue S${((viewContentInfoResult?.lastWatchSeasonIndex??BigInt.from(0))+BigInt.from(1)).toString().padLeft(2, '0')}E${((viewContentInfoResult?.lastWatchEpisodeIndex??BigInt.from(0))+BigInt.from(1)).toString().padLeft(2, '0')}"
+                                : "Continue Watching"
                               : "Watch Now",
                             ),
                             style: ElevatedButton.styleFrom(

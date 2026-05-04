@@ -5,46 +5,71 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'view_content.freezed.dart';
-part 'view_content.g.dart';
 
 // These functions are ignored because they are not marked as `pub`: `get_cache_dir`, `load_cache`, `save_cache`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
-@freezed
-sealed class EpisodeInfo with _$EpisodeInfo {
-  const factory EpisodeInfo({
-    required String source,
-    required String title,
-    required String thumbnailUrl,
-  }) = _EpisodeInfo;
+class EpisodeInfo {
+  final String source;
+  final String title;
+  final String thumbnailUrl;
 
-  factory EpisodeInfo.fromJson(Map<String, dynamic> json) =>
-      _$EpisodeInfoFromJson(json);
+  const EpisodeInfo({
+    required this.source,
+    required this.title,
+    required this.thumbnailUrl,
+  });
+
+  @override
+  int get hashCode => source.hashCode ^ title.hashCode ^ thumbnailUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EpisodeInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          title == other.title &&
+          thumbnailUrl == other.thumbnailUrl;
 }
 
-@freezed
-sealed class ViewContentInfo with _$ViewContentInfo {
-  const ViewContentInfo._();
-  const factory ViewContentInfo({
-    required String source,
-    required String externalId,
-    required String url,
-    required String title,
-    required String titleSecondary,
-    required String thumbnailUrl,
-    required String bannerUrl,
-    required List<String> contextual,
-    required String description,
-    required String trailerUrl,
-    required PlatformInt64 countdown,
-    required List<String> pictures,
-    required List<List<EpisodeInfo>> episodes,
-    BigInt? lastWatchSeasonIndex,
-    BigInt? lastWatchEpisodeIndex,
-    String? lastUpdate,
-  }) = _ViewContentInfo;
+class ViewContentInfo {
+  final String source;
+  final String externalId;
+  final String url;
+  final String title;
+  final String titleSecondary;
+  final String thumbnailUrl;
+  final String bannerUrl;
+  final List<String> contextual;
+  final String description;
+  final String trailerUrl;
+  final PlatformInt64 countdown;
+  final List<String> pictures;
+  final List<List<EpisodeInfo>> episodes;
+  final BigInt? lastWatchSeasonIndex;
+  final BigInt? lastWatchEpisodeIndex;
+  final String? lastUpdate;
+
+  const ViewContentInfo({
+    required this.source,
+    required this.externalId,
+    required this.url,
+    required this.title,
+    required this.titleSecondary,
+    required this.thumbnailUrl,
+    required this.bannerUrl,
+    required this.contextual,
+    required this.description,
+    required this.trailerUrl,
+    required this.countdown,
+    required this.pictures,
+    required this.episodes,
+    this.lastWatchSeasonIndex,
+    this.lastWatchEpisodeIndex,
+    this.lastUpdate,
+  });
+
   static Future<ViewContentInfo> get_(
           {required String source,
           required String id,
@@ -65,6 +90,44 @@ sealed class ViewContentInfo with _$ViewContentInfo {
               seasonIndex: seasonIndex,
               episodeIndex: episodeIndex);
 
-  factory ViewContentInfo.fromJson(Map<String, dynamic> json) =>
-      _$ViewContentInfoFromJson(json);
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      externalId.hashCode ^
+      url.hashCode ^
+      title.hashCode ^
+      titleSecondary.hashCode ^
+      thumbnailUrl.hashCode ^
+      bannerUrl.hashCode ^
+      contextual.hashCode ^
+      description.hashCode ^
+      trailerUrl.hashCode ^
+      countdown.hashCode ^
+      pictures.hashCode ^
+      episodes.hashCode ^
+      lastWatchSeasonIndex.hashCode ^
+      lastWatchEpisodeIndex.hashCode ^
+      lastUpdate.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ViewContentInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          externalId == other.externalId &&
+          url == other.url &&
+          title == other.title &&
+          titleSecondary == other.titleSecondary &&
+          thumbnailUrl == other.thumbnailUrl &&
+          bannerUrl == other.bannerUrl &&
+          contextual == other.contextual &&
+          description == other.description &&
+          trailerUrl == other.trailerUrl &&
+          countdown == other.countdown &&
+          pictures == other.pictures &&
+          episodes == other.episodes &&
+          lastWatchSeasonIndex == other.lastWatchSeasonIndex &&
+          lastWatchEpisodeIndex == other.lastWatchEpisodeIndex &&
+          lastUpdate == other.lastUpdate;
 }

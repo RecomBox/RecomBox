@@ -1,12 +1,12 @@
 use std::{sync::{Arc, Mutex}};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
+
 use std::path::PathBuf;
 
 static SETTIGNS: Lazy<Mutex<Option<Arc<Settings>>>> = Lazy::new(|| Mutex::new(None));
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
     pub port: u32,
@@ -14,7 +14,7 @@ pub struct Settings {
     pub version: String
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Paths {
     pub app_support_dir: String,

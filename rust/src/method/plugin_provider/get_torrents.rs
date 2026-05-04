@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
+
 use tokio;
 
 use recombox_plugin_provider::get_torrents::{self, InputPayload};
@@ -9,7 +9,7 @@ use recombox_plugin_provider::global_types::Source;
 use crate::utils::settings::Settings;
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TorrentInfo{
     pub title: String,

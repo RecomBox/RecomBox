@@ -15,7 +15,7 @@ pub mod set_last_watch_torrent;
 pub use redb::Database;
 use redb::{TableDefinition, MultimapTableDefinition};
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
+
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{RwLock, Arc};
@@ -34,22 +34,21 @@ const CATEGORY_AND_ITEM_TABLE: MultimapTableDefinition<u64, &[u8]> = MultimapTab
 const ITEM_AND_CATEGORY_TABLE: MultimapTableDefinition<&[u8], u64> = MultimapTableDefinition::new("item_and_category");
 
 
-#[frb(json_serializable)]
+
 #[derive(Serialize, Deserialize)]
 pub struct CategoryMap(pub HashMap<u64, String>);
 
-#[frb(json_serializable)]
+
 #[derive(Serialize, Deserialize)]
 pub struct CategoryOrderMap(pub HashMap<u64, u64>);
 
-#[frb(json_serializable)]
 #[derive(Serialize, Deserialize)]
 pub struct FavoriteItemInfo{
     pub source: String,
     pub id: String,
 }
 
-#[frb(json_serializable)]
+
 #[derive(Serialize, Deserialize)]
 pub struct LastWatchTorrentInfo{
     pub torrent_source: String,

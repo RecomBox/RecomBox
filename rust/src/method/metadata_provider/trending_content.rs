@@ -3,7 +3,7 @@ use recombox_metadata_provider::{
 };
 use recombox_metadata_provider::global_types::Source;
 
-use flutter_rust_bridge::frb;
+
 use serde::{Deserialize, Serialize};
 use chrono::{Utc, DateTime, Duration};
 use std::path::PathBuf;
@@ -12,7 +12,7 @@ use std::fs;
 use crate::utils::settings::Settings;
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrendingContentInfo {
     pub source: String,

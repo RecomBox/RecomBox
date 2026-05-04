@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_torrent_metadata.freezed.dart';
-part 'get_torrent_metadata.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
 
@@ -16,27 +13,54 @@ Future<TorrentMetadata> getTorrentMetadata({required String torrentSource}) =>
         .crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
             torrentSource: torrentSource);
 
-@freezed
-sealed class FileInfo with _$FileInfo {
-  const factory FileInfo({
-    required BigInt id,
-    String? path,
-    BigInt? length,
-    String? sha1,
-  }) = _FileInfo;
+class FileInfo {
+  final BigInt id;
+  final String? path;
+  final BigInt? length;
+  final String? sha1;
 
-  factory FileInfo.fromJson(Map<String, dynamic> json) =>
-      _$FileInfoFromJson(json);
+  const FileInfo({
+    required this.id,
+    this.path,
+    this.length,
+    this.sha1,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ path.hashCode ^ length.hashCode ^ sha1.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FileInfo &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          path == other.path &&
+          length == other.length &&
+          sha1 == other.sha1;
 }
 
-@freezed
-sealed class TorrentMetadata with _$TorrentMetadata {
-  const factory TorrentMetadata({
-    String? name,
-    BigInt? length,
-    required List<FileInfo> files,
-  }) = _TorrentMetadata;
+class TorrentMetadata {
+  final String? name;
+  final BigInt? length;
+  final List<FileInfo> files;
 
-  factory TorrentMetadata.fromJson(Map<String, dynamic> json) =>
-      _$TorrentMetadataFromJson(json);
+  const TorrentMetadata({
+    this.name,
+    this.length,
+    required this.files,
+  });
+
+  @override
+  int get hashCode => name.hashCode ^ length.hashCode ^ files.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TorrentMetadata &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          length == other.length &&
+          files == other.files;
 }
