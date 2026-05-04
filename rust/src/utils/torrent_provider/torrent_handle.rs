@@ -7,7 +7,7 @@ use std::sync::{Arc, LazyLock};
 use librqbit::ManagedTorrent;
 use librqbit::api::TorrentIdOrHash;
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
+
 
 
 use super::torrent_session::TorrentSession;
@@ -17,7 +17,7 @@ static WATCH_TORRENT_HANDLE_MAP: LazyLock<DashMap<String, Arc<ManagedTorrent>>> 
 static DOWNLOAD_TORRENT_HANDLE_MAP: LazyLock<DashMap<String, Arc<ManagedTorrent>>> = LazyLock::new(DashMap::new);
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub enum TorrentHandleMode{
     Watch,
@@ -41,7 +41,7 @@ impl TorrentHandleMode {
     }
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TorrentHandle {
     pub torrent_handle_mode: TorrentHandleMode,

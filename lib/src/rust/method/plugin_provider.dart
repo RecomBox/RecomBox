@@ -5,23 +5,44 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'plugin_provider.freezed.dart';
-part 'plugin_provider.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
-@freezed
-sealed class PluginInfo with _$PluginInfo {
-  const factory PluginInfo({
-    required String hashedManifestRepoId,
-    required String manifestRepoName,
-    required String pluginId,
-    required String pluginName,
-    required String pluginRepoUrl,
-    required String pluginIconUrl,
-  }) = _PluginInfo;
+class PluginInfo {
+  final String hashedManifestRepoId;
+  final String manifestRepoName;
+  final String pluginId;
+  final String pluginName;
+  final String pluginRepoUrl;
+  final String pluginIconUrl;
 
-  factory PluginInfo.fromJson(Map<String, dynamic> json) =>
-      _$PluginInfoFromJson(json);
+  const PluginInfo({
+    required this.hashedManifestRepoId,
+    required this.manifestRepoName,
+    required this.pluginId,
+    required this.pluginName,
+    required this.pluginRepoUrl,
+    required this.pluginIconUrl,
+  });
+
+  @override
+  int get hashCode =>
+      hashedManifestRepoId.hashCode ^
+      manifestRepoName.hashCode ^
+      pluginId.hashCode ^
+      pluginName.hashCode ^
+      pluginRepoUrl.hashCode ^
+      pluginIconUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PluginInfo &&
+          runtimeType == other.runtimeType &&
+          hashedManifestRepoId == other.hashedManifestRepoId &&
+          manifestRepoName == other.manifestRepoName &&
+          pluginId == other.pluginId &&
+          pluginName == other.pluginName &&
+          pluginRepoUrl == other.pluginRepoUrl &&
+          pluginIconUrl == other.pluginIconUrl;
 }

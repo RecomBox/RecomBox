@@ -1,7 +1,7 @@
 use redb::{ReadableDatabase, ReadableTable};
 use serde_json::from_slice;
 use std::collections::HashMap;
-use flutter_rust_bridge::frb;
+
 use serde::{Deserialize, Serialize};
 
 
@@ -9,7 +9,7 @@ use super::{get_db, DOWNLOAD_TABLE};
 
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash, Clone)]
 pub struct AllDownloadItemKey{
     pub source: String,
@@ -17,7 +17,7 @@ pub struct AllDownloadItemKey{
     
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash, Clone)]
 pub struct AllDownloadItemValue{
     pub season_index: u64,

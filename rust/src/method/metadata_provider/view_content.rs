@@ -4,7 +4,7 @@ use recombox_metadata_provider::{
 };
 use recombox_metadata_provider::global_types::Source;
 
-use flutter_rust_bridge::frb;
+
 use serde::{Deserialize, Serialize};
 use chrono::{Utc, DateTime, Duration};
 use std::path::PathBuf;
@@ -15,7 +15,7 @@ use crate::method::favorite::{is_in_category::is_in_category};
 use crate::utils::download_file;
 use crate::utils::settings::Settings;
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EpisodeInfo{
 	pub source: String,
@@ -23,7 +23,7 @@ pub struct EpisodeInfo{
 	pub thumbnail_url: String
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ViewContentInfo {
 	pub source: String,
@@ -166,12 +166,6 @@ impl ViewContentInfo{
 
 		let source = Source::from_str(source);
 		
-		match is_in_category(&source.to_string(), id).await? {
-			false => {
-				return Ok(())
-			},
-			true => {}
-		};
 		
 		let mut data = ViewContentInfo::load_cache(&source, id, false).await?
 			.ok_or("Not in favorite. Can't update last watch.")?;

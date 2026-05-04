@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_sources.freezed.dart';
-part 'get_sources.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
@@ -32,13 +29,23 @@ Future<List<SourceInfo>> getSources(
         search: search,
         page: page);
 
-@freezed
-sealed class SourceInfo with _$SourceInfo {
-  const factory SourceInfo({
-    required String id,
-    required String title,
-  }) = _SourceInfo;
+class SourceInfo {
+  final String id;
+  final String title;
 
-  factory SourceInfo.fromJson(Map<String, dynamic> json) =>
-      _$SourceInfoFromJson(json);
+  const SourceInfo({
+    required this.id,
+    required this.title,
+  });
+
+  @override
+  int get hashCode => id.hashCode ^ title.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SourceInfo &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title;
 }

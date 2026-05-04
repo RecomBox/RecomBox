@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_installed_plugins.freezed.dart';
-part 'get_installed_plugins.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
@@ -17,18 +14,45 @@ Future<Map<String, InstalledPluginInfo>> getInstalledPlugins(
         .crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins(
             source: source);
 
-@freezed
-sealed class InstalledPluginInfo with _$InstalledPluginInfo {
-  const factory InstalledPluginInfo({
-    required String hashedManifestRepoId,
-    required String manifestRepoName,
-    required String pluginName,
-    required String pluginRepoUrl,
-    required String pluginIconUrl,
-    required String pluginPath,
-    required String pluginVersion,
-  }) = _InstalledPluginInfo;
+class InstalledPluginInfo {
+  final String hashedManifestRepoId;
+  final String manifestRepoName;
+  final String pluginName;
+  final String pluginRepoUrl;
+  final String pluginIconUrl;
+  final String pluginPath;
+  final String pluginVersion;
 
-  factory InstalledPluginInfo.fromJson(Map<String, dynamic> json) =>
-      _$InstalledPluginInfoFromJson(json);
+  const InstalledPluginInfo({
+    required this.hashedManifestRepoId,
+    required this.manifestRepoName,
+    required this.pluginName,
+    required this.pluginRepoUrl,
+    required this.pluginIconUrl,
+    required this.pluginPath,
+    required this.pluginVersion,
+  });
+
+  @override
+  int get hashCode =>
+      hashedManifestRepoId.hashCode ^
+      manifestRepoName.hashCode ^
+      pluginName.hashCode ^
+      pluginRepoUrl.hashCode ^
+      pluginIconUrl.hashCode ^
+      pluginPath.hashCode ^
+      pluginVersion.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InstalledPluginInfo &&
+          runtimeType == other.runtimeType &&
+          hashedManifestRepoId == other.hashedManifestRepoId &&
+          manifestRepoName == other.manifestRepoName &&
+          pluginName == other.pluginName &&
+          pluginRepoUrl == other.pluginRepoUrl &&
+          pluginIconUrl == other.pluginIconUrl &&
+          pluginPath == other.pluginPath &&
+          pluginVersion == other.pluginVersion;
 }

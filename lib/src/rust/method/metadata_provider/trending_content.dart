@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'trending_content.freezed.dart';
-part 'trending_content.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
@@ -17,17 +14,41 @@ Future<List<TrendingContentInfo>> trendingContent(
         .crateMethodMetadataProviderTrendingContentTrendingContent(
             source: source, fromCache: fromCache);
 
-@freezed
-sealed class TrendingContentInfo with _$TrendingContentInfo {
-  const factory TrendingContentInfo({
-    required String source,
-    required String id,
-    required String title,
-    required String year,
-    required double rating,
-    required String thumbnailUrl,
-  }) = _TrendingContentInfo;
+class TrendingContentInfo {
+  final String source;
+  final String id;
+  final String title;
+  final String year;
+  final double rating;
+  final String thumbnailUrl;
 
-  factory TrendingContentInfo.fromJson(Map<String, dynamic> json) =>
-      _$TrendingContentInfoFromJson(json);
+  const TrendingContentInfo({
+    required this.source,
+    required this.id,
+    required this.title,
+    required this.year,
+    required this.rating,
+    required this.thumbnailUrl,
+  });
+
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      id.hashCode ^
+      title.hashCode ^
+      year.hashCode ^
+      rating.hashCode ^
+      thumbnailUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TrendingContentInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id &&
+          title == other.title &&
+          year == other.year &&
+          rating == other.rating &&
+          thumbnailUrl == other.thumbnailUrl;
 }

@@ -9,7 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'download_provider.freezed.dart';
 part 'download_provider.g.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `assert_receiver_is_total_eq`, `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `hash`, `hash`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `assert_receiver_is_total_eq`, `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `hash`, `hash`
 
 Future<ArcDatabase> getDb() =>
     RustLib.instance.api.crateMethodDownloadProviderGetDb();
@@ -17,30 +17,66 @@ Future<ArcDatabase> getDb() =>
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>
 abstract class ArcDatabase implements RustOpaqueInterface {}
 
-@freezed
-sealed class DownloadItemKey with _$DownloadItemKey {
-  const factory DownloadItemKey({
-    required String source,
-    required String id,
-    required BigInt seasonIndex,
-    required BigInt episodeIndex,
-  }) = _DownloadItemKey;
+class DownloadItemKey {
+  final String source;
+  final String id;
+  final BigInt seasonIndex;
+  final BigInt episodeIndex;
 
-  factory DownloadItemKey.fromJson(Map<String, dynamic> json) =>
-      _$DownloadItemKeyFromJson(json);
+  const DownloadItemKey({
+    required this.source,
+    required this.id,
+    required this.seasonIndex,
+    required this.episodeIndex,
+  });
+
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      id.hashCode ^
+      seasonIndex.hashCode ^
+      episodeIndex.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DownloadItemKey &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id &&
+          seasonIndex == other.seasonIndex &&
+          episodeIndex == other.episodeIndex;
 }
 
-@freezed
-sealed class DownloadItemValue with _$DownloadItemValue {
-  const factory DownloadItemValue({
-    required String torrentSource,
-    required BigInt fileId,
-    required String filePath,
-    required String mimeType,
-  }) = _DownloadItemValue;
+class DownloadItemValue {
+  final String torrentSource;
+  final BigInt fileId;
+  final String filePath;
+  final String mimeType;
 
-  factory DownloadItemValue.fromJson(Map<String, dynamic> json) =>
-      _$DownloadItemValueFromJson(json);
+  const DownloadItemValue({
+    required this.torrentSource,
+    required this.fileId,
+    required this.filePath,
+    required this.mimeType,
+  });
+
+  @override
+  int get hashCode =>
+      torrentSource.hashCode ^
+      fileId.hashCode ^
+      filePath.hashCode ^
+      mimeType.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DownloadItemValue &&
+          runtimeType == other.runtimeType &&
+          torrentSource == other.torrentSource &&
+          fileId == other.fileId &&
+          filePath == other.filePath &&
+          mimeType == other.mimeType;
 }
 
 @freezed

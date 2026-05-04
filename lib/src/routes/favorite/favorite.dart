@@ -34,7 +34,7 @@ class _FavoriteState extends State<FavoriteScreen> {
   FocusNode searchFocus = FocusNode();
 
   CategoryMap categoryMap = CategoryMap(field0: {});
-  List<FavoriteItemInfo> FavoriteItemInfoList = [];
+  List<FavoriteItemInfo> favoriteItemInfoList = [];
 
   Map<int, String> itemTitleMap = {};
 
@@ -80,7 +80,7 @@ class _FavoriteState extends State<FavoriteScreen> {
 
       setState(() {
         categoryMap = categoryMapResult;
-        FavoriteItemInfoList = favoriteItemInfoListResult;
+        favoriteItemInfoList = favoriteItemInfoListResult;
       });
     }catch(e){
       debugPrint(e.toString());
@@ -108,19 +108,19 @@ class _FavoriteState extends State<FavoriteScreen> {
   List<FavoriteItemInfo> onFilterSearch() {
     String query = _textEditingController.text.toLowerCase();
     
-    if (query.isEmpty || itemTitleMap.isEmpty) return FavoriteItemInfoList;
+    if (query.isEmpty || itemTitleMap.isEmpty) return favoriteItemInfoList;
 
     List<int> sortedFavoriteItemInfoIndexList = Map.fromEntries(
       itemTitleMap.entries.where((entry) => entry.value.toLowerCase().contains(query))
     ).keys.toList();
 
 
-    return sortedFavoriteItemInfoIndexList.map((i) => FavoriteItemInfoList[i]).toList();
+    return sortedFavoriteItemInfoIndexList.map((i) => favoriteItemInfoList[i]).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<FavoriteItemInfo> filteredFavoriteItemInfoList = onFilterSearch();
+    List<FavoriteItemInfo> filteredfavoriteItemInfoList = onFilterSearch();
 
     return SafeArea(
       child: Material(
@@ -253,12 +253,12 @@ class _FavoriteState extends State<FavoriteScreen> {
                                         controller: _textEditingController,
                                         onChanged: (_) {
                                           setState(() {
-                                            filteredFavoriteItemInfoList = onFilterSearch();
+                                            filteredfavoriteItemInfoList = onFilterSearch();
                                           });
                                         },
                                         onSubmitted: (_){
                                           setState(() {
-                                            filteredFavoriteItemInfoList = onFilterSearch();
+                                            filteredfavoriteItemInfoList = onFilterSearch();
                                           });
                                         },
                                         cursorColor: appColors.textPrimary,
@@ -293,7 +293,7 @@ class _FavoriteState extends State<FavoriteScreen> {
                       )
                     ),
 
-                    if (FavoriteItemInfoList.isEmpty)
+                    if (favoriteItemInfoList.isEmpty)
                     Expanded(
                       child: Container(
                         height: double.infinity,
@@ -310,7 +310,7 @@ class _FavoriteState extends State<FavoriteScreen> {
                       ),
                     ),
 
-                    if (FavoriteItemInfoList.isNotEmpty)
+                    if (favoriteItemInfoList.isNotEmpty)
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.all(15),
@@ -326,15 +326,15 @@ class _FavoriteState extends State<FavoriteScreen> {
                                   mainAxisSpacing: 10,
                                   childAspectRatio: 1, 
                                 ),
-                                itemCount: filteredFavoriteItemInfoList.length,
+                                itemCount: filteredfavoriteItemInfoList.length,
                                 itemBuilder: (context, index) {
                                   return FavoriteContentCard(
-                                    key: ValueKey(filteredFavoriteItemInfoList[index].id),
+                                    key: ValueKey(filteredfavoriteItemInfoList[index].id),
                                     addTitle: (String title) {
                                       addTitle(index, title);
                                     },
-                                    source: SourceExtension.fromString(filteredFavoriteItemInfoList[index].source), 
-                                    id: filteredFavoriteItemInfoList[index].id,
+                                    source: SourceExtension.fromString(filteredfavoriteItemInfoList[index].source), 
+                                    id: filteredfavoriteItemInfoList[index].id,
                                   );
                                 },
                               );

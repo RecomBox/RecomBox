@@ -6,10 +6,10 @@ pub mod get_sources;
 pub mod get_torrents;
 
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
 
 
-#[frb(json_serializable)]
+
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PluginInfo{
     pub hashed_manifest_repo_id: String,

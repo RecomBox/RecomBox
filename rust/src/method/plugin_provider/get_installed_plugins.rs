@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use flutter_rust_bridge::frb;
+
 
 
 use recombox_plugin_provider::manage_plugin::PluginDatabaseManager;
@@ -10,7 +10,7 @@ use recombox_plugin_provider::global_types::Source;
 use crate::utils::settings::Settings;
 
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct InstalledPluginInfo{
     pub hashed_manifest_repo_id: String,

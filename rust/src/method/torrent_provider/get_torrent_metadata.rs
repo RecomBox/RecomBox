@@ -1,12 +1,12 @@
 
 use serde::{Deserialize, Serialize};
 
-use flutter_rust_bridge::frb;
+
 
 
 use crate::utils::torrent_provider::get_torrent_metadata;
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileInfo {
     pub id: usize,
@@ -15,7 +15,7 @@ pub struct FileInfo {
     pub sha1: Option<String>
 }
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TorrentMetadata {
     pub name: Option<String>,

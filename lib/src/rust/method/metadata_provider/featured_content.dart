@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'featured_content.freezed.dart';
-part 'featured_content.g.dart';
 
 // These functions are ignored because they are not marked as `pub`: `load`, `save`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Cache`
@@ -19,17 +16,41 @@ Future<List<FeaturedContentInfo>> featuredContent(
         .crateMethodMetadataProviderFeaturedContentFeaturedContent(
             source: source, fromCache: fromCache);
 
-@freezed
-sealed class FeaturedContentInfo with _$FeaturedContentInfo {
-  const factory FeaturedContentInfo({
-    required String source,
-    required String id,
-    required String title,
-    required List<String> contextual,
-    required String shortDescription,
-    required String bannerUrl,
-  }) = _FeaturedContentInfo;
+class FeaturedContentInfo {
+  final String source;
+  final String id;
+  final String title;
+  final List<String> contextual;
+  final String shortDescription;
+  final String bannerUrl;
 
-  factory FeaturedContentInfo.fromJson(Map<String, dynamic> json) =>
-      _$FeaturedContentInfoFromJson(json);
+  const FeaturedContentInfo({
+    required this.source,
+    required this.id,
+    required this.title,
+    required this.contextual,
+    required this.shortDescription,
+    required this.bannerUrl,
+  });
+
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      id.hashCode ^
+      title.hashCode ^
+      contextual.hashCode ^
+      shortDescription.hashCode ^
+      bannerUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FeaturedContentInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id &&
+          title == other.title &&
+          contextual == other.contextual &&
+          shortDescription == other.shortDescription &&
+          bannerUrl == other.bannerUrl;
 }

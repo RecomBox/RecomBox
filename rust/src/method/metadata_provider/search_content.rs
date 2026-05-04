@@ -4,10 +4,10 @@ use recombox_metadata_provider::{
 };
 use recombox_metadata_provider::global_types::Source;
 
-use flutter_rust_bridge::frb;
+
 use serde::{Deserialize, Serialize};
 
-#[frb(json_serializable)]
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SearchContentInfo{
 	pub source: String,

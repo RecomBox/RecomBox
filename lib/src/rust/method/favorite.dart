@@ -6,51 +6,87 @@
 import '../frb_generated.dart';
 import 'download_provider.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'favorite.freezed.dart';
-part 'favorite.g.dart';
 
 Future<ArcDatabase> getDb() => RustLib.instance.api.crateMethodFavoriteGetDb();
 
-@freezed
-sealed class CategoryMap with _$CategoryMap {
-  const factory CategoryMap({
-    required Map<BigInt, String> field0,
-  }) = _CategoryMap;
+class CategoryMap {
+  final Map<BigInt, String> field0;
 
-  factory CategoryMap.fromJson(Map<String, dynamic> json) =>
-      _$CategoryMapFromJson(json);
+  const CategoryMap({
+    required this.field0,
+  });
+
+  @override
+  int get hashCode => field0.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryMap &&
+          runtimeType == other.runtimeType &&
+          field0 == other.field0;
 }
 
-@freezed
-sealed class CategoryOrderMap with _$CategoryOrderMap {
-  const factory CategoryOrderMap({
-    required Map<BigInt, BigInt> field0,
-  }) = _CategoryOrderMap;
+class CategoryOrderMap {
+  final Map<BigInt, BigInt> field0;
 
-  factory CategoryOrderMap.fromJson(Map<String, dynamic> json) =>
-      _$CategoryOrderMapFromJson(json);
+  const CategoryOrderMap({
+    required this.field0,
+  });
+
+  @override
+  int get hashCode => field0.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryOrderMap &&
+          runtimeType == other.runtimeType &&
+          field0 == other.field0;
 }
 
-@freezed
-sealed class FavoriteItemInfo with _$FavoriteItemInfo {
-  const factory FavoriteItemInfo({
-    required String source,
-    required String id,
-  }) = _FavoriteItemInfo;
+class FavoriteItemInfo {
+  final String source;
+  final String id;
 
-  factory FavoriteItemInfo.fromJson(Map<String, dynamic> json) =>
-      _$FavoriteItemInfoFromJson(json);
+  const FavoriteItemInfo({
+    required this.source,
+    required this.id,
+  });
+
+  @override
+  int get hashCode => source.hashCode ^ id.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FavoriteItemInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id;
 }
 
-@freezed
-sealed class LastWatchTorrentInfo with _$LastWatchTorrentInfo {
-  const factory LastWatchTorrentInfo({
-    required String torrentSource,
-    required BigInt fileId,
-    required String mimeType,
-  }) = _LastWatchTorrentInfo;
+class LastWatchTorrentInfo {
+  final String torrentSource;
+  final BigInt fileId;
+  final String mimeType;
 
-  factory LastWatchTorrentInfo.fromJson(Map<String, dynamic> json) =>
-      _$LastWatchTorrentInfoFromJson(json);
+  const LastWatchTorrentInfo({
+    required this.torrentSource,
+    required this.fileId,
+    required this.mimeType,
+  });
+
+  @override
+  int get hashCode =>
+      torrentSource.hashCode ^ fileId.hashCode ^ mimeType.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LastWatchTorrentInfo &&
+          runtimeType == other.runtimeType &&
+          torrentSource == other.torrentSource &&
+          fileId == other.fileId &&
+          mimeType == other.mimeType;
 }

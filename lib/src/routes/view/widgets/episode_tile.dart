@@ -5,6 +5,8 @@ import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download_status.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
+import 'package:recombox/src/rust/method/watch_state.dart';
+import 'package:recombox/src/rust/method/watch_state/get_watch_state.dart';
 
 class EpisodeTile extends StatefulWidget {
   const EpisodeTile({
@@ -43,6 +45,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
     paused: false, 
     done: false
   );
+  BigInt watchPosition = BigInt.from(0);
 
   @override
   void initState() {
@@ -67,6 +70,13 @@ class _EpisodeTileState extends State<EpisodeTile> {
         episodeIndex: widget.episode
       ));
 
+      var watchState = await getWatchState(watchStateKey: WatchStateKey(
+        source: widget.source.name, 
+        id: widget.viewID, 
+        seasonIndex: widget.season, 
+        episodeIndex: widget.episode
+      ));
+
       if (context.mounted){
         if (downloadItemValue != null){
           setState(() {
@@ -77,6 +87,12 @@ class _EpisodeTileState extends State<EpisodeTile> {
         if (downloadStatus != null){
           setState(() {
             downloadStatusResult = downloadStatus;
+          });
+        }
+
+        if (watchState != null){
+          setState(() {
+            watchPosition = watchState.position ?? BigInt.from(0);
           });
         }
       }
@@ -115,7 +131,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
                   child: Container(
                     padding: EdgeInsets.all(10),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -125,22 +141,26 @@ class _EpisodeTileState extends State<EpisodeTile> {
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
                           ),
-                          maxLines: 3,
+                          maxLines: 2,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                        )
+                        ),
+                        if (watchPosition > BigInt.from(0))
+                          Text(
+                            "Last watched: ${Duration(milliseconds: watchPosition.toInt()).toString().split('.').first.padLeft(8, "0")}",
+                            style: TextStyle(
+                              color: appColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            maxLines: 3,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                          )
                       ],
                     )
                   )
                 ),
-                // Container(
-                //   alignment: Alignment.center,
-                //   padding: EdgeInsets.only(right: 5, left: 5),
-                //   child: Icon(
-                //     Icons.save_rounded,
-                //     color: appColors.secondary,
-                //   )
-                // )
                 if (!isInDownload)
                   IconButton(
                     mouseCursor: SystemMouseCursors.click,

@@ -5,9 +5,6 @@
 
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'get_torrents.freezed.dart';
-part 'get_torrents.g.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
@@ -19,13 +16,23 @@ Future<List<TorrentInfo>> getTorrents(
     RustLib.instance.api.crateMethodPluginProviderGetTorrentsGetTorrents(
         pluginPath: pluginPath, source: source, id: id, page: page);
 
-@freezed
-sealed class TorrentInfo with _$TorrentInfo {
-  const factory TorrentInfo({
-    required String title,
-    required String torrentUrl,
-  }) = _TorrentInfo;
+class TorrentInfo {
+  final String title;
+  final String torrentUrl;
 
-  factory TorrentInfo.fromJson(Map<String, dynamic> json) =>
-      _$TorrentInfoFromJson(json);
+  const TorrentInfo({
+    required this.title,
+    required this.torrentUrl,
+  });
+
+  @override
+  int get hashCode => title.hashCode ^ torrentUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TorrentInfo &&
+          runtimeType == other.runtimeType &&
+          title == other.title &&
+          torrentUrl == other.torrentUrl;
 }

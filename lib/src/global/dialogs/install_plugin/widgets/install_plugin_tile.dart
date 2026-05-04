@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pub_semver/pub_semver.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/rust/method/plugin_provider.dart';
@@ -45,10 +44,10 @@ class _SetFavoriteTileState extends State<InstallPluginTile> {
     super.initState();
     
     isInstalled = widget.isInstalled;
-    if (isInstalled){
-      // TODO: Implement plugin update
-      var installedVersion = Version.parse(widget.installedVersion ?? "0.0.0");
-    }
+    // if (isInstalled){
+    //   // TODO: Implement plugin update
+    //   var installedVersion = Version.parse(widget.installedVersion ?? "0.0.0");
+    // }
   }
 
   Future<void> onInstallPlugin() async {
