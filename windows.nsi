@@ -48,7 +48,7 @@ Section "MainSection" SEC01
 
     WriteUninstaller "$INSTDIR\uninstall.exe"
 
-    IfSilent +2 0
+    IfSilent 0 +2
         Exec '"$INSTDIR\${APP_NAME}.exe"'
 
 
