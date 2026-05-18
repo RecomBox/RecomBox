@@ -219,7 +219,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                           alignment: Alignment.topLeft,
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Text(
-                            "Season: ${args!.selectPluginScreenArguments.season+BigInt.from(1)}, Episode: ${args!.selectPluginScreenArguments.episode+BigInt.from(1)}",
+                            "${args!.selectPluginScreenArguments.source == Source.anime ? "" : "Season: ${args!.selectPluginScreenArguments.season+BigInt.from(1)}, "}Episode: ${args!.selectPluginScreenArguments.episode+BigInt.from(1)}",
                             style: GoogleFonts.nunito(
                               color: appColors.textPrimary,
                               fontSize: 18,
@@ -234,7 +234,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                         alignment: Alignment.topLeft,
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Text(
-                          "[Note]: Manual search to disable default filter.",
+                          "➤ Note: Manual search to disable default filter.",
                           style: GoogleFonts.nunito(
                             color: appColors.textPrimary,
                             fontSize: 18,
