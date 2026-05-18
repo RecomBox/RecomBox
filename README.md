@@ -151,3 +151,7 @@ flutter build {os}
 # use 'flutter build -h' to list available build.
 
 ```
+
+# Legal
+- [Privacy Policy](https://recombox.github.io/RecomBox/privacy.html)
+- [Terms of Service](https://recombox.github.io/RecomBox/tos.html)

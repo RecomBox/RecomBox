@@ -147,6 +147,7 @@ class _StorageState extends State<Storage> {
           position: ToastPosition.bottom,
           dismissOtherToast: true,
         );
+        return;
       }
       final inputFile = File(inputFilePath);
 
@@ -225,6 +226,7 @@ class _StorageState extends State<Storage> {
           position: ToastPosition.bottom,
           dismissOtherToast: true,
         );
+        return;
       }
 
 
@@ -391,7 +393,7 @@ class _StorageState extends State<Storage> {
                         style: ElevatedButton.styleFrom(
                           enabledMouseCursor: SystemMouseCursors.click,
                           backgroundColor: appColors.tertiary,
-                          fixedSize: Size(250, 50),
+                          fixedSize: Size(220, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.5)
                           )
@@ -411,7 +413,7 @@ class _StorageState extends State<Storage> {
                         style: ElevatedButton.styleFrom(
                           enabledMouseCursor: SystemMouseCursors.click,
                           backgroundColor: appColors.tertiary,
-                          fixedSize: Size(250, 50),
+                          fixedSize: Size(220, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.5)
                           )
