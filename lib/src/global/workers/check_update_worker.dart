@@ -67,14 +67,9 @@ Future<void> onUpdate(
         await sink.close();
 
         await Process.start(
-          'powershell',
-          [
-            '-NoProfile',
-            '-NonInteractive',
-            '-Command',
-            'Start-Process -FilePath "$filePath" -ArgumentList "/S" -Verb RunAs'
-          ],
-          mode: ProcessStartMode.detached, 
+          filePath,
+          ['/S'],
+          mode: ProcessStartMode.detached,
         );
 
         exit(0);
