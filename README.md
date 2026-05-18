@@ -152,6 +152,6 @@ flutter build {os}
 
 ```
 
-# Legal
+<!-- # Legal
 - [Privacy Policy](https://recombox.github.io/RecomBox/privacy.html)
-- [Terms of Service](https://recombox.github.io/RecomBox/tos.html)
+- [Terms of Service](https://recombox.github.io/RecomBox/tos.html) -->
