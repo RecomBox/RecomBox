@@ -147,6 +147,7 @@ class _StorageState extends State<Storage> {
           position: ToastPosition.bottom,
           dismissOtherToast: true,
         );
+        return;
       }
       final inputFile = File(inputFilePath);
 
@@ -225,6 +226,7 @@ class _StorageState extends State<Storage> {
           position: ToastPosition.bottom,
           dismissOtherToast: true,
         );
+        return;
       }
 
 
