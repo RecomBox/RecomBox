@@ -10,6 +10,9 @@ import 'package:recombox/src/rust/method/settings/set_settings.dart';
 import 'package:recombox/src/rust/utils/settings.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Storage extends StatefulWidget {
   const Storage({super.key});
@@ -76,6 +79,23 @@ class _StorageState extends State<Storage> {
   }
 
   Future<void> onChangeDir(int index) async {
+    // -> On android ask for file access intent
+    if (Platform.isAndroid){
+      final intent = AndroidIntent(
+        action: 'android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION',
+        flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+      );
+      await intent.launch();
+
+      var status = await Permission.manageExternalStorage.status;
+
+      if (!status.isGranted) {
+        debugPrint("Not yet grant MANAGE_EXTERNAL_STORAGE access permission");
+        return;
+      }
+    }
+    // <-
+
     String? selectedDirectory = await FilePicker.getDirectoryPath();
 
     if (selectedDirectory != null) {
