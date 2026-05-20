@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/rust/method/settings/get_settings.dart';
 import 'package:recombox/src/rust/method/settings/set_settings.dart';
@@ -39,17 +40,41 @@ class _StorageState extends State<Storage> {
         directoryInfo.add({
           "label": "App Data Directory",
           "path": settings!.paths.appSupportDir,
-          'onChange': () => onChangeDir(1)
+          'onChange': () => onChangeDir(1),
+          'onReset': () => onResetDir(1)
         });
         directoryInfo.add({
           "label": "App Cache Directory",
           "path": settings!.paths.appCacheDir,
-          'onChange': () => onChangeDir(2)
+          'onChange': () => onChangeDir(2),
+          'onReset': () => onResetDir(2)
         });
       });
     }
   }
   
+  Future<void> onResetDir(int index) async {
+
+    switch (index) {
+      case 1:
+        settings = settings!.copyWith(
+          paths: settings!.paths.copyWith(appSupportDir: (await getApplicationSupportDirectory()).path)
+        );
+        break;
+      case 2:
+        settings = settings!.copyWith(
+          paths: settings!.paths.copyWith(appCacheDir: (await getApplicationCacheDirectory()).path)
+        );
+        break;
+      default: break;
+    }
+
+
+    await setSettings(settings: settings!);
+    await initStorage();
+      
+  }
+
   Future<void> onChangeDir(int index) async {
     String? selectedDirectory = await FilePicker.getDirectoryPath();
 
@@ -261,59 +286,74 @@ class _StorageState extends State<Storage> {
                       fontWeight: FontWeight(600)
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    color: appColors.tertiary,
-                    padding: EdgeInsets.only(left: 10, right: 10, top: 2.5, bottom: 2.5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      spacing: 10,
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            mouseCursor: SystemMouseCursors.click,
-                            onTap: () {
-                              Clipboard.setData(ClipboardData(text: item["path"]));
-                              showToastWidget(
-                                Container(
-                                  padding: EdgeInsets.all(15),
-                                  decoration: BoxDecoration(
-                                    color: appColors.tertiary,
-                                    borderRadius: BorderRadius.circular(25)
-                                  ),
+                  
+                  Row(
+                    spacing: 5,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          color: appColors.tertiary,
+                          padding: EdgeInsets.only(left: 10, right: 10, top: 2.5, bottom: 2.5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            spacing: 10,
+                            children: [
+                              IconButton(
+                                mouseCursor: SystemMouseCursors.click,
+                                onPressed: item["onChange"],
+                                icon: Icon(Icons.folder_rounded),
+                                color: appColors.secondary,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  mouseCursor: SystemMouseCursors.click,
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: item["path"]));
+                                    showToastWidget(
+                                      Container(
+                                        padding: EdgeInsets.all(15),
+                                        decoration: BoxDecoration(
+                                          color: appColors.tertiary,
+                                          borderRadius: BorderRadius.circular(25)
+                                        ),
+                                        child: Text(
+                                          "Path copied to clipboard",
+                                          style: GoogleFonts.nunito(
+                                            color: appColors.textPrimary,
+                                            fontSize: 16
+                                          ),
+                                        ),
+                                      ),
+                                      position: ToastPosition.bottom,
+                                      dismissOtherToast: true,
+                                    );
+                                  },
+                                  
                                   child: Text(
-                                    "Path copied to clipboard",
+                                    item["path"],
                                     style: GoogleFonts.nunito(
                                       color: appColors.textPrimary,
-                                      fontSize: 16
+                                      fontSize: 14
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                position: ToastPosition.bottom,
-                                dismissOtherToast: true,
-                              );
-                            },
-                            
-                            child: Text(
-                              item["path"],
-                              style: GoogleFonts.nunito(
-                                color: appColors.textPrimary,
-                                fontSize: 14
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              
+                            ],
                           ),
+                          
+                      
                         ),
-                        
-                        IconButton(
-                          mouseCursor: SystemMouseCursors.click,
-                          onPressed: item["onChange"],
-                          icon: Icon(Icons.folder_rounded),
-                          color: appColors.secondary,
-                        )
-                      ],
-                    ),
+                      ),
+                      IconButton(
+                        mouseCursor: SystemMouseCursors.click,
+                        onPressed: item["onReset"],
+                        icon: Icon(Icons.refresh_rounded),
+                        color: appColors.secondary,
+                      ),
+                    ],
                   )
 
                 ],
