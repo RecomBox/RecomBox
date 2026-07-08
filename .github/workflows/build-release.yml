@@ -59,12 +59,12 @@ jobs:
         run: |
           choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --passive --norestart" -y
 
-      - name: Setup MSVC dev environment (VS2022)
+      - name: Setup MSVC dev environment (VS2022, direct)
         if: matrix.target == 'windows'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-          vsversion: '[17.0,18.0)'
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
+          set >> "%GITHUB_ENV%"
 
       - name: Build Project
         shell: bash
