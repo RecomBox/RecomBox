@@ -62,6 +62,9 @@ jobs:
         with:
           cmakeVersion: "3.29.6"
 
+      - name: Install NASM
+        run: choco install nasm -y
+
       - name: Build Project
         shell: bash
         env:
