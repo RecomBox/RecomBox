@@ -95,7 +95,7 @@ jobs:
           elif [ "${{ matrix.target }}" == "macos" ]; then
             flutter build macos --release
           elif [ "${{ matrix.target }}" == "windows" ]; then
-            flutter build windows --release
+            CFLAGS="/std:c11" flutter build windows --release
           fi
 
       - name: Install NSIS

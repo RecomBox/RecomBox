@@ -40,7 +40,4 @@ base64 = "0.22.1"
 sha2 = "0.11.0"
 hex = "0.4.3"
 recombox_subtitle_provider = { git = "https://github.com/RecomBox/recombox_subtitle_provider", version = "0.1.0" }
-aws-lc-rs = "=1.16.0"
-aws-lc-sys = "=0.41.0"
-
 
