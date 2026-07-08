@@ -56,6 +56,7 @@ jobs:
       - name: Build Project
         shell: bash
         env:
+          CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
           FLUTTER_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           FLUTTER_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
