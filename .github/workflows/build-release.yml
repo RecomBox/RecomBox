@@ -53,6 +53,13 @@ jobs:
         if: matrix.target == 'android'
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/upload-keystore.jks
 
+      - name: Setup MSVC dev environment (pin VS2022 toolchain)
+        if: matrix.target == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          toolset: 14.44 
+
       - name: Build Project
         shell: bash
         env:
