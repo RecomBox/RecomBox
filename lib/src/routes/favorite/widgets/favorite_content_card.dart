@@ -42,6 +42,7 @@ class _FavoriteContentCardState extends State<FavoriteContentCard> {
         source: widget.source.name,
         id: widget.id, 
         fromCache: true,
+        checkExpire: false
       );
 
       widget.addTitle(viewContentInfoResult.title);
@@ -101,9 +102,7 @@ class _FavoriteContentCardState extends State<FavoriteContentCard> {
                     borderRadius: BorderRadius.circular(5),
                     color: Colors.transparent,
                     child: Ink.image(
-                      image: thumbnailUrl.isEmpty
-                          ? const AssetImage("assets/thumbnail_placeholder.png")
-                          : thumbnailUrl.startsWith('http')
+                      image: thumbnailUrl.startsWith('http')
                               ? NetworkImage(thumbnailUrl)
                               : FileImage(File(thumbnailUrl)),
                       width: 155,

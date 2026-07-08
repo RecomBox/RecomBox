@@ -7,6 +7,7 @@ import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_torrent/widgets/select_torrent_tile.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 import 'dart:io';
 
@@ -15,7 +16,7 @@ import 'package:recombox/src/rust/method/plugin_provider/get_torrents.dart';
 class SelectTorrentScreenArguments {
   SelectFileMode selectFileMode;
   String viewID;
-  String externalID;
+  ExternalID externalID;
   String title;
   String titleSecondary;
   String pluginPath;
@@ -73,7 +74,7 @@ class _SelectTorrentState extends State<SelectTorrentScreen> {
             : SelectTorrentScreenArguments(
               selectFileMode: SelectFileMode.watch,
               viewID: "72673844%20spider",
-              externalID: "tt999",
+              externalID: ExternalID(imdb: "tt999"),
               title: "Loki",
               titleSecondary: "Loki",
               pluginPath: "movies/8c8fb2b288439bcd9a71ff75051af9922162ba23b8a8ebd3db1dbe905cca00ee/2036011253247552227.js", 

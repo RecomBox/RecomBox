@@ -7,7 +7,7 @@ import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `get_cache_dir`, `load_cache`, `save_cache`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
 class EpisodeInfo {
   final String source;
@@ -33,9 +33,36 @@ class EpisodeInfo {
           thumbnailUrl == other.thumbnailUrl;
 }
 
+class ExternalID {
+  final String? mal;
+  final String? kitsu;
+  final String? imdb;
+
+  const ExternalID({
+    this.mal,
+    this.kitsu,
+    this.imdb,
+  });
+
+  static Future<ExternalID> default_() => RustLib.instance.api
+      .crateMethodMetadataProviderViewContentExternalIdDefault();
+
+  @override
+  int get hashCode => mal.hashCode ^ kitsu.hashCode ^ imdb.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExternalID &&
+          runtimeType == other.runtimeType &&
+          mal == other.mal &&
+          kitsu == other.kitsu &&
+          imdb == other.imdb;
+}
+
 class ViewContentInfo {
   final String source;
-  final String externalId;
+  final ExternalID externalId;
   final String url;
   final String title;
   final String titleSecondary;
@@ -73,10 +100,14 @@ class ViewContentInfo {
   static Future<ViewContentInfo> get_(
           {required String source,
           required String id,
-          required bool fromCache}) =>
+          required bool fromCache,
+          required bool checkExpire}) =>
       RustLib.instance.api
           .crateMethodMetadataProviderViewContentViewContentInfoGet(
-              source: source, id: id, fromCache: fromCache);
+              source: source,
+              id: id,
+              fromCache: fromCache,
+              checkExpire: checkExpire);
 
   static Future<void> updateLastWatch(
           {required String source,

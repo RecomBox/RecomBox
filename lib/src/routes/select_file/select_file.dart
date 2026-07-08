@@ -8,6 +8,7 @@ import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/global/dialogs/submit_bulk_download/submit_bulk_download.dart';
 import 'package:recombox/src/routes/select_file/widgets/select_file_tile.dart';
 import 'package:path/path.dart' as path;
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 
 import 'dart:io';
@@ -19,7 +20,7 @@ class SelectFileScreenArguments {
   SelectFileMode selectFileMode;
   String viewID;
   Source source;
-  String externalID;
+  ExternalID externalID;
   String title;
   String titleSecondary;
   String torrentSource;
@@ -83,7 +84,7 @@ class _SelectFileState extends State<SelectFileScreen> {
               selectFileMode: SelectFileMode.watch,
               viewID: "72673844%20spider",
               source: Source.tv,
-              externalID: "tt999",
+              externalID: ExternalID(imdb: "tt999"),
               title: "Loki",
               titleSecondary: "Loki",
               torrentSource: "magnet:?xt=urn:btih:62EDE09B4E617C4C688D86B349F07290C3101238&dn=Loki.S02E01.WEB.x264-TORRENTGALAXY&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.bittor.pw%3A1337%2Fannounce&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fglotorrents.pw%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftorrent.gresille.org%3A80%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337",

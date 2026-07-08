@@ -166,6 +166,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   EpisodeInfo dco_decode_episode_info(dynamic raw);
 
   @protected
+  ExternalID dco_decode_external_id(dynamic raw);
+
+  @protected
   double dco_decode_f_32(dynamic raw);
 
   @protected
@@ -441,6 +444,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer);
+
+  @protected
+  ExternalID sse_decode_external_id(SseDeserializer deserializer);
 
   @protected
   double sse_decode_f_32(SseDeserializer deserializer);
@@ -740,6 +746,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_external_id(ExternalID self, SseSerializer serializer);
 
   @protected
   void sse_encode_f_32(double self, SseSerializer serializer);

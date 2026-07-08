@@ -365,18 +365,19 @@ class _StorageState extends State<Storage> {
                                 ),
                               ),
                               
+                              IconButton(
+                                mouseCursor: SystemMouseCursors.click,
+                                onPressed: item["onReset"],
+                                icon: Icon(Icons.refresh_rounded),
+                                color: appColors.secondary,
+                              ),
                             ],
                           ),
                           
                       
                         ),
                       ),
-                      IconButton(
-                        mouseCursor: SystemMouseCursors.click,
-                        onPressed: item["onReset"],
-                        icon: Icon(Icons.refresh_rounded),
-                        color: appColors.secondary,
-                      ),
+                      
                     ],
                   )
 

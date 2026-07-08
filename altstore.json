@@ -11,6 +11,12 @@
             "iconURL": "https://github.com/RecomBox/RecomBox/blob/main/assets/icon/icon.png?raw=true",
             "versions": [
                 {
+                    "version": "1.2.4",
+                    "date": "2026-05-12T15:30:00+07:00",
+                    "size": 31457280,
+                    "downloadURL": "https://github.com/RecomBox/RecomBox/releases/latest/download/recombox-ios-aarch64.ipa"
+                },
+                {
                     "version": "1.2.3",
                     "date": "2026-05-12T15:30:00+07:00",
                     "size": 31457280,

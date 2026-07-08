@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/plugin_provider/get_torrents.dart';
 
 class SelectTorrentTile extends StatefulWidget {
@@ -23,7 +24,7 @@ class SelectTorrentTile extends StatefulWidget {
   final SelectFileMode selectFileMode;
   final String viewID;
   final Source source;
-  final String externalID;
+  final ExternalID externalID;
   final String title;
   final String titleSecondary;
   final TorrentInfo torrentInfo;

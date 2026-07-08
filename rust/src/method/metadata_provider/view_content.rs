@@ -15,6 +15,12 @@ use crate::method::favorite::{is_in_category::is_in_category};
 use crate::utils::download_file;
 use crate::utils::settings::Settings;
 
+#[derive(Debug, Serialize, Deserialize, Default, Clone)]
+pub struct ExternalID {
+    pub mal: Option<String>,
+    pub kitsu: Option<String>,
+    pub imdb: Option<String>
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EpisodeInfo{
@@ -27,18 +33,18 @@ pub struct EpisodeInfo{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ViewContentInfo {
 	pub source: String,
-	pub external_id: String,
-    pub url: String,
-    pub title: String,
+	pub external_id: ExternalID,
+	pub url: String,
+	pub title: String,
 	pub title_secondary: String,
-    pub thumbnail_url: String,
-    pub banner_url: String,
-    pub contextual: Vec<String>,
-    pub description: String,
-    pub trailer_url: String,
-    pub countdown: i64,
-    pub pictures: Vec<String>,
-    pub episodes: Vec<Vec<EpisodeInfo>>, // Seasons -> Episodes
+	pub thumbnail_url: String,
+	pub banner_url: String,
+	pub contextual: Vec<String>,
+	pub description: String,
+	pub trailer_url: String,
+	pub countdown: i64,
+	pub pictures: Vec<String>,
+	pub episodes: Vec<Vec<EpisodeInfo>>, // Seasons -> Episodes
 	pub last_watch_season_index: Option<u64>,
 	pub last_watch_episode_index: Option<u64>,
 	pub last_update: Option<String>,
@@ -178,12 +184,12 @@ impl ViewContentInfo{
 		return Ok(());
 	}
 
-	pub async fn get(source: &str, id: &str, from_cache: bool) -> Result<ViewContentInfo, String> {
+	pub async fn get(source: &str, id: &str, from_cache: bool, check_expire: bool) -> Result<ViewContentInfo, String> {
 
 		let source = Source::from_str(source);
 
 		if from_cache {
-			match ViewContentInfo::load_cache(&source, &id, true).await {
+			match ViewContentInfo::load_cache(&source, &id, check_expire).await {
 				Ok(Some(cache)) => {
 					return Ok(cache);
 				},
@@ -224,10 +230,16 @@ impl ViewContentInfo{
 			}
 		};
 
+		let external_id = ExternalID{
+			imdb: data.external_id.imdb,
+			kitsu: data.external_id.kitsu,
+			mal: data.external_id.mal
+		};
+
 
 		let mut result: ViewContentInfo = ViewContentInfo {
 			source: source.to_string(),
-			external_id: data.external_id,
+			external_id,
 			url: data.url,
 			title: data.title,
 			title_secondary: data.title_secondary,

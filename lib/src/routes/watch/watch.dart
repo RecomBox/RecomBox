@@ -38,7 +38,7 @@ class WatchScreenArguments {
   SelectFileMode selectFileMode;
   Source source;
   String viewID;
-  String externalID;
+  ExternalID externalID;
   String title;
   String titleSecondary;
   String torrentSource;
@@ -133,7 +133,7 @@ class _WatchState extends State<WatchScreen> {
               :  WatchScreenArguments(
                 selectFileMode: SelectFileMode.watch,
                 viewID: "72673844%20loki-test",
-                externalID: "tt123",
+                externalID: ExternalID(imdb: "tt999"),
                 source: Source.tv,
                 title: "One Piece",
                 titleSecondary: "One Piece",
@@ -469,7 +469,8 @@ class _WatchState extends State<WatchScreen> {
     final viewContentInfoResult = await ViewContentInfo.get_(
       source: args!.source.name,
       id: args!.viewID,
-      fromCache: true
+      fromCache: true,
+      checkExpire: false
     );
 
     final episodeList = viewContentInfoResult.episodes;

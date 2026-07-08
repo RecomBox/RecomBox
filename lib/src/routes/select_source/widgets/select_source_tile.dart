@@ -4,6 +4,7 @@ import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_torrent/select_torrent.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/plugin_provider/get_sources.dart';
 
 class SelectSourceTile extends StatefulWidget {
@@ -25,7 +26,7 @@ class SelectSourceTile extends StatefulWidget {
 
   final SelectFileMode selectFileMode;
   final String viewID;
-  final String externalID;
+  final ExternalID externalID;
   final String title;
   final String titleSecondary;
   final String pluginPath;

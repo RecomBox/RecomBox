@@ -29,7 +29,7 @@ class EpisodeTile extends StatefulWidget {
 
   final Source source;
   final String viewID;
-  final String externalID;
+  final ExternalID externalID;
   final String title;
   final String titleSecondary;
   final BigInt season;

@@ -8,6 +8,7 @@ import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/routes/select_source/widgets/select_source_tile.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 import 'dart:io';
 
@@ -62,7 +63,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
                   selectFileMode: SelectFileMode.watch,
                   source: Source.movies,
                   id: "%2F53906%2Fspider-man",
-                  externalID: "tt999",
+                  externalID: ExternalID(imdb: "tt999"),
                   title: "Spiderman",
                   titleSecondary: "Spiderman",
                   season: BigInt.from(1),
@@ -94,7 +95,7 @@ class _SelectSourceState extends State<SelectSourceScreen> {
       List<SourceInfo> getSourceInfoResult = await getSources(
         pluginPath: args!.pluginPath, 
         source: args!.selectPluginScreenArguments.source.name, 
-        id: args!.selectPluginScreenArguments.externalID, 
+        id: args!.selectPluginScreenArguments.externalID.imdb??"", 
         title: args!.selectPluginScreenArguments.title, 
         titleSecondary: args!.selectPluginScreenArguments.titleSecondary,
         season: args!.selectPluginScreenArguments.season+BigInt.from(1), 

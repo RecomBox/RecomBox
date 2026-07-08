@@ -43,7 +43,8 @@ class _DownloadCardState extends State<DownloadCard> {
       var getViewContentInfo = await ViewContentInfo.get_(
         source: widget.allDownloadItemKey.source, 
         id: widget.allDownloadItemKey.id, 
-        fromCache: true
+        fromCache: true,
+        checkExpire: false
       );
 
       setState(() {
