@@ -49,6 +49,12 @@ import 'method/plugin_provider/install_plugin.dart';
 import 'method/plugin_provider/remove_plugin.dart';
 import 'method/settings/get_settings.dart';
 import 'method/settings/set_settings.dart';
+import 'method/subtitle_provider/get_chapters.dart';
+import 'method/subtitle_provider/get_installed_subtitles.dart';
+import 'method/subtitle_provider/get_subtitles.dart';
+import 'method/subtitle_provider/install_subtitle.dart';
+import 'method/subtitle_provider/remove_subtitles.dart';
+import 'method/subtitle_provider/search_subtitles.dart';
 import 'method/torrent_provider/free_torrent_handle.dart';
 import 'method/torrent_provider/get_torrent_metadata.dart';
 import 'method/watch_state.dart';
@@ -83,12 +89,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dco_decode_Map_String_installed_plugin_info_None(dynamic raw);
 
   @protected
+  Map<String, List<SubtitleData>> dco_decode_Map_String_list_subtitle_data_None(
+      dynamic raw);
+
+  @protected
   Map<AllDownloadItemKey, List<AllDownloadItemValue>>
       dco_decode_Map_all_download_item_key_list_all_download_item_value_None(
           dynamic raw);
 
   @protected
   Map<BigInt, String> dco_decode_Map_u_64_String_None(dynamic raw);
+
+  @protected
+  Map<BigInt, GetInstalledSubtitlesData>
+      dco_decode_Map_u_64_get_installed_subtitles_data_None(dynamic raw);
 
   @protected
   Map<BigInt, BigInt> dco_decode_Map_u_64_u_64_None(dynamic raw);
@@ -130,6 +144,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PluginInfo dco_decode_box_autoadd_plugin_info(dynamic raw);
 
   @protected
+  SearchData dco_decode_box_autoadd_search_data(dynamic raw);
+
+  @protected
   Settings dco_decode_box_autoadd_settings(dynamic raw);
 
   @protected
@@ -149,6 +166,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CategoryOrderMap dco_decode_category_order_map(dynamic raw);
+
+  @protected
+  ChapterData dco_decode_chapter_data(dynamic raw);
 
   @protected
   CheckUpdate dco_decode_check_update(dynamic raw);
@@ -181,6 +201,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   FileInfo dco_decode_file_info(dynamic raw);
 
   @protected
+  GetInstalledSubtitlesData dco_decode_get_installed_subtitles_data(
+      dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
 
   @protected
@@ -198,6 +222,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<AllDownloadItemValue> dco_decode_list_all_download_item_value(
       dynamic raw);
+
+  @protected
+  List<ChapterData> dco_decode_list_chapter_data(dynamic raw);
 
   @protected
   List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw);
@@ -230,6 +257,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dco_decode_list_record_string_installed_plugin_info(dynamic raw);
 
   @protected
+  List<(String, List<SubtitleData>)>
+      dco_decode_list_record_string_list_subtitle_data(dynamic raw);
+
+  @protected
+  List<(BigInt, GetInstalledSubtitlesData)>
+      dco_decode_list_record_u_64_get_installed_subtitles_data(dynamic raw);
+
+  @protected
   List<(BigInt, String)> dco_decode_list_record_u_64_string(dynamic raw);
 
   @protected
@@ -240,6 +275,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<SourceInfo> dco_decode_list_source_info(dynamic raw);
+
+  @protected
+  List<SubtitleData> dco_decode_list_subtitle_data(dynamic raw);
 
   @protected
   List<TorrentInfo> dco_decode_list_torrent_info(dynamic raw);
@@ -263,6 +301,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   LastWatchTorrentInfo? dco_decode_opt_box_autoadd_last_watch_torrent_info(
       dynamic raw);
+
+  @protected
+  SearchData? dco_decode_opt_box_autoadd_search_data(dynamic raw);
 
   @protected
   BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
@@ -289,6 +330,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dynamic raw);
 
   @protected
+  (String, List<SubtitleData>) dco_decode_record_string_list_subtitle_data(
+      dynamic raw);
+
+  @protected
+  (BigInt, GetInstalledSubtitlesData)
+      dco_decode_record_u_64_get_installed_subtitles_data(dynamic raw);
+
+  @protected
   (BigInt, String) dco_decode_record_u_64_string(dynamic raw);
 
   @protected
@@ -298,10 +347,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SearchContentInfo dco_decode_search_content_info(dynamic raw);
 
   @protected
+  SearchData dco_decode_search_data(dynamic raw);
+
+  @protected
   Settings dco_decode_settings(dynamic raw);
 
   @protected
   SourceInfo dco_decode_source_info(dynamic raw);
+
+  @protected
+  SubtitleData dco_decode_subtitle_data(dynamic raw);
 
   @protected
   TorrentHandleMode dco_decode_torrent_handle_mode(dynamic raw);
@@ -353,6 +408,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
+  Map<String, List<SubtitleData>> sse_decode_Map_String_list_subtitle_data_None(
+      SseDeserializer deserializer);
+
+  @protected
   Map<AllDownloadItemKey, List<AllDownloadItemValue>>
       sse_decode_Map_all_download_item_key_list_all_download_item_value_None(
           SseDeserializer deserializer);
@@ -360,6 +419,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Map<BigInt, String> sse_decode_Map_u_64_String_None(
       SseDeserializer deserializer);
+
+  @protected
+  Map<BigInt, GetInstalledSubtitlesData>
+      sse_decode_Map_u_64_get_installed_subtitles_data_None(
+          SseDeserializer deserializer);
 
   @protected
   Map<BigInt, BigInt> sse_decode_Map_u_64_u_64_None(
@@ -407,6 +471,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PluginInfo sse_decode_box_autoadd_plugin_info(SseDeserializer deserializer);
 
   @protected
+  SearchData sse_decode_box_autoadd_search_data(SseDeserializer deserializer);
+
+  @protected
   Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer);
 
   @protected
@@ -428,6 +495,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CategoryOrderMap sse_decode_category_order_map(SseDeserializer deserializer);
+
+  @protected
+  ChapterData sse_decode_chapter_data(SseDeserializer deserializer);
 
   @protected
   CheckUpdate sse_decode_check_update(SseDeserializer deserializer);
@@ -462,6 +532,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   FileInfo sse_decode_file_info(SseDeserializer deserializer);
 
   @protected
+  GetInstalledSubtitlesData sse_decode_get_installed_subtitles_data(
+      SseDeserializer deserializer);
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
@@ -481,6 +555,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<AllDownloadItemValue> sse_decode_list_all_download_item_value(
       SseDeserializer deserializer);
+
+  @protected
+  List<ChapterData> sse_decode_list_chapter_data(SseDeserializer deserializer);
 
   @protected
   List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer);
@@ -517,6 +594,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
+  List<(String, List<SubtitleData>)>
+      sse_decode_list_record_string_list_subtitle_data(
+          SseDeserializer deserializer);
+
+  @protected
+  List<(BigInt, GetInstalledSubtitlesData)>
+      sse_decode_list_record_u_64_get_installed_subtitles_data(
+          SseDeserializer deserializer);
+
+  @protected
   List<(BigInt, String)> sse_decode_list_record_u_64_string(
       SseDeserializer deserializer);
 
@@ -530,6 +617,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<SourceInfo> sse_decode_list_source_info(SseDeserializer deserializer);
+
+  @protected
+  List<SubtitleData> sse_decode_list_subtitle_data(
+      SseDeserializer deserializer);
 
   @protected
   List<TorrentInfo> sse_decode_list_torrent_info(SseDeserializer deserializer);
@@ -558,6 +649,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  SearchData? sse_decode_opt_box_autoadd_search_data(
+      SseDeserializer deserializer);
+
+  @protected
   BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
 
   @protected
@@ -583,6 +678,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  (String, List<SubtitleData>) sse_decode_record_string_list_subtitle_data(
+      SseDeserializer deserializer);
+
+  @protected
+  (BigInt, GetInstalledSubtitlesData)
+      sse_decode_record_u_64_get_installed_subtitles_data(
+          SseDeserializer deserializer);
+
+  @protected
   (BigInt, String) sse_decode_record_u_64_string(SseDeserializer deserializer);
 
   @protected
@@ -593,10 +697,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  SearchData sse_decode_search_data(SseDeserializer deserializer);
+
+  @protected
   Settings sse_decode_settings(SseDeserializer deserializer);
 
   @protected
   SourceInfo sse_decode_source_info(SseDeserializer deserializer);
+
+  @protected
+  SubtitleData sse_decode_subtitle_data(SseDeserializer deserializer);
 
   @protected
   TorrentHandleMode sse_decode_torrent_handle_mode(
@@ -650,6 +760,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Map<String, InstalledPluginInfo> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Map_String_list_subtitle_data_None(
+      Map<String, List<SubtitleData>> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_Map_all_download_item_key_list_all_download_item_value_None(
       Map<AllDownloadItemKey, List<AllDownloadItemValue>> self,
       SseSerializer serializer);
@@ -657,6 +771,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_Map_u_64_String_None(
       Map<BigInt, String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_Map_u_64_get_installed_subtitles_data_None(
+      Map<BigInt, GetInstalledSubtitlesData> self, SseSerializer serializer);
 
   @protected
   void sse_encode_Map_u_64_u_64_None(
@@ -706,6 +824,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       PluginInfo self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_search_data(
+      SearchData self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer);
 
   @protected
@@ -728,6 +850,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_category_order_map(
       CategoryOrderMap self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_chapter_data(ChapterData self, SseSerializer serializer);
 
   @protected
   void sse_encode_check_update(CheckUpdate self, SseSerializer serializer);
@@ -765,6 +890,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_file_info(FileInfo self, SseSerializer serializer);
 
   @protected
+  void sse_encode_get_installed_subtitles_data(
+      GetInstalledSubtitlesData self, SseSerializer serializer);
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
@@ -784,6 +913,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_all_download_item_value(
       List<AllDownloadItemValue> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_chapter_data(
+      List<ChapterData> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_episode_info(
@@ -823,6 +956,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<(String, InstalledPluginInfo)> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_record_string_list_subtitle_data(
+      List<(String, List<SubtitleData>)> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_record_u_64_get_installed_subtitles_data(
+      List<(BigInt, GetInstalledSubtitlesData)> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_record_u_64_string(
       List<(BigInt, String)> self, SseSerializer serializer);
 
@@ -837,6 +978,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_source_info(
       List<SourceInfo> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_subtitle_data(
+      List<SubtitleData> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_torrent_info(
@@ -866,6 +1011,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       LastWatchTorrentInfo? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_search_data(
+      SearchData? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
 
   @protected
@@ -891,6 +1040,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       (String, InstalledPluginInfo) self, SseSerializer serializer);
 
   @protected
+  void sse_encode_record_string_list_subtitle_data(
+      (String, List<SubtitleData>) self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_u_64_get_installed_subtitles_data(
+      (BigInt, GetInstalledSubtitlesData) self, SseSerializer serializer);
+
+  @protected
   void sse_encode_record_u_64_string(
       (BigInt, String) self, SseSerializer serializer);
 
@@ -903,10 +1060,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SearchContentInfo self, SseSerializer serializer);
 
   @protected
+  void sse_encode_search_data(SearchData self, SseSerializer serializer);
+
+  @protected
   void sse_encode_settings(Settings self, SseSerializer serializer);
 
   @protected
   void sse_encode_source_info(SourceInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_subtitle_data(SubtitleData self, SseSerializer serializer);
 
   @protected
   void sse_encode_torrent_handle_mode(

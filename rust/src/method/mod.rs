@@ -14,4 +14,5 @@ pub mod settings;
 pub mod check_update;
 pub mod watch_state;
 pub mod current_watch;
+pub mod subtitle_provider;
 
