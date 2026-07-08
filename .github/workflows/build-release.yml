@@ -64,7 +64,8 @@ jobs:
 
       - name: Install NASM
         if: matrix.target == 'windows'
-        run: choco install nasm -y
+        uses: ilammy/setup-nasm@v1
+
 
       - name: Build Project
         shell: bash
