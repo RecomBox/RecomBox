@@ -1,8 +1,6 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-cmake_policy(SET CMP0175 OLD)
 project(recombox LANGUAGES CXX)
-
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
