@@ -64,9 +64,7 @@ jobs:
 
       - name: Install NASM
         if: matrix.target == 'windows'
-        run: |
-          choco install nasm -y
-          echo "C:\Program Files\NASM" >> $env:GITHUB_PATH
+        uses: ilammy/setup-nasm@v1
 
 
       - name: Build Project
