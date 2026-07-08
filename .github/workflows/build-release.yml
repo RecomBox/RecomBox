@@ -26,7 +26,7 @@ jobs:
           - target: macos
             os: macos-latest
           - target: windows
-            os: windows-2022
+            os: windows-latest
 
     steps:
       - name: Checkout code
