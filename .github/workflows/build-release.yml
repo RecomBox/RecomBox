@@ -26,7 +26,7 @@ jobs:
           - target: macos
             os: macos-latest
           - target: windows
-            os: windows-2022
+            os: windows-latest
 
     steps:
       - name: Checkout code
@@ -61,7 +61,7 @@ jobs:
       - name: Build Project
         shell: bash
         env:
-          CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
+          CFLAGS: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
           FLUTTER_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           FLUTTER_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
