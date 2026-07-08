@@ -26,7 +26,7 @@ jobs:
           - target: macos
             os: macos-latest
           - target: windows
-            os: windows-latest
+            os: windows-2022
 
     steps:
       - name: Checkout code
@@ -53,18 +53,10 @@ jobs:
         if: matrix.target == 'android'
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/upload-keystore.jks
 
-      - name: Install VS2022 Build Tools
+      - name: Setup MSBuild
         if: matrix.target == 'windows'
-        shell: pwsh
-        run: |
-          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --passive --norestart" -y
+        uses: microsoft/setup-msbuild@v1.3.1
 
-      - name: Setup MSVC dev environment (VS2022, direct)
-        if: matrix.target == 'windows'
-        shell: cmd
-        run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
-          set >> "%GITHUB_ENV%"
 
       - name: Build Project
         shell: bash
