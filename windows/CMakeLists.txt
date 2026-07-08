@@ -2,7 +2,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(recombox LANGUAGES CXX)
 
-add_compile_options("/std:c11" "/experimental:c11atomics")
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
