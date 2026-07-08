@@ -13,6 +13,7 @@ import 'package:recombox/src/rust/method/download_provider/set_download.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/favorite/set_last_watch_torrent.dart';
 import 'package:path/path.dart' as path;
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:recombox/src/rust/method/torrent_provider/get_torrent_metadata.dart';
 
 class SelectFileTile extends StatefulWidget {
@@ -33,7 +34,7 @@ class SelectFileTile extends StatefulWidget {
   final SelectFileMode selectFileMode;
   final Source source;
   final String viewID;
-  final String externalID;
+  final ExternalID externalID;
   final String title;
   final String titleSecondary;
   final String torrentSource;

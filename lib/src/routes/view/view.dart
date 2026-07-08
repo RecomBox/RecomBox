@@ -121,7 +121,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
       });
     }
     try{
-      var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache);
+      var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache, checkExpire: true);
       
       if (context.mounted){
         

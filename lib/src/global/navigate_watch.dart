@@ -7,12 +7,13 @@ import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/favorite/get_last_watch_torrent.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 class NavigateWatchArgs {
   final BuildContext context;
   final Source source;
   final String viewID;
-  final String externalID;
+  final ExternalID externalID;
   final String title;
   final String titleSecondary;
   final BigInt seasonIndex;

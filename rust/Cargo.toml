@@ -30,7 +30,7 @@ reqwest = {version = "0.12.28", default-features = false, features = ["rustls-tl
 once_cell = "1.21.4"
 chrono = "0.4.44"
 redb = "4.1.0"
-snowid = "2.0.3"
+snowid = "3.0.1"
 recombox_metadata_provider = { git = "https://github.com/RecomBox/recombox_metadata_provider"}
 recombox_plugin_provider = { git = "https://github.com/RecomBox/recombox_plugin_provider"}
 urlencoding = "2.1.3"
@@ -39,6 +39,7 @@ semver = "1.0.28"
 base64 = "0.22.1"
 sha2 = "0.11.0"
 hex = "0.4.3"
+recombox_subtitle_provider = { git = "https://github.com/RecomBox/recombox_subtitle_provider", version = "0.1.0" }
 
 
 

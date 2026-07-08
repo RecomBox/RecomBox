@@ -48,6 +48,12 @@ import 'method/plugin_provider/install_plugin.dart';
 import 'method/plugin_provider/remove_plugin.dart';
 import 'method/settings/get_settings.dart';
 import 'method/settings/set_settings.dart';
+import 'method/subtitle_provider/get_chapters.dart';
+import 'method/subtitle_provider/get_installed_subtitles.dart';
+import 'method/subtitle_provider/get_subtitles.dart';
+import 'method/subtitle_provider/install_subtitle.dart';
+import 'method/subtitle_provider/remove_subtitles.dart';
+import 'method/subtitle_provider/search_subtitles.dart';
 import 'method/torrent_provider/free_torrent_handle.dart';
 import 'method/torrent_provider/get_torrent_metadata.dart';
 import 'method/watch_state.dart';
@@ -114,7 +120,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -1730757904;
+  int get rustContentHash => 299426090;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -133,6 +139,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateMethodFavoriteDeleteCategoryDeleteCategory(
       {required BigInt categoryId});
+
+  Future<ExternalID> crateMethodMetadataProviderViewContentExternalIdDefault();
 
   Future<List<FeaturedContentInfo>>
       crateMethodMetadataProviderFeaturedContentFeaturedContent(
@@ -159,6 +167,9 @@ abstract class RustLibApi extends BaseApi {
   Future<CategoryOrderMap>
       crateMethodFavoriteGetCategoryOrderGetCategoryOrder();
 
+  Future<List<ChapterData>> crateMethodSubtitleProviderGetChaptersGetChapters(
+      {required String imdbId, required String source});
+
   Future<String?> crateMethodCurrentWatchGetCurrentWatchTorrent();
 
   Future<ArcDatabase> crateMethodDownloadProviderGetDb();
@@ -177,6 +188,13 @@ abstract class RustLibApi extends BaseApi {
   Future<Map<String, InstalledPluginInfo>>
       crateMethodPluginProviderGetInstalledPluginsGetInstalledPlugins(
           {required String source});
+
+  Future<Map<BigInt, GetInstalledSubtitlesData>>
+      crateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitles(
+          {required String source,
+          required String id,
+          required BigInt seasonIndex,
+          required BigInt episodeIndex});
 
   Future<LastWatchTorrentInfo?>
       crateMethodFavoriteGetLastWatchTorrentGetLastWatchTorrent(
@@ -200,6 +218,10 @@ abstract class RustLibApi extends BaseApi {
       required BigInt episode,
       required String search,
       required BigInt page});
+
+  Future<Map<String, List<SubtitleData>>>
+      crateMethodSubtitleProviderGetSubtitlesGetSubtitles(
+          {required String link});
 
   Future<TorrentMetadata>
       crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
@@ -226,6 +248,14 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateMethodPluginProviderInstallPluginInstallPlugin(
       {required String source, required PluginInfo pluginInfo});
 
+  Future<void> crateMethodSubtitleProviderInstallSubtitleInstallSubtitle(
+      {required String source,
+      required String id,
+      required BigInt seasonIndex,
+      required BigInt episodeIndex,
+      required String language,
+      required String link});
+
   Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
       {required String source, required String id});
 
@@ -237,6 +267,13 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateMethodPluginProviderRemovePluginRemovePlugins(
       {required String source, required PluginInfo pluginInfo});
 
+  Future<void> crateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitles(
+      {required String source,
+      required String id,
+      required BigInt seasonIndex,
+      required BigInt episodeIndex,
+      required BigInt subtitleId});
+
   Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
       {required BigInt categoryId, required String newCategoryName});
 
@@ -246,6 +283,9 @@ abstract class RustLibApi extends BaseApi {
           required String search,
           required BigInt sort,
           required BigInt page});
+
+  Future<SearchData?> crateMethodSubtitleProviderSearchSubtitlesSearchSubtitles(
+      {required String imdbId, required String source});
 
   Future<void> crateMethodFavoriteSetCategorySetCategory(
       {required BigInt categoryId, required String source, required String id});
@@ -290,7 +330,8 @@ abstract class RustLibApi extends BaseApi {
       crateMethodMetadataProviderViewContentViewContentInfoGet(
           {required String source,
           required String id,
-          required bool fromCache});
+          required bool fromCache,
+          required bool checkExpire});
 
   Future<void>
       crateMethodMetadataProviderViewContentViewContentInfoUpdateLastWatch(
@@ -393,6 +434,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<ExternalID> crateMethodMetadataProviderViewContentExternalIdDefault() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_external_id,
+        decodeErrorData: null,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderViewContentExternalIdDefaultConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodMetadataProviderViewContentExternalIdDefaultConstMeta =>
+          const TaskConstMeta(
+            debugName: "external_id_default",
+            argNames: [],
+          );
+
+  @override
   Future<List<FeaturedContentInfo>>
       crateMethodMetadataProviderFeaturedContentFeaturedContent(
           {required String source, required bool fromCache}) {
@@ -402,7 +469,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_bool(fromCache, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_featured_content_info,
@@ -434,7 +501,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(torrentSource, serializer);
         sse_encode_bool(deleteFiles, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 6, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -460,7 +527,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_category_map,
@@ -488,7 +555,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_category_map,
@@ -515,7 +582,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -545,7 +612,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_u_64(categoryId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_favorite_item_info,
@@ -572,7 +639,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_category_order_map,
@@ -592,12 +659,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<List<ChapterData>> crateMethodSubtitleProviderGetChaptersGetChapters(
+      {required String imdbId, required String source}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(imdbId, serializer);
+        sse_encode_String(source, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 12, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_chapter_data,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateMethodSubtitleProviderGetChaptersGetChaptersConstMeta,
+      argValues: [imdbId, source],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderGetChaptersGetChaptersConstMeta =>
+          const TaskConstMeta(
+            debugName: "get_chapters",
+            argNames: ["imdbId", "source"],
+          );
+
+  @override
   Future<String?> crateMethodCurrentWatchGetCurrentWatchTorrent() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_String,
@@ -621,7 +716,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
+            funcId: 14, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -646,7 +741,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
+            funcId: 15, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -670,7 +765,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 14, port: port_);
+            funcId: 16, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -696,7 +791,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_download_item_key(downloadItemKey, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 15, port: port_);
+            funcId: 17, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_download_item_value,
@@ -724,7 +819,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_download_item_key(downloadItemKey, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 16, port: port_);
+            funcId: 18, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_download_status,
@@ -753,7 +848,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 17, port: port_);
+            funcId: 19, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_Map_String_installed_plugin_info_None,
@@ -774,6 +869,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<Map<BigInt, GetInstalledSubtitlesData>>
+      crateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitles(
+          {required String source,
+          required String id,
+          required BigInt seasonIndex,
+          required BigInt episodeIndex}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_usize(seasonIndex, serializer);
+        sse_encode_usize(episodeIndex, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 20, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Map_u_64_get_installed_subtitles_data_None,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta:
+          kCrateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitlesConstMeta,
+      argValues: [source, id, seasonIndex, episodeIndex],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitlesConstMeta =>
+          const TaskConstMeta(
+            debugName: "get_installed_subtitles",
+            argNames: ["source", "id", "seasonIndex", "episodeIndex"],
+          );
+
+  @override
   Future<LastWatchTorrentInfo?>
       crateMethodFavoriteGetLastWatchTorrentGetLastWatchTorrent(
           {required String source,
@@ -788,7 +919,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(seasonIndex, serializer);
         sse_encode_u_64(episodeIndex, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 18, port: port_);
+            funcId: 21, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_last_watch_torrent_info,
@@ -816,7 +947,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 19, port: port_);
+            funcId: 22, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_plugin_info,
@@ -841,7 +972,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 20, port: port_);
+            funcId: 23, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_settings,
@@ -883,7 +1014,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(search, serializer);
         sse_encode_u_64(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 21, port: port_);
+            funcId: 24, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_source_info,
@@ -922,6 +1053,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<Map<String, List<SubtitleData>>>
+      crateMethodSubtitleProviderGetSubtitlesGetSubtitles(
+          {required String link}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(link, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 25, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_Map_String_list_subtitle_data_None,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateMethodSubtitleProviderGetSubtitlesGetSubtitlesConstMeta,
+      argValues: [link],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderGetSubtitlesGetSubtitlesConstMeta =>
+          const TaskConstMeta(
+            debugName: "get_subtitles",
+            argNames: ["link"],
+          );
+
+  @override
   Future<TorrentMetadata>
       crateMethodTorrentProviderGetTorrentMetadataGetTorrentMetadata(
           {required String torrentSource}) {
@@ -930,7 +1089,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(torrentSource, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 22, port: port_);
+            funcId: 26, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_torrent_metadata,
@@ -964,7 +1123,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(id, serializer);
         sse_encode_u_64(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 23, port: port_);
+            funcId: 27, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_torrent_info,
@@ -990,7 +1149,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_watch_state_key(watchStateKey, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 24, port: port_);
+            funcId: 28, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_watch_state_value,
@@ -1014,7 +1173,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 25, port: port_);
+            funcId: 29, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1040,7 +1199,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_settings(settings, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 26, port: port_);
+            funcId: 30, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1064,7 +1223,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 27, port: port_);
+            funcId: 31, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1089,7 +1248,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 28, port: port_);
+            funcId: 32, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1116,7 +1275,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 29, port: port_);
+            funcId: 33, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1136,6 +1295,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<void> crateMethodSubtitleProviderInstallSubtitleInstallSubtitle(
+      {required String source,
+      required String id,
+      required BigInt seasonIndex,
+      required BigInt episodeIndex,
+      required String language,
+      required String link}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_usize(seasonIndex, serializer);
+        sse_encode_usize(episodeIndex, serializer);
+        sse_encode_String(language, serializer);
+        sse_encode_String(link, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 34, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta:
+          kCrateMethodSubtitleProviderInstallSubtitleInstallSubtitleConstMeta,
+      argValues: [source, id, seasonIndex, episodeIndex, language, link],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderInstallSubtitleInstallSubtitleConstMeta =>
+          const TaskConstMeta(
+            debugName: "install_subtitle",
+            argNames: [
+              "source",
+              "id",
+              "seasonIndex",
+              "episodeIndex",
+              "language",
+              "link"
+            ],
+          );
+
+  @override
   Future<bool> crateMethodFavoriteIsInCategoryIsInCategory(
       {required String source, required String id}) {
     return handler.executeNormal(NormalTask(
@@ -1144,7 +1348,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 30, port: port_);
+            funcId: 35, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -1168,7 +1372,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 31, port: port_);
+            funcId: 36, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1195,7 +1399,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_download_item_key(downloadItemKey, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 32, port: port_);
+            funcId: 37, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1224,7 +1428,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_box_autoadd_plugin_info(pluginInfo, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 33, port: port_);
+            funcId: 38, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1244,6 +1448,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<void> crateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitles(
+      {required String source,
+      required String id,
+      required BigInt seasonIndex,
+      required BigInt episodeIndex,
+      required BigInt subtitleId}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_usize(seasonIndex, serializer);
+        sse_encode_usize(episodeIndex, serializer);
+        sse_encode_u_64(subtitleId, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 39, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta:
+          kCrateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitlesConstMeta,
+      argValues: [source, id, seasonIndex, episodeIndex, subtitleId],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitlesConstMeta =>
+          const TaskConstMeta(
+            debugName: "remove_subtitles",
+            argNames: [
+              "source",
+              "id",
+              "seasonIndex",
+              "episodeIndex",
+              "subtitleId"
+            ],
+          );
+
+  @override
   Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
       {required BigInt categoryId, required String newCategoryName}) {
     return handler.executeNormal(NormalTask(
@@ -1252,7 +1498,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId, serializer);
         sse_encode_String(newCategoryName, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 34, port: port_);
+            funcId: 40, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1285,7 +1531,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(sort, serializer);
         sse_encode_u_64(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 35, port: port_);
+            funcId: 41, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_search_content_info,
@@ -1306,6 +1552,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
+  Future<SearchData?> crateMethodSubtitleProviderSearchSubtitlesSearchSubtitles(
+      {required String imdbId, required String source}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(imdbId, serializer);
+        sse_encode_String(source, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 42, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_opt_box_autoadd_search_data,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta:
+          kCrateMethodSubtitleProviderSearchSubtitlesSearchSubtitlesConstMeta,
+      argValues: [imdbId, source],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodSubtitleProviderSearchSubtitlesSearchSubtitlesConstMeta =>
+          const TaskConstMeta(
+            debugName: "search_subtitles",
+            argNames: ["imdbId", "source"],
+          );
+
+  @override
   Future<void> crateMethodFavoriteSetCategorySetCategory(
       {required BigInt categoryId,
       required String source,
@@ -1317,7 +1592,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 36, port: port_);
+            funcId: 43, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1343,7 +1618,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(torrentSource, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 37, port: port_);
+            funcId: 44, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1372,7 +1647,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_box_autoadd_download_item_value(
             downloadItemValue, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 38, port: port_);
+            funcId: 45, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1403,7 +1678,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_box_autoadd_download_status(downloadStatus, serializer);
         sse_encode_bool(applyProgress, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 39, port: port_);
+            funcId: 46, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1440,7 +1715,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_box_autoadd_last_watch_torrent_info(
             lastWatchTorrentInfo, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 40, port: port_);
+            funcId: 47, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1474,7 +1749,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_settings(settings, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 41, port: port_);
+            funcId: 48, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1502,7 +1777,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_box_autoadd_watch_state_key(watchStateKey, serializer);
         sse_encode_box_autoadd_watch_state_value(watchStateValue, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 42, port: port_);
+            funcId: 49, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1529,7 +1804,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(categoryId1, serializer);
         sse_encode_u_64(categoryId2, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 43, port: port_);
+            funcId: 50, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1559,7 +1834,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_bool(fromCache, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 44, port: port_);
+            funcId: 51, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_trending_content_info,
@@ -1591,7 +1866,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 45, port: port_);
+            funcId: 52, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1614,15 +1889,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       crateMethodMetadataProviderViewContentViewContentInfoGet(
           {required String source,
           required String id,
-          required bool fromCache}) {
+          required bool fromCache,
+          required bool checkExpire}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
         sse_encode_bool(fromCache, serializer);
+        sse_encode_bool(checkExpire, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 46, port: port_);
+            funcId: 53, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_view_content_info,
@@ -1630,7 +1907,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ),
       constMeta:
           kCrateMethodMetadataProviderViewContentViewContentInfoGetConstMeta,
-      argValues: [source, id, fromCache],
+      argValues: [source, id, fromCache, checkExpire],
       apiImpl: this,
     ));
   }
@@ -1639,7 +1916,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get kCrateMethodMetadataProviderViewContentViewContentInfoGetConstMeta =>
           const TaskConstMeta(
             debugName: "view_content_info_get",
-            argNames: ["source", "id", "fromCache"],
+            argNames: ["source", "id", "fromCache", "checkExpire"],
           );
 
   @override
@@ -1657,7 +1934,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_64(seasonIndex, serializer);
         sse_encode_u_64(episodeIndex, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 47, port: port_);
+            funcId: 54, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1709,6 +1986,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Map<String, List<SubtitleData>> dco_decode_Map_String_list_subtitle_data_None(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(dco_decode_list_record_string_list_subtitle_data(raw)
+        .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
   Map<AllDownloadItemKey, List<AllDownloadItemValue>>
       dco_decode_Map_all_download_item_key_list_all_download_item_value_None(
           dynamic raw) {
@@ -1724,6 +2009,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Map.fromEntries(dco_decode_list_record_u_64_string(raw)
         .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, GetInstalledSubtitlesData>
+      dco_decode_Map_u_64_get_installed_subtitles_data_None(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(
+        dco_decode_list_record_u_64_get_installed_subtitles_data(raw)
+            .map((e) => MapEntry(e.$1, e.$2)));
   }
 
   @protected
@@ -1815,6 +2109,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SearchData dco_decode_box_autoadd_search_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_search_data(raw);
+  }
+
+  @protected
   Settings dco_decode_box_autoadd_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_settings(raw);
@@ -1863,6 +2163,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
     return CategoryOrderMap(
       field0: dco_decode_Map_u_64_u_64_None(arr[0]),
+    );
+  }
+
+  @protected
+  ChapterData dco_decode_chapter_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ChapterData(
+      title: dco_decode_String(arr[0]),
+      link: dco_decode_String(arr[1]),
     );
   }
 
@@ -1934,6 +2246,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExternalID dco_decode_external_id(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ExternalID(
+      mal: dco_decode_opt_String(arr[0]),
+      kitsu: dco_decode_opt_String(arr[1]),
+      imdb: dco_decode_opt_String(arr[2]),
+    );
+  }
+
+  @protected
   double dco_decode_f_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
@@ -1978,6 +2303,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       path: dco_decode_opt_String(arr[1]),
       length: dco_decode_opt_box_autoadd_usize(arr[2]),
       sha1: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  GetInstalledSubtitlesData dco_decode_get_installed_subtitles_data(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return GetInstalledSubtitlesData(
+      title: dco_decode_String(arr[0]),
+      path: dco_decode_String(arr[1]),
     );
   }
 
@@ -2036,6 +2374,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (raw as List<dynamic>)
         .map(dco_decode_all_download_item_value)
         .toList();
+  }
+
+  @protected
+  List<ChapterData> dco_decode_list_chapter_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_chapter_data).toList();
   }
 
   @protected
@@ -2103,6 +2447,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, List<SubtitleData>)>
+      dco_decode_list_record_string_list_subtitle_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_record_string_list_subtitle_data)
+        .toList();
+  }
+
+  @protected
+  List<(BigInt, GetInstalledSubtitlesData)>
+      dco_decode_list_record_u_64_get_installed_subtitles_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_record_u_64_get_installed_subtitles_data)
+        .toList();
+  }
+
+  @protected
   List<(BigInt, String)> dco_decode_list_record_u_64_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_record_u_64_string).toList();
@@ -2124,6 +2486,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<SourceInfo> dco_decode_list_source_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_source_info).toList();
+  }
+
+  @protected
+  List<SubtitleData> dco_decode_list_subtitle_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_subtitle_data).toList();
   }
 
   @protected
@@ -2172,6 +2540,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return raw == null
         ? null
         : dco_decode_box_autoadd_last_watch_torrent_info(raw);
+  }
+
+  @protected
+  SearchData? dco_decode_opt_box_autoadd_search_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_search_data(raw);
   }
 
   @protected
@@ -2252,6 +2626,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (String, List<SubtitleData>) dco_decode_record_string_list_subtitle_data(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_list_subtitle_data(arr[1]),
+    );
+  }
+
+  @protected
+  (BigInt, GetInstalledSubtitlesData)
+      dco_decode_record_u_64_get_installed_subtitles_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_u_64(arr[0]),
+      dco_decode_get_installed_subtitles_data(arr[1]),
+    );
+  }
+
+  @protected
   (BigInt, String) dco_decode_record_u_64_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -2294,6 +2696,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SearchData dco_decode_search_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return SearchData(
+      title: dco_decode_String(arr[0]),
+      posterUrl: dco_decode_String(arr[1]),
+      link: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
   Settings dco_decode_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -2315,6 +2730,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return SourceInfo(
       id: dco_decode_String(arr[0]),
       title: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  SubtitleData dco_decode_subtitle_data(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SubtitleData(
+      title: dco_decode_String(arr[0]),
+      link: dco_decode_String(arr[1]),
     );
   }
 
@@ -2403,7 +2830,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 16 but see ${arr.length}');
     return ViewContentInfo(
       source: dco_decode_String(arr[0]),
-      externalId: dco_decode_String(arr[1]),
+      externalId: dco_decode_external_id(arr[1]),
       url: dco_decode_String(arr[2]),
       title: dco_decode_String(arr[3]),
       titleSecondary: dco_decode_String(arr[4]),
@@ -2473,6 +2900,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Map<String, List<SubtitleData>> sse_decode_Map_String_list_subtitle_data_None(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_record_string_list_subtitle_data(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
   Map<AllDownloadItemKey, List<AllDownloadItemValue>>
       sse_decode_Map_all_download_item_key_list_all_download_item_value_None(
           SseDeserializer deserializer) {
@@ -2488,6 +2923,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_record_u_64_string(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  Map<BigInt, GetInstalledSubtitlesData>
+      sse_decode_Map_u_64_get_installed_subtitles_data_None(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner =
+        sse_decode_list_record_u_64_get_installed_subtitles_data(deserializer);
     return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
   }
 
@@ -2582,6 +3027,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SearchData sse_decode_box_autoadd_search_data(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_search_data(deserializer));
+  }
+
+  @protected
   Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_settings(deserializer));
@@ -2625,6 +3076,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_Map_u_64_u_64_None(deserializer);
     return CategoryOrderMap(field0: var_field0);
+  }
+
+  @protected
+  ChapterData sse_decode_chapter_data(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_String(deserializer);
+    var var_link = sse_decode_String(deserializer);
+    return ChapterData(title: var_title, link: var_link);
   }
 
   @protected
@@ -2690,6 +3149,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExternalID sse_decode_external_id(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_mal = sse_decode_opt_String(deserializer);
+    var var_kitsu = sse_decode_opt_String(deserializer);
+    var var_imdb = sse_decode_opt_String(deserializer);
+    return ExternalID(mal: var_mal, kitsu: var_kitsu, imdb: var_imdb);
+  }
+
+  @protected
   double sse_decode_f_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getFloat32();
@@ -2731,6 +3199,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_sha1 = sse_decode_opt_String(deserializer);
     return FileInfo(
         id: var_id, path: var_path, length: var_length, sha1: var_sha1);
+  }
+
+  @protected
+  GetInstalledSubtitlesData sse_decode_get_installed_subtitles_data(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_String(deserializer);
+    var var_path = sse_decode_String(deserializer);
+    return GetInstalledSubtitlesData(title: var_title, path: var_path);
   }
 
   @protected
@@ -2800,6 +3277,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <AllDownloadItemValue>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_all_download_item_value(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ChapterData> sse_decode_list_chapter_data(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ChapterData>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_chapter_data(deserializer));
     }
     return ans_;
   }
@@ -2917,6 +3406,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, List<SubtitleData>)>
+      sse_decode_list_record_string_list_subtitle_data(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(String, List<SubtitleData>)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_string_list_subtitle_data(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<(BigInt, GetInstalledSubtitlesData)>
+      sse_decode_list_record_u_64_get_installed_subtitles_data(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(BigInt, GetInstalledSubtitlesData)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(
+          sse_decode_record_u_64_get_installed_subtitles_data(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<(BigInt, String)> sse_decode_list_record_u_64_string(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2963,6 +3481,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <SourceInfo>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_source_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<SubtitleData> sse_decode_list_subtitle_data(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <SubtitleData>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_subtitle_data(deserializer));
     }
     return ans_;
   }
@@ -3046,6 +3577,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_last_watch_torrent_info(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  SearchData? sse_decode_opt_box_autoadd_search_data(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_search_data(deserializer));
     } else {
       return null;
     }
@@ -3137,6 +3680,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (String, List<SubtitleData>) sse_decode_record_string_list_subtitle_data(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_list_subtitle_data(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (BigInt, GetInstalledSubtitlesData)
+      sse_decode_record_u_64_get_installed_subtitles_data(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_u_64(deserializer);
+    var var_field1 = sse_decode_get_installed_subtitles_data(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
   (BigInt, String) sse_decode_record_u_64_string(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_u_64(deserializer);
@@ -3172,6 +3734,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SearchData sse_decode_search_data(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_String(deserializer);
+    var var_posterUrl = sse_decode_String(deserializer);
+    var var_link = sse_decode_String(deserializer);
+    return SearchData(
+        title: var_title, posterUrl: var_posterUrl, link: var_link);
+  }
+
+  @protected
   Settings sse_decode_settings(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_port = sse_decode_u_32(deserializer);
@@ -3186,6 +3758,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_id = sse_decode_String(deserializer);
     var var_title = sse_decode_String(deserializer);
     return SourceInfo(id: var_id, title: var_title);
+  }
+
+  @protected
+  SubtitleData sse_decode_subtitle_data(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_title = sse_decode_String(deserializer);
+    var var_link = sse_decode_String(deserializer);
+    return SubtitleData(title: var_title, link: var_link);
   }
 
   @protected
@@ -3266,7 +3846,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ViewContentInfo sse_decode_view_content_info(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_source = sse_decode_String(deserializer);
-    var var_externalId = sse_decode_String(deserializer);
+    var var_externalId = sse_decode_external_id(deserializer);
     var var_url = sse_decode_String(deserializer);
     var var_title = sse_decode_String(deserializer);
     var var_titleSecondary = sse_decode_String(deserializer);
@@ -3348,6 +3928,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_Map_String_list_subtitle_data_None(
+      Map<String, List<SubtitleData>> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_string_list_subtitle_data(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
   void sse_encode_Map_all_download_item_key_list_all_download_item_value_None(
       Map<AllDownloadItemKey, List<AllDownloadItemValue>> self,
       SseSerializer serializer) {
@@ -3361,6 +3949,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       Map<BigInt, String> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_u_64_string(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void sse_encode_Map_u_64_get_installed_subtitles_data_None(
+      Map<BigInt, GetInstalledSubtitlesData> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_u_64_get_installed_subtitles_data(
         self.entries.map((e) => (e.key, e.value)).toList(), serializer);
   }
 
@@ -3452,6 +4048,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_search_data(
+      SearchData self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_search_data(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_settings(
       Settings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3495,6 +4098,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       CategoryOrderMap self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_Map_u_64_u_64_None(self.field0, serializer);
+  }
+
+  @protected
+  void sse_encode_chapter_data(ChapterData self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.link, serializer);
   }
 
   @protected
@@ -3543,6 +4153,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_external_id(ExternalID self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.mal, serializer);
+    sse_encode_opt_String(self.kitsu, serializer);
+    sse_encode_opt_String(self.imdb, serializer);
+  }
+
+  @protected
   void sse_encode_f_32(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putFloat32(self);
@@ -3575,6 +4193,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.path, serializer);
     sse_encode_opt_box_autoadd_usize(self.length, serializer);
     sse_encode_opt_String(self.sha1, serializer);
+  }
+
+  @protected
+  void sse_encode_get_installed_subtitles_data(
+      GetInstalledSubtitlesData self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.path, serializer);
   }
 
   @protected
@@ -3627,6 +4253,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_all_download_item_value(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_chapter_data(
+      List<ChapterData> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_chapter_data(item, serializer);
     }
   }
 
@@ -3722,6 +4358,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_record_string_list_subtitle_data(
+      List<(String, List<SubtitleData>)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_string_list_subtitle_data(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_record_u_64_get_installed_subtitles_data(
+      List<(BigInt, GetInstalledSubtitlesData)> self,
+      SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_u_64_get_installed_subtitles_data(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_record_u_64_string(
       List<(BigInt, String)> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3758,6 +4415,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_source_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_subtitle_data(
+      List<SubtitleData> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_subtitle_data(item, serializer);
     }
   }
 
@@ -3836,6 +4503,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_search_data(
+      SearchData? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_search_data(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -3905,6 +4583,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_record_string_list_subtitle_data(
+      (String, List<SubtitleData>) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_list_subtitle_data(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_u_64_get_installed_subtitles_data(
+      (BigInt, GetInstalledSubtitlesData) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_64(self.$1, serializer);
+    sse_encode_get_installed_subtitles_data(self.$2, serializer);
+  }
+
+  @protected
   void sse_encode_record_u_64_string(
       (BigInt, String) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3933,6 +4627,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_search_data(SearchData self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.posterUrl, serializer);
+    sse_encode_String(self.link, serializer);
+  }
+
+  @protected
   void sse_encode_settings(Settings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_u_32(self.port, serializer);
@@ -3945,6 +4647,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.id, serializer);
     sse_encode_String(self.title, serializer);
+  }
+
+  @protected
+  void sse_encode_subtitle_data(SubtitleData self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.title, serializer);
+    sse_encode_String(self.link, serializer);
   }
 
   @protected
@@ -4016,7 +4725,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ViewContentInfo self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.source, serializer);
-    sse_encode_String(self.externalId, serializer);
+    sse_encode_external_id(self.externalId, serializer);
     sse_encode_String(self.url, serializer);
     sse_encode_String(self.title, serializer);
     sse_encode_String(self.titleSecondary, serializer);
