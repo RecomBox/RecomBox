@@ -63,6 +63,7 @@ jobs:
           cmakeVersion: "3.29.6"
 
       - name: Install NASM
+        if: matrix.target == 'windows'
         run: choco install nasm -y
 
       - name: Build Project
