@@ -66,10 +66,11 @@ jobs:
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           FLUTTER_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           FLUTTER_STORE_FILE: "upload-keystore.jks"
-          BINDGEN_EXTRA_CLANG_ARGS: "--sysroot=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
         run: |
           flutter pub get
           if [ "${{ matrix.target }}" == "android" ]; then
+            export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+            
             # Universal APK
             flutter build apk --release --no-tree-shake-icons
             # Split APKs (arm, arm64, x64)
