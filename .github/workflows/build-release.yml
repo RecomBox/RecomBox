@@ -66,7 +66,7 @@ jobs:
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           FLUTTER_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           FLUTTER_STORE_FILE: "upload-keystore.jks"
-          BINDGEN_EXTRA_CLANG_ARGS: ${{ matrix.target == 'android' && '--sysroot=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot' || '' }}
+          BINDGEN_EXTRA_CLANG_ARGS: "--sysroot=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
         run: |
           flutter pub get
           if [ "${{ matrix.target }}" == "android" ]; then
