@@ -61,6 +61,7 @@ jobs:
       - name: Build Project
         shell: bash
         env:
+          CARGO_ENCODED_RUSTFLAGS: "-Awarnings"
           FLUTTER_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           FLUTTER_STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
