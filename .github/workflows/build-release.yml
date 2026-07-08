@@ -64,7 +64,8 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
-          vs-version: '[17.0,18.0)'
+          vsversion: [17.0,18.0)
+
 
       - name: Build Project
         shell: bash
