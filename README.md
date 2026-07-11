@@ -36,6 +36,15 @@
 # Tech Stack
 ![Flutter](https://img.shields.io/badge/flutter-%2320232a?style=for-the-badge&logo=flutter&logoColor=%2361DAFB) ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) 
 
+# What's RecomBox?
+An open-source cross-platform torrent streaming app for Anime, Movies, and TV.
+
+# ✨ Features
+- **Stream Torrent** seamlessly from various sources without full download.
+- **Track your watch progress** and pick up where you left off.
+- **Download** for offline watching.
+- **Advanced search** for quick content discovery.
+- **Plugins**: add and update external torrent provider without update entire app.
 
 # Download
 <table>
@@ -77,15 +86,7 @@ https://raw.githubusercontent.com/RecomBox/RecomBox/refs/heads/main/altstore.jso
 
 
 
-# What's RecomBox?
-An open-source cross-platform torrent streaming app for Anime, Movies, and TV.
 
-# ✨ Features
-- **Stream Torrent** seamlessly from various sources without full download.
-- **Track your watch progress** and pick up where you left off.
-- **Download** for offline watching.
-- **Advanced search** for quick content discovery.
-- **Plugins**: add and update external torrent provider without update entire app.
 
 <!--
 
