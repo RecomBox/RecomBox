@@ -80,6 +80,7 @@ jobs:
       - name: Build Project
         shell: bash
         env:
+          TrackFileAccess: "false"
           CARGO_ENCODED_RUSTFLAGS: "-Awarnings"
           FLUTTER_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           FLUTTER_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
