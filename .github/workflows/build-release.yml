@@ -67,11 +67,13 @@ jobs:
         uses: ilammy/setup-nasm@v1
 
       - name: Install LLVM and Clang
+        if: matrix.target == 'windows'
         uses: KyleMayes/install-llvm-action@v2
         with:
           version: "18"
 
       - name: Set LIBCLANG_PATH
+        if: matrix.target == 'windows'
         run: echo "LIBCLANG_PATH=$($env:LLVM_PATH)\bin" >> $env:GITHUB_ENV
 
 
