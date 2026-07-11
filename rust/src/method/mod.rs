@@ -15,4 +15,5 @@ pub mod check_update;
 pub mod watch_state;
 pub mod current_watch;
 pub mod subtitle_provider;
+pub mod clear_cache;
 

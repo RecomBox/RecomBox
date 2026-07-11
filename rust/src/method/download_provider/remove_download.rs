@@ -58,7 +58,8 @@ pub async fn remove_download(download_item_key: &DownloadItemKey) -> Result<(), 
     TorrentHandle::free(
         &TorrentHandleMode::Download,
         &download_item_key.source,
-        true
+        true,
+        false
     ).await.map_err(|e| e.to_string())?;
 
     Ok(())

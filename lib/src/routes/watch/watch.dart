@@ -174,7 +174,8 @@ class _WatchState extends State<WatchScreen> {
         freeTorrentHandle(
           torrentHandleMode: torrentHandleMode,
           torrentSource: args!.torrentSource,
-          deleteFiles: true
+          deleteFiles: true,
+          checkCacheSizeBeforeDelete: true
         );
       }
       

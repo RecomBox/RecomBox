@@ -381,6 +381,7 @@ mixin _$Settings {
   int get port;
   Paths get paths;
   String get version;
+  BigInt? get maxCacheSize;
 
   /// Create a copy of Settings
   /// with the given fields replaced by the non-null parameter values.
@@ -399,16 +400,19 @@ mixin _$Settings {
             other is Settings &&
             (identical(other.port, port) || other.port == port) &&
             (identical(other.paths, paths) || other.paths == paths) &&
-            (identical(other.version, version) || other.version == version));
+            (identical(other.version, version) || other.version == version) &&
+            (identical(other.maxCacheSize, maxCacheSize) ||
+                other.maxCacheSize == maxCacheSize));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, port, paths, version);
+  int get hashCode =>
+      Object.hash(runtimeType, port, paths, version, maxCacheSize);
 
   @override
   String toString() {
-    return 'Settings(port: $port, paths: $paths, version: $version)';
+    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize)';
   }
 }
 
@@ -417,7 +421,7 @@ abstract mixin class $SettingsCopyWith<$Res> {
   factory $SettingsCopyWith(Settings value, $Res Function(Settings) _then) =
       _$SettingsCopyWithImpl;
   @useResult
-  $Res call({int port, Paths paths, String version});
+  $Res call({int port, Paths paths, String version, BigInt? maxCacheSize});
 
   $PathsCopyWith<$Res> get paths;
 }
@@ -437,6 +441,7 @@ class _$SettingsCopyWithImpl<$Res> implements $SettingsCopyWith<$Res> {
     Object? port = null,
     Object? paths = null,
     Object? version = null,
+    Object? maxCacheSize = freezed,
   }) {
     return _then(_self.copyWith(
       port: null == port
@@ -451,6 +456,10 @@ class _$SettingsCopyWithImpl<$Res> implements $SettingsCopyWith<$Res> {
           ? _self.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
+      maxCacheSize: freezed == maxCacheSize
+          ? _self.maxCacheSize
+          : maxCacheSize // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
     ));
   }
 
@@ -556,13 +565,16 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(int port, Paths paths, String version)? $default, {
+    TResult Function(
+            int port, Paths paths, String version, BigInt? maxCacheSize)?
+        $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _Settings() when $default != null:
-        return $default(_that.port, _that.paths, _that.version);
+        return $default(
+            _that.port, _that.paths, _that.version, _that.maxCacheSize);
       case _:
         return orElse();
     }
@@ -583,12 +595,15 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(int port, Paths paths, String version) $default,
+    TResult Function(
+            int port, Paths paths, String version, BigInt? maxCacheSize)
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _Settings():
-        return $default(_that.port, _that.paths, _that.version);
+        return $default(
+            _that.port, _that.paths, _that.version, _that.maxCacheSize);
     }
   }
 
@@ -606,12 +621,15 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(int port, Paths paths, String version)? $default,
+    TResult? Function(
+            int port, Paths paths, String version, BigInt? maxCacheSize)?
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _Settings() when $default != null:
-        return $default(_that.port, _that.paths, _that.version);
+        return $default(
+            _that.port, _that.paths, _that.version, _that.maxCacheSize);
       case _:
         return null;
     }
@@ -622,7 +640,10 @@ extension SettingsPatterns on Settings {
 @JsonSerializable()
 class _Settings implements Settings {
   const _Settings(
-      {required this.port, required this.paths, required this.version});
+      {required this.port,
+      required this.paths,
+      required this.version,
+      this.maxCacheSize});
   factory _Settings.fromJson(Map<String, dynamic> json) =>
       _$SettingsFromJson(json);
 
@@ -632,6 +653,8 @@ class _Settings implements Settings {
   final Paths paths;
   @override
   final String version;
+  @override
+  final BigInt? maxCacheSize;
 
   /// Create a copy of Settings
   /// with the given fields replaced by the non-null parameter values.
@@ -655,16 +678,19 @@ class _Settings implements Settings {
             other is _Settings &&
             (identical(other.port, port) || other.port == port) &&
             (identical(other.paths, paths) || other.paths == paths) &&
-            (identical(other.version, version) || other.version == version));
+            (identical(other.version, version) || other.version == version) &&
+            (identical(other.maxCacheSize, maxCacheSize) ||
+                other.maxCacheSize == maxCacheSize));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, port, paths, version);
+  int get hashCode =>
+      Object.hash(runtimeType, port, paths, version, maxCacheSize);
 
   @override
   String toString() {
-    return 'Settings(port: $port, paths: $paths, version: $version)';
+    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize)';
   }
 }
 
@@ -675,7 +701,7 @@ abstract mixin class _$SettingsCopyWith<$Res>
       __$SettingsCopyWithImpl;
   @override
   @useResult
-  $Res call({int port, Paths paths, String version});
+  $Res call({int port, Paths paths, String version, BigInt? maxCacheSize});
 
   @override
   $PathsCopyWith<$Res> get paths;
@@ -696,6 +722,7 @@ class __$SettingsCopyWithImpl<$Res> implements _$SettingsCopyWith<$Res> {
     Object? port = null,
     Object? paths = null,
     Object? version = null,
+    Object? maxCacheSize = freezed,
   }) {
     return _then(_Settings(
       port: null == port
@@ -710,6 +737,10 @@ class __$SettingsCopyWithImpl<$Res> implements _$SettingsCopyWith<$Res> {
           ? _self.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
+      maxCacheSize: freezed == maxCacheSize
+          ? _self.maxCacheSize
+          : maxCacheSize // ignore: cast_nullable_to_non_nullable
+              as BigInt?,
     ));
   }
 

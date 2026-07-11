@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'frb_generated.dart';
 import 'method/check_update.dart';
+import 'method/clear_cache.dart';
 import 'method/current_watch.dart';
 import 'method/download_provider.dart';
 import 'method/download_provider/get_all_download.dart';

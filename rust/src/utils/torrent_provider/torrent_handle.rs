@@ -7,9 +7,12 @@ use std::sync::{Arc, LazyLock};
 use librqbit::ManagedTorrent;
 use librqbit::api::TorrentIdOrHash;
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 
 
+use crate::utils::get_dir_size;
+use crate::utils::settings::Settings;
 
 use super::torrent_session::TorrentSession;
 use super::serialize_torrent_source;
@@ -55,6 +58,23 @@ pub struct TorrentHandle {
 
 impl TorrentHandle {
     pub async fn load(self) -> anyhow::Result<(Arc<ManagedTorrent>, bool), Box<dyn Error>>{
+        if self.torrent_handle_mode == TorrentHandleMode::Watch{
+            let settings = Settings::get()?;
+            let max_cache_size = settings.max_cache_size.unwrap_or(5368709120); // 5GB default
+            let current_cache_size = get_dir_size::new(&settings.paths.app_cache_dir);
+            
+            if current_cache_size > max_cache_size{
+                let session_dir = PathBuf::from(&settings.paths.app_cache_dir)
+                    .join("torrent_session_cache");
+                fs::remove_dir_all(&session_dir).ok();
+
+                let torrent_files_dir = PathBuf::from(&settings.paths.app_cache_dir)
+                    .join("torrent_files");
+                fs::remove_dir_all(&torrent_files_dir).ok();
+            }
+            
+        }
+
         let session = TorrentSession::get().await?.clone();
 
         let already_exist;
@@ -85,7 +105,7 @@ impl TorrentHandle {
                     options.only_files = Some(current);
                     options.output_folder = Some(self.output_dir.to_string_lossy().to_string());
 
-                    TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false).await?;
+                    TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false, false).await?;
 
                     let new_handle = session
                         .add_torrent(
@@ -165,7 +185,7 @@ impl TorrentHandle {
         current_files.retain(|x| x != &(file_id as usize));
 
         if current_files.is_empty() {
-            TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false).await?;
+            TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false, false).await?;
             println!("[{}:{}] Pause files success!", file!(), line!());
             return Ok(());
         }
@@ -175,7 +195,7 @@ impl TorrentHandle {
         options.paused = false;
         options.only_files = Some(current_files);
         options.output_folder = Some(self.output_dir.to_string_lossy().to_string());
-        TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false).await?;
+        TorrentHandle::free(&self.torrent_handle_mode, &self.torrent_source, false, false).await?;
         let new_handle = session
             .add_torrent(
                 serialize_torrent_source::new(self.torrent_source.as_str(), true).await?,
@@ -202,7 +222,12 @@ impl TorrentHandle {
 
 
 
-    pub async fn free(torrent_handle_mode: &TorrentHandleMode, torrent_source: &str, delete_files: bool) -> anyhow::Result<()>{
+    pub async fn free(
+        torrent_handle_mode: &TorrentHandleMode, 
+        torrent_source: &str, 
+        delete_files: bool,
+        check_cache_size_before_delete: bool
+    ) -> anyhow::Result<()>{
         
         let torrent_handle = match {
             let torrent_handle_map = match torrent_handle_mode {
@@ -227,7 +252,18 @@ impl TorrentHandle {
         let torrent_session = TorrentSession::get().await?;
         let torrent_id = TorrentIdOrHash::Id(torrent_handle.id());
 
-        torrent_session.delete(torrent_id, delete_files).await?;
+        let mut should_delete = delete_files;
+
+        if *torrent_handle_mode == TorrentHandleMode::Watch && check_cache_size_before_delete{
+            let settings = Settings::get()?;
+            let max_cache_size = settings.max_cache_size.unwrap_or(5368709120); // 5GB default
+            let current_cache_size = get_dir_size::new(&settings.paths.app_cache_dir);
+            should_delete = current_cache_size >= max_cache_size;
+            
+        }
+
+        torrent_session.delete(torrent_id, should_delete).await?;
+
         {
             let torrent_handle_map = match torrent_handle_mode {
                 TorrentHandleMode::Watch => &WATCH_TORRENT_HANDLE_MAP,

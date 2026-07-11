@@ -27,6 +27,7 @@ sealed class Settings with _$Settings {
     required int port,
     required Paths paths,
     required String version,
+    BigInt? maxCacheSize,
   }) = _Settings;
 
   factory Settings.fromJson(Map<String, dynamic> json) =>
