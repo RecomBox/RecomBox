@@ -44,6 +44,7 @@ An open-source cross-platform torrent streaming app for Anime, Movies, and TV.
 - **Track your watch progress** and pick up where you left off.
 - **Download** for offline watching.
 - **Advanced search** for quick content discovery.
+- **External Subtitles**: add subtitles from external provider.
 - **Plugins**: add and update external torrent provider without update entire app.
 
 # Download
