@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/global/app_color.dart';
+import 'package:recombox/src/rust/method/clear_cache.dart';
 import 'package:recombox/src/rust/method/settings/get_settings.dart';
 import 'package:recombox/src/rust/method/settings/set_settings.dart';
 import 'package:recombox/src/rust/utils/settings.dart';
@@ -28,6 +29,15 @@ class _StorageState extends State<Storage> {
 
   final List<Map<String, dynamic>> directoryInfo = [];
 
+  static final Map<BigInt, String> cacheSizeMap = {
+    BigInt.from(1073741824): '1 GB',
+    BigInt.from(5368709120): '5 GB',
+    BigInt.from(10737418240): '10 GB',
+    BigInt.from(26843545600): '25 GB',
+    BigInt.from(53687091200): '50 GB',
+  };
+
+
   @override
   void initState() {
     super.initState();
@@ -35,10 +45,15 @@ class _StorageState extends State<Storage> {
   }
 
   Future<void> initStorage() async {
-    final result = await getSettings();
+    var result = await getSettings();
+    if (result.maxCacheSize == null) {
+      result = result.copyWith(maxCacheSize: BigInt.from(5368709120));
+    }
+
     if (context.mounted) {
       setState(() {
         settings = result;
+
         directoryInfo.clear();
         directoryInfo.add({
           "label": "App Data Directory",
@@ -382,7 +397,76 @@ class _StorageState extends State<Storage> {
                   )
 
                 ],
-              
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 18,
+                  children: [
+                    Text(
+                      "Max Cache Size:",
+                      style: GoogleFonts.nunito(
+                        color: appColors.textPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight(600)
+                      ),
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: 
+                        DropdownButton<BigInt>(
+                          isExpanded: true,
+                          value: settings!.maxCacheSize,
+                          dropdownColor: appColors.tertiary, // background of the opened menu list
+                          style: TextStyle(color: appColors.textPrimary), // selected item text
+                          iconEnabledColor: appColors.secondary, // the dropdown arrow icon
+                          underline: Container(
+                            height: 1,
+                            color: appColors.secondary,
+                          ),
+                          items: cacheSizeMap.entries.map((entry) {
+                            return DropdownMenuItem(
+                              value: entry.key,
+                              child: Text(entry.value),
+                            );
+                          }).toList(),
+                          onChanged: (value) async {
+                            if (value == null) return;
+                            
+                            var newSettings = settings!.copyWith(maxCacheSize: value);
+                            await setSettings(settings: newSettings);
+
+                            if (context.mounted){
+                              setState(() {
+                                settings = newSettings;
+                              });
+                            }
+                          },
+                        ),
+                      
+                      ),
+                  ],
+                ),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    enabledMouseCursor: SystemMouseCursors.click,
+                    backgroundColor: Colors.red,
+                    fixedSize: Size(150, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.5)
+                    )
+                  ),
+                  onPressed: clearCache,
+                  child: Text(
+                    "Clear Cache",
+                    style: GoogleFonts.nunito(
+                      color: appColors.textPrimary,
+                      fontSize: 18
+                    ),
+                  ),
+                ),
+                
+
                 Text(
                   "Backup Favorite",
                   style: GoogleFonts.nunito(

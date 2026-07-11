@@ -1,0 +1,34 @@
+use flutter_rust_bridge::frb;
+pub use recombox_subtitle_provider::manage_subtitle::get_all_installed_subtitles::GetAllInstalledSubtitlesData;
+use std::path::PathBuf;
+
+
+use crate::utils::settings::Settings;
+
+#[frb(mirror(GetAllInstalledSubtitlesData))]
+pub struct _GetAllInstalledSubtitlesData{
+  pub source: String,
+  pub id: String,
+  pub season_index: usize,
+  pub episode_index: usize,
+  pub subtitle_id: u64,
+  pub title: String,
+  pub path: String
+}
+
+
+pub async fn get_all_installed_subtitles() -> anyhow::Result<Vec<GetAllInstalledSubtitlesData>> {
+  let settings = Settings::get()?;
+
+  let appdata_dir = &settings.paths.app_support_dir;
+  let subtitle_directory = PathBuf::from(appdata_dir)
+    .join("subtitle");
+
+
+  
+  let manager = recombox_subtitle_provider::manage_subtitle::SubtitleDatabaseManager{
+    subtitle_directory
+  };
+  manager.get_all_installed().await
+
+}

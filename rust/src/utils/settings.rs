@@ -13,7 +13,8 @@ static SETTIGNS: Lazy<Mutex<Option<Arc<Settings>>>> = Lazy::new(|| Mutex::new(No
 pub struct Settings {
     pub port: u32,
     pub paths: Paths,
-    pub version: String
+    pub version: String,
+    pub max_cache_size: Option<u64>
 }
 
 #[frb(json_serializable)]
@@ -41,6 +42,7 @@ impl Settings {
                 app_cache_dir: temp_dir.join("app_cache_dir").to_string_lossy().to_string(),
                 temp_dir: temp_dir.join("temp_dir").to_string_lossy().to_string(),
             },
+            max_cache_size: Some(5368709120),
             version: "0.0.1".to_string(),
         };
         let mut guard = SETTIGNS.lock()

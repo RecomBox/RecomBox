@@ -8,8 +8,8 @@ import 'package:recombox/src/global/types.dart';
 import 'dart:math';
 
 import 'package:recombox/src/routes/watch/watch.dart';
-import 'package:recombox/src/rust/method/subtitle_provider/get_chapters.dart';
 import 'package:recombox/src/rust/method/subtitle_provider/get_subtitles.dart';
+import 'package:recombox/src/rust/method/subtitle_provider/get_subtitles_chapters.dart';
 import 'package:recombox/src/rust/method/subtitle_provider/install_subtitle.dart';
 import 'package:recombox/src/rust/method/subtitle_provider/search_subtitles.dart';
 class ExternalSubtitleDialog extends StatefulWidget {
@@ -83,7 +83,7 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
         }
 
       }else{
-        var getChaptersResult = await getChapters(
+        var getChaptersResult = await getSubtitlesChapters(
           imdbId: widget.watchScreenArgs.externalID.imdb??"", 
           source: widget.watchScreenArgs.source.name,
         );
@@ -174,6 +174,16 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                           )
                         )
                       ),
+
+                      IconButton(
+                        mouseCursor: SystemMouseCursors.click,
+                        iconSize: 32,
+                        color: appColors.secondary,
+                        onPressed: (){
+                          initExternalSubtitle();
+                        },
+                        icon: const Icon(Icons.refresh_rounded)
+                      ),
                     ],
                   )
                 ),
@@ -195,6 +205,7 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                     padding: EdgeInsets.all(10),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
+                                      
                                       border: Border(
                                         bottom: BorderSide(
                                           width: 1,
@@ -210,18 +221,13 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                       textAlign: TextAlign.start,
                                     ),
                                   ),
-                                  
+
                                   Container(
                                     padding: EdgeInsets.only(left: 10, right: 10),
-                                    
-                                    child: ListView.separated(
-                                      shrinkWrap: true,
-                                      
-                                      itemCount: subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]!.length,
-                                      itemBuilder: (context, index_2) {
-                                        
-
-                                        return 
+                                    color: appColors.tertiary,
+                                    child: Column(
+                                      children: [
+                                        for (var sub in subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]!) ...[
                                           Row(
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
@@ -229,7 +235,7 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                                 child: Container(
                                                   color: Colors.transparent,
                                                   padding: EdgeInsets.all(10),
-                                                  child: Text(subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2].title,
+                                                  child: Text(sub.title,
                                                     style: GoogleFonts.nunito(
                                                       color: appColors.textPrimary,
                                                       fontSize: 18
@@ -239,12 +245,10 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                                 )
                                               ),
                                               
-                                              if (!installingSubtitleList.contains(subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2].link)) ...[
-                                                if (!installedSubtitleList.contains(subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2].link))
+                                              if (!installingSubtitleList.contains(sub.link) && !installedSubtitleList.contains(sub.link))
                                                   IconButton(
                                                     mouseCursor: SystemMouseCursors.click,
                                                     onPressed: () async {
-                                                      var sub = subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2];
                                                       
                                                       if (installingSubtitleList.contains(sub.link)) return;
 
@@ -277,14 +281,14 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                                     icon: Icon(Icons.add_circle_rounded, color: appColors.secondary, size: 24),
                                                   ),
                                                 
-                                                if (installedSubtitleList.contains(subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2].link))
-                                                  Container(
-                                                    padding: EdgeInsets.all(10),
-                                                    child: Icon(Icons.check_circle_rounded, color: Colors.green),
-                                                  )
-                                              ],
+                                                
+                                              if (installedSubtitleList.contains(sub.link))
+                                                Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Icon(Icons.check_circle_rounded, color: Colors.green),
+                                                ),
 
-                                              if (installingSubtitleList.contains(subtitleDataMap[subtitleDataMap.keys.toList()[index_1]]![index_2].link)) ...[
+                                              if (installingSubtitleList.contains(sub.link))
                                                 SizedBox(
                                                   width: 24,
                                                   height: 24,
@@ -293,23 +297,27 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                                   
                                                   ),
                                                 ),
-                                              ]
+                                              
+                                              
                                             ],
-                                          );
+                                          ),
+
+                                          Container(
+                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 1,
+                                              color: appColors.strokePrimary,
+                                            )
+                                          )
+
                                           
-                                      
-                                        
-                                      }, 
-                                      separatorBuilder: (_,__) {
-                                        return Container(
-                                          height: 1,
-                                          color: appColors.strokePrimary,
-                                        );
-                                      }, 
-
-                                    ),
+                                    
+                                        ]
+                                          
+                                      ],
+                                    )
                                   )
-
                                   
                                   
                                 ],
@@ -331,7 +339,7 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                           alignment: Alignment.center,
                           padding: EdgeInsets.all(10),
                           child: Text(
-                            "No subtitle track found",
+                            "No external subtitle track found.\nTry refreshing.",
                             style: GoogleFonts.nunito(
                               color: appColors.textPrimary,
                               fontSize: 18

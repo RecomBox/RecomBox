@@ -3249,7 +3249,7 @@ dependencies = [
 [[package]]
 name = "recombox_subtitle_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_subtitle_provider#3a751bfdb5855f7eb1d39338687e4072cc67ff5b"
+source = "git+https://github.com/RecomBox/recombox_subtitle_provider#af83f8f9f7230072d5e2cbc355d5806add4b93ee"
 dependencies = [
  "anyhow",
  "base64",
@@ -3485,6 +3485,7 @@ dependencies = [
  "tokio",
  "tokio-util",
  "urlencoding",
+ "walkdir",
 ]
 
 [[package]]

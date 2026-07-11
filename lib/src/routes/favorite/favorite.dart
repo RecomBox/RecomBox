@@ -36,7 +36,7 @@ class _FavoriteState extends State<FavoriteScreen> {
   CategoryMap categoryMap = CategoryMap(field0: {});
   List<FavoriteItemInfo> favoriteItemInfoList = [];
 
-  Map<int, String> itemTitleMap = {};
+  Map<int, String> itemSearchKeywordsMap = {};
 
   @override
   void dispose() {
@@ -99,19 +99,19 @@ class _FavoriteState extends State<FavoriteScreen> {
     initFavorite();
   }
 
-  void addTitle( int index, String title) {
+  void addSearchKeywords( int index, String title) {
     setState(() {
-      itemTitleMap[index] = title;
+      itemSearchKeywordsMap[index] = title;
     });
   }
 
   List<FavoriteItemInfo> onFilterSearch() {
     String query = _textEditingController.text.toLowerCase();
     
-    if (query.isEmpty || itemTitleMap.isEmpty) return favoriteItemInfoList;
+    if (query.isEmpty || itemSearchKeywordsMap.isEmpty) return favoriteItemInfoList;
 
     List<int> sortedFavoriteItemInfoIndexList = Map.fromEntries(
-      itemTitleMap.entries.where((entry) => entry.value.toLowerCase().contains(query))
+      itemSearchKeywordsMap.entries.where((entry) => entry.value.toLowerCase().contains(query))
     ).keys.toList();
 
 
@@ -330,8 +330,8 @@ class _FavoriteState extends State<FavoriteScreen> {
                                 itemBuilder: (context, index) {
                                   return FavoriteContentCard(
                                     key: ValueKey(filteredfavoriteItemInfoList[index].id),
-                                    addTitle: (String title) {
-                                      addTitle(index, title);
+                                    addSearchKeywords: (String title) {
+                                      addSearchKeywords(index, title);
                                     },
                                     source: SourceExtension.fromString(filteredfavoriteItemInfoList[index].source), 
                                     id: filteredfavoriteItemInfoList[index].id,

@@ -9,12 +9,12 @@ import 'dart:io';
 class FavoriteContentCard extends StatefulWidget {
   const FavoriteContentCard({
     super.key,
-    required this.addTitle,
+    required this.addSearchKeywords,
     required this.source,
     required this.id,
   });
 
-  final Function(String title) addTitle;
+  final Function(String keywords) addSearchKeywords;
   final Source source;
   final String id;
 
@@ -45,7 +45,7 @@ class _FavoriteContentCardState extends State<FavoriteContentCard> {
         checkExpire: false
       );
 
-      widget.addTitle(viewContentInfoResult.title);
+      widget.addSearchKeywords("${viewContentInfoResult.title} | ${viewContentInfoResult.titleSecondary} | ${viewContentInfoResult.externalId.imdb}");
       if (context.mounted) {
         setState(() {
           title = viewContentInfoResult.title;

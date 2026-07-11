@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 299426090;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1016369483;
 
 // Section: executor
 
@@ -115,6 +115,40 @@ fn wire__crate__method__check_update__check_update_new_impl(
                         Ok(output_ok)
                     })()
                     .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__method__clear_cache__clear_cache_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "clear_cache",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok = crate::method::clear_cache::clear_cache()?;
+                        Ok(output_ok)
+                    })(),
                 )
             }
         },
@@ -246,9 +280,10 @@ fn wire__crate__method__torrent_provider__free_torrent_handle__free_torrent_hand
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_torrent_handle_mode = <crate::utils::torrent_provider::torrent_handle::TorrentHandleMode>::sse_decode(&mut deserializer);
 let api_torrent_source = <String>::sse_decode(&mut deserializer);
-let api_delete_files = <bool>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
+let api_delete_files = <bool>::sse_decode(&mut deserializer);
+let api_check_cache_size_before_delete = <bool>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
                     transform_result_sse::<_, String>((move || async move {
-                         let output_ok = crate::method::torrent_provider::free_torrent_handle::free_torrent_handle(&api_torrent_handle_mode, &api_torrent_source, api_delete_files).await?;   Ok(output_ok)
+                         let output_ok = crate::method::torrent_provider::free_torrent_handle::free_torrent_handle(&api_torrent_handle_mode, &api_torrent_source, api_delete_files, api_check_cache_size_before_delete).await?;   Ok(output_ok)
                     })().await)
                 } })
 }
@@ -341,6 +376,21 @@ fn wire__crate__method__download_provider__get_all_download__get_all_download_im
         },
     )
 }
+fn wire__crate__method__subtitle_provider__get_all_installed_subtitles__get_all_installed_subtitles_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "get_all_installed_subtitles", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
+            let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end(); move |context| async move {
+                    transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
+                         let output_ok = crate::method::subtitle_provider::get_all_installed_subtitles::get_all_installed_subtitles().await?;   Ok(output_ok)
+                    })().await)
+                } })
+}
 fn wire__crate__method__favorite__get_all_item_by_category_id__get_all_item_by_category_id_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -385,48 +435,6 @@ fn wire__crate__method__favorite__get_category_order__get_category_order_impl(
                         let output_ok =
                             crate::method::favorite::get_category_order::get_category_order()
                                 .await?;
-                        Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__method__subtitle_provider__get_chapters__get_chapters_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "get_chapters",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_imdb_id = <String>::sse_decode(&mut deserializer);
-            let api_source = <String>::sse_decode(&mut deserializer);
-            deserializer.end();
-            move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || async move {
-                        let output_ok =
-                            crate::method::subtitle_provider::get_chapters::get_chapters(
-                                &api_imdb_id,
-                                &api_source,
-                            )
-                            .await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -841,6 +849,22 @@ fn wire__crate__method__subtitle_provider__get_subtitles__get_subtitles_impl(
             }
         },
     )
+}
+fn wire__crate__method__subtitle_provider__get_subtitles_chapters__get_subtitles_chapters_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "get_subtitles_chapters", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
+            let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_imdb_id = <String>::sse_decode(&mut deserializer);
+let api_source = <String>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
+                    transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
+                         let output_ok = crate::method::subtitle_provider::get_subtitles_chapters::get_subtitles_chapters(&api_imdb_id, &api_source).await?;   Ok(output_ok)
+                    })().await)
+                } })
 }
 fn wire__crate__method__torrent_provider__get_torrent_metadata__get_torrent_metadata_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
@@ -1958,9 +1982,19 @@ let api_episode_index = <u64>::sse_decode(&mut deserializer);deserializer.end();
 const _: fn() = || {
     {
         let ChapterData =
-            None::<crate::method::subtitle_provider::get_chapters::ChapterData>.unwrap();
+            None::<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>.unwrap();
         let _: String = ChapterData.title;
         let _: String = ChapterData.link;
+    }
+    {
+        let GetAllInstalledSubtitlesData = None::<crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData>.unwrap();
+        let _: String = GetAllInstalledSubtitlesData.source;
+        let _: String = GetAllInstalledSubtitlesData.id;
+        let _: usize = GetAllInstalledSubtitlesData.season_index;
+        let _: usize = GetAllInstalledSubtitlesData.episode_index;
+        let _: u64 = GetAllInstalledSubtitlesData.subtitle_id;
+        let _: String = GetAllInstalledSubtitlesData.title;
+        let _: String = GetAllInstalledSubtitlesData.path;
     }
     {
         let GetInstalledSubtitlesData = None::<
@@ -2156,12 +2190,12 @@ impl SseDecode for crate::method::favorite::CategoryOrderMap {
     }
 }
 
-impl SseDecode for crate::method::subtitle_provider::get_chapters::ChapterData {
+impl SseDecode for crate::method::subtitle_provider::get_subtitles_chapters::ChapterData {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_title = <String>::sse_decode(deserializer);
         let mut var_link = <String>::sse_decode(deserializer);
-        return crate::method::subtitle_provider::get_chapters::ChapterData {
+        return crate::method::subtitle_provider::get_subtitles_chapters::ChapterData {
             title: var_title,
             link: var_link,
         };
@@ -2312,6 +2346,22 @@ impl SseDecode for crate::method::torrent_provider::get_torrent_metadata::FileIn
 }
 
 impl SseDecode
+    for crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_source = <String>::sse_decode(deserializer);
+        let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_seasonIndex = <usize>::sse_decode(deserializer);
+        let mut var_episodeIndex = <usize>::sse_decode(deserializer);
+        let mut var_subtitleId = <u64>::sse_decode(deserializer);
+        let mut var_title = <String>::sse_decode(deserializer);
+        let mut var_path = <String>::sse_decode(deserializer);
+        return crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData{source: var_source, id: var_id, season_index: var_seasonIndex, episode_index: var_episodeIndex, subtitle_id: var_subtitleId, title: var_title, path: var_path};
+    }
+}
+
+impl SseDecode
     for crate::method::subtitle_provider::get_installed_subtitles::GetInstalledSubtitlesData
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2396,14 +2446,14 @@ impl SseDecode for Vec<crate::method::download_provider::get_all_download::AllDo
     }
 }
 
-impl SseDecode for Vec<crate::method::subtitle_provider::get_chapters::ChapterData> {
+impl SseDecode for Vec<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut len_ = <i32>::sse_decode(deserializer);
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(
-                <crate::method::subtitle_provider::get_chapters::ChapterData>::sse_decode(
+                <crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>::sse_decode(
                     deserializer,
                 ),
             );
@@ -2465,6 +2515,22 @@ impl SseDecode for Vec<crate::method::torrent_provider::get_torrent_metadata::Fi
                     deserializer,
                 ),
             );
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode
+    for Vec<
+        crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -2956,10 +3022,12 @@ impl SseDecode for crate::utils::settings::Settings {
         let mut var_port = <u32>::sse_decode(deserializer);
         let mut var_paths = <crate::utils::settings::Paths>::sse_decode(deserializer);
         let mut var_version = <String>::sse_decode(deserializer);
+        let mut var_maxCacheSize = <Option<u64>>::sse_decode(deserializer);
         return crate::utils::settings::Settings {
             port: var_port,
             paths: var_paths,
             version: var_version,
+            max_cache_size: var_maxCacheSize,
         };
     }
 }
@@ -3162,58 +3230,60 @@ fn pde_ffi_dispatcher_primary_impl(
     match func_id {
                         1 => wire__crate__method__favorite__add_category__add_category_impl(port, ptr, rust_vec_len, data_len),
 2 => wire__crate__method__check_update__check_update_new_impl(port, ptr, rust_vec_len, data_len),
-3 => wire__crate__method__favorite__delete_category__delete_category_impl(port, ptr, rust_vec_len, data_len),
-4 => wire__crate__method__metadata_provider__view_content__external_id_default_impl(port, ptr, rust_vec_len, data_len),
-5 => wire__crate__method__metadata_provider__featured_content__featured_content_impl(port, ptr, rust_vec_len, data_len),
-6 => wire__crate__method__torrent_provider__free_torrent_handle__free_torrent_handle_impl(port, ptr, rust_vec_len, data_len),
-7 => wire__crate__method__favorite__get_all_category__get_all_category_impl(port, ptr, rust_vec_len, data_len),
-8 => wire__crate__method__favorite__get_all_category_by_item_id__get_all_category_by_item_id_impl(port, ptr, rust_vec_len, data_len),
-9 => wire__crate__method__download_provider__get_all_download__get_all_download_impl(port, ptr, rust_vec_len, data_len),
-10 => wire__crate__method__favorite__get_all_item_by_category_id__get_all_item_by_category_id_impl(port, ptr, rust_vec_len, data_len),
-11 => wire__crate__method__favorite__get_category_order__get_category_order_impl(port, ptr, rust_vec_len, data_len),
-12 => wire__crate__method__subtitle_provider__get_chapters__get_chapters_impl(port, ptr, rust_vec_len, data_len),
-13 => wire__crate__method__current_watch__get_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
-14 => wire__crate__method__download_provider__get_db_impl(port, ptr, rust_vec_len, data_len),
-15 => wire__crate__method__favorite__get_db_impl(port, ptr, rust_vec_len, data_len),
-16 => wire__crate__method__watch_state__get_db_impl(port, ptr, rust_vec_len, data_len),
-17 => wire__crate__method__download_provider__get_download__get_download_impl(port, ptr, rust_vec_len, data_len),
-18 => wire__crate__method__download_provider__get_download_status__get_download_status_impl(port, ptr, rust_vec_len, data_len),
-19 => wire__crate__method__plugin_provider__get_installed_plugins__get_installed_plugins_impl(port, ptr, rust_vec_len, data_len),
-20 => wire__crate__method__subtitle_provider__get_installed_subtitles__get_installed_subtitles_impl(port, ptr, rust_vec_len, data_len),
-21 => wire__crate__method__favorite__get_last_watch_torrent__get_last_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
-22 => wire__crate__method__plugin_provider__get_plugin_list__get_plugin_list_impl(port, ptr, rust_vec_len, data_len),
-23 => wire__crate__method__settings__get_settings__get_settings_impl(port, ptr, rust_vec_len, data_len),
-24 => wire__crate__method__plugin_provider__get_sources__get_sources_impl(port, ptr, rust_vec_len, data_len),
-25 => wire__crate__method__subtitle_provider__get_subtitles__get_subtitles_impl(port, ptr, rust_vec_len, data_len),
-26 => wire__crate__method__torrent_provider__get_torrent_metadata__get_torrent_metadata_impl(port, ptr, rust_vec_len, data_len),
-27 => wire__crate__method__plugin_provider__get_torrents__get_torrents_impl(port, ptr, rust_vec_len, data_len),
-28 => wire__crate__method__watch_state__get_watch_state__get_watch_state_impl(port, ptr, rust_vec_len, data_len),
-29 => wire__crate__method__init__init_rest_server__init_rest_server_impl(port, ptr, rust_vec_len, data_len),
-30 => wire__crate__method__init__init_settings__init_settings_impl(port, ptr, rust_vec_len, data_len),
-31 => wire__crate__method__init__init_torrent_session__init_torrent_session_impl(port, ptr, rust_vec_len, data_len),
-32 => wire__crate__method__init__init_worker__init_worker_impl(port, ptr, rust_vec_len, data_len),
-33 => wire__crate__method__plugin_provider__install_plugin__install_plugin_impl(port, ptr, rust_vec_len, data_len),
-34 => wire__crate__method__subtitle_provider__install_subtitle__install_subtitle_impl(port, ptr, rust_vec_len, data_len),
-35 => wire__crate__method__favorite__is_in_category__is_in_category_impl(port, ptr, rust_vec_len, data_len),
-36 => wire__crate__method__current_watch__remove_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
-37 => wire__crate__method__download_provider__remove_download__remove_download_impl(port, ptr, rust_vec_len, data_len),
-38 => wire__crate__method__plugin_provider__remove_plugin__remove_plugins_impl(port, ptr, rust_vec_len, data_len),
-39 => wire__crate__method__subtitle_provider__remove_subtitles__remove_subtitles_impl(port, ptr, rust_vec_len, data_len),
-40 => wire__crate__method__favorite__rename_category__rename_category_impl(port, ptr, rust_vec_len, data_len),
-41 => wire__crate__method__metadata_provider__search_content__search_content_impl(port, ptr, rust_vec_len, data_len),
-42 => wire__crate__method__subtitle_provider__search_subtitles__search_subtitles_impl(port, ptr, rust_vec_len, data_len),
-43 => wire__crate__method__favorite__set_category__set_category_impl(port, ptr, rust_vec_len, data_len),
-44 => wire__crate__method__current_watch__set_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
-45 => wire__crate__method__download_provider__set_download__set_download_impl(port, ptr, rust_vec_len, data_len),
-46 => wire__crate__method__download_provider__set_download_status__set_download_status_impl(port, ptr, rust_vec_len, data_len),
-47 => wire__crate__method__favorite__set_last_watch_torrent__set_last_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
-48 => wire__crate__method__settings__set_settings__set_settings_impl(port, ptr, rust_vec_len, data_len),
-49 => wire__crate__method__watch_state__set_watch_state__set_watch_state_impl(port, ptr, rust_vec_len, data_len),
-50 => wire__crate__method__favorite__swap_category_order__swap_category_order_impl(port, ptr, rust_vec_len, data_len),
-51 => wire__crate__method__metadata_provider__trending_content__trending_content_impl(port, ptr, rust_vec_len, data_len),
-52 => wire__crate__method__favorite__unset_category__unset_category_impl(port, ptr, rust_vec_len, data_len),
-53 => wire__crate__method__metadata_provider__view_content__view_content_info_get_impl(port, ptr, rust_vec_len, data_len),
-54 => wire__crate__method__metadata_provider__view_content__view_content_info_update_last_watch_impl(port, ptr, rust_vec_len, data_len),
+3 => wire__crate__method__clear_cache__clear_cache_impl(port, ptr, rust_vec_len, data_len),
+4 => wire__crate__method__favorite__delete_category__delete_category_impl(port, ptr, rust_vec_len, data_len),
+5 => wire__crate__method__metadata_provider__view_content__external_id_default_impl(port, ptr, rust_vec_len, data_len),
+6 => wire__crate__method__metadata_provider__featured_content__featured_content_impl(port, ptr, rust_vec_len, data_len),
+7 => wire__crate__method__torrent_provider__free_torrent_handle__free_torrent_handle_impl(port, ptr, rust_vec_len, data_len),
+8 => wire__crate__method__favorite__get_all_category__get_all_category_impl(port, ptr, rust_vec_len, data_len),
+9 => wire__crate__method__favorite__get_all_category_by_item_id__get_all_category_by_item_id_impl(port, ptr, rust_vec_len, data_len),
+10 => wire__crate__method__download_provider__get_all_download__get_all_download_impl(port, ptr, rust_vec_len, data_len),
+11 => wire__crate__method__subtitle_provider__get_all_installed_subtitles__get_all_installed_subtitles_impl(port, ptr, rust_vec_len, data_len),
+12 => wire__crate__method__favorite__get_all_item_by_category_id__get_all_item_by_category_id_impl(port, ptr, rust_vec_len, data_len),
+13 => wire__crate__method__favorite__get_category_order__get_category_order_impl(port, ptr, rust_vec_len, data_len),
+14 => wire__crate__method__current_watch__get_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
+15 => wire__crate__method__download_provider__get_db_impl(port, ptr, rust_vec_len, data_len),
+16 => wire__crate__method__favorite__get_db_impl(port, ptr, rust_vec_len, data_len),
+17 => wire__crate__method__watch_state__get_db_impl(port, ptr, rust_vec_len, data_len),
+18 => wire__crate__method__download_provider__get_download__get_download_impl(port, ptr, rust_vec_len, data_len),
+19 => wire__crate__method__download_provider__get_download_status__get_download_status_impl(port, ptr, rust_vec_len, data_len),
+20 => wire__crate__method__plugin_provider__get_installed_plugins__get_installed_plugins_impl(port, ptr, rust_vec_len, data_len),
+21 => wire__crate__method__subtitle_provider__get_installed_subtitles__get_installed_subtitles_impl(port, ptr, rust_vec_len, data_len),
+22 => wire__crate__method__favorite__get_last_watch_torrent__get_last_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
+23 => wire__crate__method__plugin_provider__get_plugin_list__get_plugin_list_impl(port, ptr, rust_vec_len, data_len),
+24 => wire__crate__method__settings__get_settings__get_settings_impl(port, ptr, rust_vec_len, data_len),
+25 => wire__crate__method__plugin_provider__get_sources__get_sources_impl(port, ptr, rust_vec_len, data_len),
+26 => wire__crate__method__subtitle_provider__get_subtitles__get_subtitles_impl(port, ptr, rust_vec_len, data_len),
+27 => wire__crate__method__subtitle_provider__get_subtitles_chapters__get_subtitles_chapters_impl(port, ptr, rust_vec_len, data_len),
+28 => wire__crate__method__torrent_provider__get_torrent_metadata__get_torrent_metadata_impl(port, ptr, rust_vec_len, data_len),
+29 => wire__crate__method__plugin_provider__get_torrents__get_torrents_impl(port, ptr, rust_vec_len, data_len),
+30 => wire__crate__method__watch_state__get_watch_state__get_watch_state_impl(port, ptr, rust_vec_len, data_len),
+31 => wire__crate__method__init__init_rest_server__init_rest_server_impl(port, ptr, rust_vec_len, data_len),
+32 => wire__crate__method__init__init_settings__init_settings_impl(port, ptr, rust_vec_len, data_len),
+33 => wire__crate__method__init__init_torrent_session__init_torrent_session_impl(port, ptr, rust_vec_len, data_len),
+34 => wire__crate__method__init__init_worker__init_worker_impl(port, ptr, rust_vec_len, data_len),
+35 => wire__crate__method__plugin_provider__install_plugin__install_plugin_impl(port, ptr, rust_vec_len, data_len),
+36 => wire__crate__method__subtitle_provider__install_subtitle__install_subtitle_impl(port, ptr, rust_vec_len, data_len),
+37 => wire__crate__method__favorite__is_in_category__is_in_category_impl(port, ptr, rust_vec_len, data_len),
+38 => wire__crate__method__current_watch__remove_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
+39 => wire__crate__method__download_provider__remove_download__remove_download_impl(port, ptr, rust_vec_len, data_len),
+40 => wire__crate__method__plugin_provider__remove_plugin__remove_plugins_impl(port, ptr, rust_vec_len, data_len),
+41 => wire__crate__method__subtitle_provider__remove_subtitles__remove_subtitles_impl(port, ptr, rust_vec_len, data_len),
+42 => wire__crate__method__favorite__rename_category__rename_category_impl(port, ptr, rust_vec_len, data_len),
+43 => wire__crate__method__metadata_provider__search_content__search_content_impl(port, ptr, rust_vec_len, data_len),
+44 => wire__crate__method__subtitle_provider__search_subtitles__search_subtitles_impl(port, ptr, rust_vec_len, data_len),
+45 => wire__crate__method__favorite__set_category__set_category_impl(port, ptr, rust_vec_len, data_len),
+46 => wire__crate__method__current_watch__set_current_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
+47 => wire__crate__method__download_provider__set_download__set_download_impl(port, ptr, rust_vec_len, data_len),
+48 => wire__crate__method__download_provider__set_download_status__set_download_status_impl(port, ptr, rust_vec_len, data_len),
+49 => wire__crate__method__favorite__set_last_watch_torrent__set_last_watch_torrent_impl(port, ptr, rust_vec_len, data_len),
+50 => wire__crate__method__settings__set_settings__set_settings_impl(port, ptr, rust_vec_len, data_len),
+51 => wire__crate__method__watch_state__set_watch_state__set_watch_state_impl(port, ptr, rust_vec_len, data_len),
+52 => wire__crate__method__favorite__swap_category_order__swap_category_order_impl(port, ptr, rust_vec_len, data_len),
+53 => wire__crate__method__metadata_provider__trending_content__trending_content_impl(port, ptr, rust_vec_len, data_len),
+54 => wire__crate__method__favorite__unset_category__unset_category_impl(port, ptr, rust_vec_len, data_len),
+55 => wire__crate__method__metadata_provider__view_content__view_content_info_get_impl(port, ptr, rust_vec_len, data_len),
+56 => wire__crate__method__metadata_provider__view_content__view_content_info_update_last_watch_impl(port, ptr, rust_vec_len, data_len),
                         _ => unreachable!(),
                     }
 }
@@ -3337,7 +3407,7 @@ impl flutter_rust_bridge::IntoIntoDart<crate::method::favorite::CategoryOrderMap
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart
-    for FrbWrapper<crate::method::subtitle_provider::get_chapters::ChapterData>
+    for FrbWrapper<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>
 {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -3348,17 +3418,17 @@ impl flutter_rust_bridge::IntoDart
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<crate::method::subtitle_provider::get_chapters::ChapterData>
+    for FrbWrapper<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>
 {
 }
 impl
     flutter_rust_bridge::IntoIntoDart<
-        FrbWrapper<crate::method::subtitle_provider::get_chapters::ChapterData>,
-    > for crate::method::subtitle_provider::get_chapters::ChapterData
+        FrbWrapper<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>,
+    > for crate::method::subtitle_provider::get_subtitles_chapters::ChapterData
 {
     fn into_into_dart(
         self,
-    ) -> FrbWrapper<crate::method::subtitle_provider::get_chapters::ChapterData> {
+    ) -> FrbWrapper<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData> {
         self.into()
     }
 }
@@ -3578,6 +3648,36 @@ impl
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart
     for FrbWrapper<
+        crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData,
+    >
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.source.into_into_dart().into_dart(),
+            self.0.id.into_into_dart().into_dart(),
+            self.0.season_index.into_into_dart().into_dart(),
+            self.0.episode_index.into_into_dart().into_dart(),
+            self.0.subtitle_id.into_into_dart().into_dart(),
+            self.0.title.into_into_dart().into_dart(),
+            self.0.path.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<
+        crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData,
+    >
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData>> for crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData {
+            fn into_into_dart(self) -> FrbWrapper<crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData> {
+                self.into()
+            }
+        }
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for FrbWrapper<
         crate::method::subtitle_provider::get_installed_subtitles::GetInstalledSubtitlesData,
     >
 {
@@ -3773,6 +3873,7 @@ impl flutter_rust_bridge::IntoDart for crate::utils::settings::Settings {
             self.port.into_into_dart().into_dart(),
             self.paths.into_into_dart().into_dart(),
             self.version.into_into_dart().into_dart(),
+            self.max_cache_size.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4164,7 +4265,7 @@ impl SseEncode for crate::method::favorite::CategoryOrderMap {
     }
 }
 
-impl SseEncode for crate::method::subtitle_provider::get_chapters::ChapterData {
+impl SseEncode for crate::method::subtitle_provider::get_subtitles_chapters::ChapterData {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.title, serializer);
@@ -4266,6 +4367,21 @@ impl SseEncode for crate::method::torrent_provider::get_torrent_metadata::FileIn
 }
 
 impl SseEncode
+    for crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.source, serializer);
+        <String>::sse_encode(self.id, serializer);
+        <usize>::sse_encode(self.season_index, serializer);
+        <usize>::sse_encode(self.episode_index, serializer);
+        <u64>::sse_encode(self.subtitle_id, serializer);
+        <String>::sse_encode(self.title, serializer);
+        <String>::sse_encode(self.path, serializer);
+    }
+}
+
+impl SseEncode
     for crate::method::subtitle_provider::get_installed_subtitles::GetInstalledSubtitlesData
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -4333,12 +4449,12 @@ impl SseEncode for Vec<crate::method::download_provider::get_all_download::AllDo
     }
 }
 
-impl SseEncode for Vec<crate::method::subtitle_provider::get_chapters::ChapterData> {
+impl SseEncode for Vec<crate::method::subtitle_provider::get_subtitles_chapters::ChapterData> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
-            <crate::method::subtitle_provider::get_chapters::ChapterData>::sse_encode(
+            <crate::method::subtitle_provider::get_subtitles_chapters::ChapterData>::sse_encode(
                 item, serializer,
             );
         }
@@ -4387,6 +4503,20 @@ impl SseEncode for Vec<crate::method::torrent_provider::get_torrent_metadata::Fi
             <crate::method::torrent_provider::get_torrent_metadata::FileInfo>::sse_encode(
                 item, serializer,
             );
+        }
+    }
+}
+
+impl SseEncode
+    for Vec<
+        crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData>::sse_encode(item, serializer);
         }
     }
 }
@@ -4787,6 +4917,7 @@ impl SseEncode for crate::utils::settings::Settings {
         <u32>::sse_encode(self.port, serializer);
         <crate::utils::settings::Paths>::sse_encode(self.paths, serializer);
         <String>::sse_encode(self.version, serializer);
+        <Option<u64>>::sse_encode(self.max_cache_size, serializer);
     }
 }
 

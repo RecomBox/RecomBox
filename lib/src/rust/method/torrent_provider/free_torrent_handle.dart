@@ -10,9 +10,11 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<void> freeTorrentHandle(
         {required TorrentHandleMode torrentHandleMode,
         required String torrentSource,
-        required bool deleteFiles}) =>
+        required bool deleteFiles,
+        required bool checkCacheSizeBeforeDelete}) =>
     RustLib.instance.api
         .crateMethodTorrentProviderFreeTorrentHandleFreeTorrentHandle(
             torrentHandleMode: torrentHandleMode,
             torrentSource: torrentSource,
-            deleteFiles: deleteFiles);
+            deleteFiles: deleteFiles,
+            checkCacheSizeBeforeDelete: checkCacheSizeBeforeDelete);

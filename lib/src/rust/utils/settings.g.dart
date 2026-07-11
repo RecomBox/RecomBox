@@ -24,10 +24,14 @@ _Settings _$SettingsFromJson(Map<String, dynamic> json) => _Settings(
       port: (json['port'] as num).toInt(),
       paths: Paths.fromJson(json['paths'] as Map<String, dynamic>),
       version: json['version'] as String,
+      maxCacheSize: json['maxCacheSize'] == null
+          ? null
+          : BigInt.parse(json['maxCacheSize'] as String),
     );
 
 Map<String, dynamic> _$SettingsToJson(_Settings instance) => <String, dynamic>{
       'port': instance.port,
       'paths': instance.paths,
       'version': instance.version,
+      'maxCacheSize': instance.maxCacheSize?.toString(),
     };

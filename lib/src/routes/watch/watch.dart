@@ -10,7 +10,6 @@ import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/routes/view/view.dart';
-import 'package:recombox/src/routes/watch/dialogs/external_subtitles.dart';
 import 'package:recombox/src/routes/watch/dialogs/audio_track_control.dart';
 import 'package:recombox/src/routes/watch/dialogs/subtitle_track_control.dart';
 import 'package:recombox/src/rust/method/current_watch.dart';
@@ -134,8 +133,8 @@ class _WatchState extends State<WatchScreen> {
               :  WatchScreenArguments(
                 selectFileMode: SelectFileMode.watch,
                 viewID: "72673844%20loki-test",
-                externalID: ExternalID(imdb: "tt9054364"),
-                source: Source.anime,
+                externalID: ExternalID(imdb: "tt7468056"),
+                source: Source.movies,
                 title: "One Piece",
                 titleSecondary: "One Piece",
                 torrentSource: "magnet:?xt=urn:btih:b130fefafb59f52390650a758b5c2810d4333e5c&dn=%5BToonsHub%5D%20One%20Piece%20S01E01-16%201080p%20NF%20WEB-DL%20MULTi%20AAC2.0%20H.264%20%28REMASTERED%2C%20Multi-Audio%2C%20Multi-Subs%29%20%5BBATCH%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce",
@@ -175,7 +174,8 @@ class _WatchState extends State<WatchScreen> {
         freeTorrentHandle(
           torrentHandleMode: torrentHandleMode,
           torrentSource: args!.torrentSource,
-          deleteFiles: true
+          deleteFiles: true,
+          checkCacheSizeBeforeDelete: true
         );
       }
       
@@ -356,20 +356,22 @@ class _WatchState extends State<WatchScreen> {
       return prevSlot == nextSlot;
     })
     .listen((pos) async {
-        debugPrint("3 It go here");
 
       try{
-        await setWatchState(
-          watchStateKey: WatchStateKey(
-            source: args!.source.name, 
-            id: args!.viewID, 
-            seasonIndex: args!.season, 
-            episodeIndex: args!.episode
-          ), 
-          watchStateValue: WatchStateValue(
-            position: BigInt.from(pos.inMilliseconds)
-          )
-        );
+        if (pos.inSeconds > 0){
+          await setWatchState(
+            watchStateKey: WatchStateKey(
+              source: args!.source.name, 
+              id: args!.viewID, 
+              seasonIndex: args!.season, 
+              episodeIndex: args!.episode
+            ), 
+            watchStateValue: WatchStateValue(
+              position: BigInt.from(pos.inMilliseconds)
+            )
+          );
+        }
+        
       }catch(e){
         debugPrint(e.toString());
       }
