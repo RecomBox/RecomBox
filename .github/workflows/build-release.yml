@@ -25,8 +25,8 @@ jobs:
             os: ubuntu-latest
           - target: macos
             os: macos-latest
-          # - target: windows
-          #   os: windows-latest
+          - target: windows
+            os: windows-latest
 
     steps:
       - name: Checkout code
@@ -65,6 +65,14 @@ jobs:
       - name: Install NASM
         if: matrix.target == 'windows'
         uses: ilammy/setup-nasm@v1
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: "18"
+
+      - name: Set LIBCLANG_PATH
+        run: echo "LIBCLANG_PATH=$($env:LLVM_PATH)\bin" >> $env:GITHUB_ENV
 
 
       - name: Build Project
