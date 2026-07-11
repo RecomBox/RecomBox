@@ -9,7 +9,7 @@ pub struct _ChapterData{
 }
 
 
-pub async fn get_chapters(imdb_id: &str, source: &str) -> anyhow::Result<Vec<ChapterData>> {
+pub async fn get_subtitles_chapters(imdb_id: &str, source: &str) -> anyhow::Result<Vec<ChapterData>> {
   
   let params = GetChaptersParams{
     imdb_id: imdb_id.to_string(),

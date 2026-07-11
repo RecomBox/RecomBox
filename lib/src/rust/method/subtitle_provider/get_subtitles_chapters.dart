@@ -6,10 +6,11 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<List<ChapterData>> getChapters(
+Future<List<ChapterData>> getSubtitlesChapters(
         {required String imdbId, required String source}) =>
-    RustLib.instance.api.crateMethodSubtitleProviderGetChaptersGetChapters(
-        imdbId: imdbId, source: source);
+    RustLib.instance.api
+        .crateMethodSubtitleProviderGetSubtitlesChaptersGetSubtitlesChapters(
+            imdbId: imdbId, source: source);
 
 class ChapterData {
   final String title;

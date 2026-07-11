@@ -32,6 +32,7 @@ pub async fn set_watch_state(
         let mut state_table = write_txn.open_table(WATCH_STATE_TABLE).map_err(|e| e.to_string())?;
         let mut order_table = write_txn.open_table(WATCH_STATE_ORDER_TABLE).map_err(|e| e.to_string())?;
 
+        // -> Get the oldest state from order_table and remove it if it reach max_history.
         while state_table.len().map_err(|e| e.to_string())? >= max_history {
 
             if let Some(oldest_entry) = order_table.pop_first().map_err(|e| e.to_string())? {
@@ -50,6 +51,7 @@ pub async fn set_watch_state(
                 break; 
             }
         }
+        // <-
 
         state_table.insert(encoded_key.as_slice(), encoded_value.as_slice())
             .map_err(|e| e.to_string())?;

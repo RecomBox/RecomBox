@@ -49,9 +49,10 @@ import 'method/plugin_provider/install_plugin.dart';
 import 'method/plugin_provider/remove_plugin.dart';
 import 'method/settings/get_settings.dart';
 import 'method/settings/set_settings.dart';
-import 'method/subtitle_provider/get_chapters.dart';
+import 'method/subtitle_provider/get_all_installed_subtitles.dart';
 import 'method/subtitle_provider/get_installed_subtitles.dart';
 import 'method/subtitle_provider/get_subtitles.dart';
+import 'method/subtitle_provider/get_subtitles_chapters.dart';
 import 'method/subtitle_provider/install_subtitle.dart';
 import 'method/subtitle_provider/remove_subtitles.dart';
 import 'method/subtitle_provider/search_subtitles.dart';
@@ -201,6 +202,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   FileInfo dco_decode_file_info(dynamic raw);
 
   @protected
+  GetAllInstalledSubtitlesData dco_decode_get_all_installed_subtitles_data(
+      dynamic raw);
+
+  @protected
   GetInstalledSubtitlesData dco_decode_get_installed_subtitles_data(
       dynamic raw);
 
@@ -237,6 +242,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<FileInfo> dco_decode_list_file_info(dynamic raw);
+
+  @protected
+  List<GetAllInstalledSubtitlesData>
+      dco_decode_list_get_all_installed_subtitles_data(dynamic raw);
 
   @protected
   List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw);
@@ -532,6 +541,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   FileInfo sse_decode_file_info(SseDeserializer deserializer);
 
   @protected
+  GetAllInstalledSubtitlesData sse_decode_get_all_installed_subtitles_data(
+      SseDeserializer deserializer);
+
+  @protected
   GetInstalledSubtitlesData sse_decode_get_installed_subtitles_data(
       SseDeserializer deserializer);
 
@@ -572,6 +585,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<FileInfo> sse_decode_list_file_info(SseDeserializer deserializer);
+
+  @protected
+  List<GetAllInstalledSubtitlesData>
+      sse_decode_list_get_all_installed_subtitles_data(
+          SseDeserializer deserializer);
 
   @protected
   List<List<EpisodeInfo>> sse_decode_list_list_episode_info(
@@ -890,6 +908,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_file_info(FileInfo self, SseSerializer serializer);
 
   @protected
+  void sse_encode_get_all_installed_subtitles_data(
+      GetAllInstalledSubtitlesData self, SseSerializer serializer);
+
+  @protected
   void sse_encode_get_installed_subtitles_data(
       GetInstalledSubtitlesData self, SseSerializer serializer);
 
@@ -932,6 +954,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_file_info(List<FileInfo> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_get_all_installed_subtitles_data(
+      List<GetAllInstalledSubtitlesData> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_list_episode_info(
