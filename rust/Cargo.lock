@@ -1943,7 +1943,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "tokio",
  "tower-service",
  "tracing",
@@ -3042,7 +3042,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.41",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -3080,7 +3080,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "tracing",
  "windows-sys 0.61.2",
 ]
@@ -3249,7 +3249,7 @@ dependencies = [
 [[package]]
 name = "recombox_subtitle_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_subtitle_provider#48522a9eb36bfc7556bdaaa8e28b1b759fced602"
+source = "git+https://github.com/RecomBox/recombox_subtitle_provider#c2138bd3fba9ad3a029eebf8d8c2dc9eb64dac37"
 dependencies = [
  "anyhow",
  "base64",
