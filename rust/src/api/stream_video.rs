@@ -13,7 +13,6 @@ use serde::{Deserialize, Serialize};
 use urlencoding::encode;
 use once_cell::sync::Lazy;
 use tokio::runtime::Runtime;
-use num_cpus;
 use librqbit::TorrentStatsState;
 use tokio::io::AsyncReadExt;
 
@@ -32,11 +31,10 @@ struct InputPayload {
 }
 
 static RUNTIME: Lazy<Runtime> = Lazy::new(|| {
-    tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(num_cpus::get())
-        .enable_all()
-        .build()
-        .expect("Failed to build multi-threaded runtime")
+	tokio::runtime::Builder::new_multi_thread()
+		.enable_all()
+		.build()
+		.expect("Failed to build multi-threaded runtime")
 });
 
 #[get("/stream_video")]
