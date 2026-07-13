@@ -9,8 +9,6 @@ use crate::utils::settings::Settings;
 pub struct _GetAllInstalledSubtitlesData{
   pub source: String,
   pub id: String,
-  pub season_index: usize,
-  pub episode_index: usize,
   pub subtitle_id: u64,
   pub title: String,
   pub path: String

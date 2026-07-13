@@ -89,7 +89,7 @@ class _SelectSourceTileState extends State<SelectSourceTile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.sourceInfo.title,
+                        widget.sourceInfo.title ,
                         style: GoogleFonts.nunito(
                           color: appColors.textPrimary,
                           fontSize: 24

@@ -8,8 +8,6 @@ use crate::utils::settings::Settings;
 pub async fn install_subtitle(
   source: &str,
   id: &str,
-  season_index: usize,
-  episode_index: usize,
   language: &str,
   link: &str
 ) -> anyhow::Result<()> {
@@ -28,8 +26,6 @@ pub async fn install_subtitle(
   let params = InstallSubtitleParams{
     source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or(anyhow::anyhow!("Invalid source"))?,
     id: id.to_string(),
-    season_index,
-    episode_index,
     language: language.to_string(),
     link: link.to_string(),
   };

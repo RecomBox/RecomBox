@@ -7,16 +7,10 @@ import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<Map<BigInt, GetInstalledSubtitlesData>> getInstalledSubtitles(
-        {required String source,
-        required String id,
-        required BigInt seasonIndex,
-        required BigInt episodeIndex}) =>
+        {required String source, required String id}) =>
     RustLib.instance.api
         .crateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitles(
-            source: source,
-            id: id,
-            seasonIndex: seasonIndex,
-            episodeIndex: episodeIndex);
+            source: source, id: id);
 
 class GetInstalledSubtitlesData {
   final String title;

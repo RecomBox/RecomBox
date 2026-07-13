@@ -13,8 +13,6 @@ Future<List<GetAllInstalledSubtitlesData>> getAllInstalledSubtitles() => RustLib
 class GetAllInstalledSubtitlesData {
   final String source;
   final String id;
-  final BigInt seasonIndex;
-  final BigInt episodeIndex;
   final BigInt subtitleId;
   final String title;
   final String path;
@@ -22,8 +20,6 @@ class GetAllInstalledSubtitlesData {
   const GetAllInstalledSubtitlesData({
     required this.source,
     required this.id,
-    required this.seasonIndex,
-    required this.episodeIndex,
     required this.subtitleId,
     required this.title,
     required this.path,
@@ -33,8 +29,6 @@ class GetAllInstalledSubtitlesData {
   int get hashCode =>
       source.hashCode ^
       id.hashCode ^
-      seasonIndex.hashCode ^
-      episodeIndex.hashCode ^
       subtitleId.hashCode ^
       title.hashCode ^
       path.hashCode;
@@ -46,8 +40,6 @@ class GetAllInstalledSubtitlesData {
           runtimeType == other.runtimeType &&
           source == other.source &&
           id == other.id &&
-          seasonIndex == other.seasonIndex &&
-          episodeIndex == other.episodeIndex &&
           subtitleId == other.subtitleId &&
           title == other.title &&
           path == other.path;

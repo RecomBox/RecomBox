@@ -9,15 +9,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<void> installSubtitle(
         {required String source,
         required String id,
-        required BigInt seasonIndex,
-        required BigInt episodeIndex,
         required String language,
         required String link}) =>
     RustLib.instance.api
         .crateMethodSubtitleProviderInstallSubtitleInstallSubtitle(
-            source: source,
-            id: id,
-            seasonIndex: seasonIndex,
-            episodeIndex: episodeIndex,
-            language: language,
-            link: link);
+            source: source, id: id, language: language, link: link);

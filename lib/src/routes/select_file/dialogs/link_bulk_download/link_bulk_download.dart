@@ -139,6 +139,14 @@ class _LinkBulkDownloadState extends State<LinkBulkDownload> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: appColors.strokePrimary,
+                      width: 1,
+                    ),
+                  ),
+                ),
                 child: Row(
                   spacing: 10,
                   children: [
@@ -244,62 +252,60 @@ class _LinkBulkDownloadState extends State<LinkBulkDownload> {
               ],
 
               Container(
-                padding: EdgeInsets.all(25),
+                padding: EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   spacing: 15,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(15),
-                      child: InkWell(
-                        mouseCursor: SystemMouseCursors.click,
-                        onTap: () {
-                          setState(() {
-                            hideSelected = !hideSelected;
-                          });
-                          initDialog();
-                        },
-                        child: Row(
-                          children: [
+                    InkWell(
+                      mouseCursor: SystemMouseCursors.click,
+                      onTap: () {
+                        setState(() {
+                          hideSelected = !hideSelected;
+                        });
+                        initDialog();
+                      },
+                      child: Row(
+                        children: [
 
-                            Checkbox(
-                              mouseCursor: SystemMouseCursors.click,
-                              fillColor: WidgetStateProperty.resolveWith<Color?>(
-                                (Set<WidgetState> states) {
-                                  if (states.contains(WidgetState.selected)) {
-                                    return appColors.secondary;
-                                  }
-                                  return Colors.transparent;
-                                },
-                              ),
-                              side: BorderSide(
-                                color: appColors.secondary,
-                                width: 2,
-                              ),
-                              
-                              checkColor: appColors.primary,
-                              value: hideSelected,
-                              onChanged: (value) {
-                                setState(() {
-                                  hideSelected = value!;
-                                });
-                                initDialog();
+                          Checkbox(
+                            mouseCursor: SystemMouseCursors.click,
+                            fillColor: WidgetStateProperty.resolveWith<Color?>(
+                              (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return appColors.secondary;
+                                }
+                                return Colors.transparent;
                               },
                             ),
-                            Text(
-                              'Hide selected',
-                              style: GoogleFonts.nunito(
-                                color: appColors.textPrimary,
-                                fontSize: 16
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            side: BorderSide(
+                              color: appColors.secondary,
+                              width: 2,
                             ),
-                          ]
-                        )
-                      
+                            
+                            checkColor: appColors.primary,
+                            value: hideSelected,
+                            onChanged: (value) {
+                              setState(() {
+                                hideSelected = value!;
+                              });
+                              initDialog();
+                            },
+                          ),
+                          Text(
+                            'Hide selected',
+                            style: GoogleFonts.nunito(
+                              color: appColors.textPrimary,
+                              fontSize: 16
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ]
                       )
+                    
                     ),
+                    
                       
                     
                     TextButton(

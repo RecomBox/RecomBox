@@ -42,17 +42,19 @@ class _SubtitleTrackControlDialogState extends State<SubtitleTrackControlDialog>
   }
 
   Future<void> initWidget() async {
-    var installedSubtitle = await getInstalledSubtitles(
-      source: widget.watchScreenArgs.source.name, 
-      id: widget.watchScreenArgs.viewID, 
-      seasonIndex: widget.watchScreenArgs.season, 
-      episodeIndex: widget.watchScreenArgs.episode
-    );
+    try{
+      var installedSubtitle = await getInstalledSubtitles(
+        source: widget.watchScreenArgs.source.name, 
+        id: widget.watchScreenArgs.viewID, 
+      );
 
-    if (context.mounted){
-      setState(() {
-        externalSubtitleMap = installedSubtitle;
-      });
+      if (context.mounted){
+        setState(() {
+          externalSubtitleMap = installedSubtitle;
+        });
+      }
+    }catch(e){
+      debugPrint(e.toString());
     }
 
   }
@@ -240,8 +242,6 @@ class _SubtitleTrackControlDialogState extends State<SubtitleTrackControlDialog>
                                     await removeSubtitles(
                                       source: widget.watchScreenArgs.source.name,
                                       id: widget.watchScreenArgs.viewID, 
-                                      seasonIndex: widget.watchScreenArgs.season, 
-                                      episodeIndex: widget.watchScreenArgs.episode, 
                                       subtitleId: externalSubtitleMap.keys.toList()[index]
                                     );
                                   

@@ -36,7 +36,7 @@ class _FavoriteState extends State<FavoriteScreen> {
   CategoryMap categoryMap = CategoryMap(field0: {});
   List<FavoriteItemInfo> favoriteItemInfoList = [];
 
-  Map<int, String> itemSearchKeywordsMap = {};
+  Map<String, String> itemSearchKeywordsMap = {};
 
   @override
   void dispose() {
@@ -99,23 +99,19 @@ class _FavoriteState extends State<FavoriteScreen> {
     initFavorite();
   }
 
-  void addSearchKeywords( int index, String title) {
-    setState(() {
-      itemSearchKeywordsMap[index] = title;
-    });
+  void addSearchKeywords( String id, String title) {
+    itemSearchKeywordsMap[id] = title;
   }
 
   List<FavoriteItemInfo> onFilterSearch() {
     String query = _textEditingController.text.toLowerCase();
-    
-    if (query.isEmpty || itemSearchKeywordsMap.isEmpty) return favoriteItemInfoList;
 
-    List<int> sortedFavoriteItemInfoIndexList = Map.fromEntries(
-      itemSearchKeywordsMap.entries.where((entry) => entry.value.toLowerCase().contains(query))
-    ).keys.toList();
+    if (query.isEmpty) return favoriteItemInfoList;
 
-
-    return sortedFavoriteItemInfoIndexList.map((i) => favoriteItemInfoList[i]).toList();
+    return favoriteItemInfoList.where((item) {
+      final keywords = itemSearchKeywordsMap[item.id];
+      return keywords != null && keywords.toLowerCase().contains(query);
+    }).toList();
   }
 
   @override
@@ -331,7 +327,7 @@ class _FavoriteState extends State<FavoriteScreen> {
                                   return FavoriteContentCard(
                                     key: ValueKey(filteredfavoriteItemInfoList[index].id),
                                     addSearchKeywords: (String title) {
-                                      addSearchKeywords(index, title);
+                                      addSearchKeywords(filteredfavoriteItemInfoList[index].id, title);
                                     },
                                     source: SourceExtension.fromString(filteredfavoriteItemInfoList[index].source), 
                                     id: filteredfavoriteItemInfoList[index].id,

@@ -196,10 +196,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<Map<BigInt, GetInstalledSubtitlesData>>
       crateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitles(
-          {required String source,
-          required String id,
-          required BigInt seasonIndex,
-          required BigInt episodeIndex});
+          {required String source, required String id});
 
   Future<LastWatchTorrentInfo?>
       crateMethodFavoriteGetLastWatchTorrentGetLastWatchTorrent(
@@ -260,8 +257,6 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateMethodSubtitleProviderInstallSubtitleInstallSubtitle(
       {required String source,
       required String id,
-      required BigInt seasonIndex,
-      required BigInt episodeIndex,
       required String language,
       required String link});
 
@@ -277,11 +272,7 @@ abstract class RustLibApi extends BaseApi {
       {required String source, required PluginInfo pluginInfo});
 
   Future<void> crateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitles(
-      {required String source,
-      required String id,
-      required BigInt seasonIndex,
-      required BigInt episodeIndex,
-      required BigInt subtitleId});
+      {required String source, required String id, required BigInt subtitleId});
 
   Future<void> crateMethodFavoriteRenameCategoryRenameCategory(
       {required BigInt categoryId, required String newCategoryName});
@@ -915,17 +906,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   Future<Map<BigInt, GetInstalledSubtitlesData>>
       crateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitles(
-          {required String source,
-          required String id,
-          required BigInt seasonIndex,
-          required BigInt episodeIndex}) {
+          {required String source, required String id}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
-        sse_encode_usize(seasonIndex, serializer);
-        sse_encode_usize(episodeIndex, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 21, port: port_);
       },
@@ -936,7 +922,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ),
       constMeta:
           kCrateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitlesConstMeta,
-      argValues: [source, id, seasonIndex, episodeIndex],
+      argValues: [source, id],
       apiImpl: this,
     ));
   }
@@ -945,7 +931,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get kCrateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitlesConstMeta =>
           const TaskConstMeta(
             debugName: "get_installed_subtitles",
-            argNames: ["source", "id", "seasonIndex", "episodeIndex"],
+            argNames: ["source", "id"],
           );
 
   @override
@@ -1372,8 +1358,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<void> crateMethodSubtitleProviderInstallSubtitleInstallSubtitle(
       {required String source,
       required String id,
-      required BigInt seasonIndex,
-      required BigInt episodeIndex,
       required String language,
       required String link}) {
     return handler.executeNormal(NormalTask(
@@ -1381,8 +1365,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
-        sse_encode_usize(seasonIndex, serializer);
-        sse_encode_usize(episodeIndex, serializer);
         sse_encode_String(language, serializer);
         sse_encode_String(link, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
@@ -1394,7 +1376,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ),
       constMeta:
           kCrateMethodSubtitleProviderInstallSubtitleInstallSubtitleConstMeta,
-      argValues: [source, id, seasonIndex, episodeIndex, language, link],
+      argValues: [source, id, language, link],
       apiImpl: this,
     ));
   }
@@ -1403,14 +1385,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get kCrateMethodSubtitleProviderInstallSubtitleInstallSubtitleConstMeta =>
           const TaskConstMeta(
             debugName: "install_subtitle",
-            argNames: [
-              "source",
-              "id",
-              "seasonIndex",
-              "episodeIndex",
-              "language",
-              "link"
-            ],
+            argNames: ["source", "id", "language", "link"],
           );
 
   @override
@@ -1525,16 +1500,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<void> crateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitles(
       {required String source,
       required String id,
-      required BigInt seasonIndex,
-      required BigInt episodeIndex,
       required BigInt subtitleId}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(source, serializer);
         sse_encode_String(id, serializer);
-        sse_encode_usize(seasonIndex, serializer);
-        sse_encode_usize(episodeIndex, serializer);
         sse_encode_u_64(subtitleId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 41, port: port_);
@@ -1545,7 +1516,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ),
       constMeta:
           kCrateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitlesConstMeta,
-      argValues: [source, id, seasonIndex, episodeIndex, subtitleId],
+      argValues: [source, id, subtitleId],
       apiImpl: this,
     ));
   }
@@ -1554,13 +1525,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get kCrateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitlesConstMeta =>
           const TaskConstMeta(
             debugName: "remove_subtitles",
-            argNames: [
-              "source",
-              "id",
-              "seasonIndex",
-              "episodeIndex",
-              "subtitleId"
-            ],
+            argNames: ["source", "id", "subtitleId"],
           );
 
   @override
@@ -2385,16 +2350,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return GetAllInstalledSubtitlesData(
       source: dco_decode_String(arr[0]),
       id: dco_decode_String(arr[1]),
-      seasonIndex: dco_decode_usize(arr[2]),
-      episodeIndex: dco_decode_usize(arr[3]),
-      subtitleId: dco_decode_u_64(arr[4]),
-      title: dco_decode_String(arr[5]),
-      path: dco_decode_String(arr[6]),
+      subtitleId: dco_decode_u_64(arr[2]),
+      title: dco_decode_String(arr[3]),
+      path: dco_decode_String(arr[4]),
     );
   }
 
@@ -3309,16 +3272,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_source = sse_decode_String(deserializer);
     var var_id = sse_decode_String(deserializer);
-    var var_seasonIndex = sse_decode_usize(deserializer);
-    var var_episodeIndex = sse_decode_usize(deserializer);
     var var_subtitleId = sse_decode_u_64(deserializer);
     var var_title = sse_decode_String(deserializer);
     var var_path = sse_decode_String(deserializer);
     return GetAllInstalledSubtitlesData(
         source: var_source,
         id: var_id,
-        seasonIndex: var_seasonIndex,
-        episodeIndex: var_episodeIndex,
         subtitleId: var_subtitleId,
         title: var_title,
         path: var_path);
@@ -4343,8 +4302,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.source, serializer);
     sse_encode_String(self.id, serializer);
-    sse_encode_usize(self.seasonIndex, serializer);
-    sse_encode_usize(self.episodeIndex, serializer);
     sse_encode_u_64(self.subtitleId, serializer);
     sse_encode_String(self.title, serializer);
     sse_encode_String(self.path, serializer);

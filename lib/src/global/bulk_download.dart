@@ -37,6 +37,10 @@ class BulkDownload {
     return _bulkDownloadMap;
   }
 
+  bool contains(BigInt episodeIndex){
+    return _bulkDownloadMap.containsKey(episodeIndex);
+  }
+
   void add(BigInt episodeIndex, BulkDownloadValue value){
     _bulkDownloadMap[episodeIndex] = value;
   }

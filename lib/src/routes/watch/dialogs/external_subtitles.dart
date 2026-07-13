@@ -261,8 +261,6 @@ class _ExternalSubtitleDialogState extends State<ExternalSubtitleDialog> {
                                                         await installSubtitle(
                                                           source: widget.watchScreenArgs.source.name, 
                                                           id: widget.watchScreenArgs.viewID, 
-                                                          seasonIndex: widget.watchScreenArgs.season, 
-                                                          episodeIndex: widget.watchScreenArgs.episode, 
                                                           language: subtitleDataMap.keys.toList()[index_1], 
                                                           link: sub.link
                                                         );
