@@ -74,9 +74,7 @@ class _InstalledSubtitlesState extends State<InstalledSubtitles> {
 
                               await removeSubtitles(
                                 source: sub.source,
-                                id: sub.id, 
-                                seasonIndex: sub.seasonIndex, 
-                                episodeIndex: sub.episodeIndex, 
+                                id: sub.id,
                                 subtitleId: sub.subtitleId
                               );
                             

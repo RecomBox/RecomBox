@@ -9,13 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<void> removeSubtitles(
         {required String source,
         required String id,
-        required BigInt seasonIndex,
-        required BigInt episodeIndex,
         required BigInt subtitleId}) =>
     RustLib.instance.api
         .crateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitles(
-            source: source,
-            id: id,
-            seasonIndex: seasonIndex,
-            episodeIndex: episodeIndex,
-            subtitleId: subtitleId);
+            source: source, id: id, subtitleId: subtitleId);

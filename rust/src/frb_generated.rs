@@ -657,11 +657,9 @@ fn wire__crate__method__subtitle_provider__get_installed_subtitles__get_installe
             let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_source = <String>::sse_decode(&mut deserializer);
-let api_id = <String>::sse_decode(&mut deserializer);
-let api_season_index = <usize>::sse_decode(&mut deserializer);
-let api_episode_index = <usize>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
+let api_id = <String>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
                     transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
-                         let output_ok = crate::method::subtitle_provider::get_installed_subtitles::get_installed_subtitles(&api_source, &api_id, api_season_index, api_episode_index).await?;   Ok(output_ok)
+                         let output_ok = crate::method::subtitle_provider::get_installed_subtitles::get_installed_subtitles(&api_source, &api_id).await?;   Ok(output_ok)
                     })().await)
                 } })
 }
@@ -1176,8 +1174,6 @@ fn wire__crate__method__subtitle_provider__install_subtitle__install_subtitle_im
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_source = <String>::sse_decode(&mut deserializer);
             let api_id = <String>::sse_decode(&mut deserializer);
-            let api_season_index = <usize>::sse_decode(&mut deserializer);
-            let api_episode_index = <usize>::sse_decode(&mut deserializer);
             let api_language = <String>::sse_decode(&mut deserializer);
             let api_link = <String>::sse_decode(&mut deserializer);
             deserializer.end();
@@ -1188,8 +1184,6 @@ fn wire__crate__method__subtitle_provider__install_subtitle__install_subtitle_im
                             crate::method::subtitle_provider::install_subtitle::install_subtitle(
                                 &api_source,
                                 &api_id,
-                                api_season_index,
-                                api_episode_index,
                                 &api_language,
                                 &api_link,
                             )
@@ -1387,8 +1381,6 @@ fn wire__crate__method__subtitle_provider__remove_subtitles__remove_subtitles_im
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_source = <String>::sse_decode(&mut deserializer);
             let api_id = <String>::sse_decode(&mut deserializer);
-            let api_season_index = <usize>::sse_decode(&mut deserializer);
-            let api_episode_index = <usize>::sse_decode(&mut deserializer);
             let api_subtitle_id = <u64>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
@@ -1398,8 +1390,6 @@ fn wire__crate__method__subtitle_provider__remove_subtitles__remove_subtitles_im
                             crate::method::subtitle_provider::remove_subtitles::remove_subtitles(
                                 &api_source,
                                 &api_id,
-                                api_season_index,
-                                api_episode_index,
                                 api_subtitle_id,
                             )
                             .await?;
@@ -1990,8 +1980,6 @@ const _: fn() = || {
         let GetAllInstalledSubtitlesData = None::<crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData>.unwrap();
         let _: String = GetAllInstalledSubtitlesData.source;
         let _: String = GetAllInstalledSubtitlesData.id;
-        let _: usize = GetAllInstalledSubtitlesData.season_index;
-        let _: usize = GetAllInstalledSubtitlesData.episode_index;
         let _: u64 = GetAllInstalledSubtitlesData.subtitle_id;
         let _: String = GetAllInstalledSubtitlesData.title;
         let _: String = GetAllInstalledSubtitlesData.path;
@@ -2352,12 +2340,10 @@ impl SseDecode
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_source = <String>::sse_decode(deserializer);
         let mut var_id = <String>::sse_decode(deserializer);
-        let mut var_seasonIndex = <usize>::sse_decode(deserializer);
-        let mut var_episodeIndex = <usize>::sse_decode(deserializer);
         let mut var_subtitleId = <u64>::sse_decode(deserializer);
         let mut var_title = <String>::sse_decode(deserializer);
         let mut var_path = <String>::sse_decode(deserializer);
-        return crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData{source: var_source, id: var_id, season_index: var_seasonIndex, episode_index: var_episodeIndex, subtitle_id: var_subtitleId, title: var_title, path: var_path};
+        return crate::method::subtitle_provider::get_all_installed_subtitles::GetAllInstalledSubtitlesData{source: var_source, id: var_id, subtitle_id: var_subtitleId, title: var_title, path: var_path};
     }
 }
 
@@ -3655,8 +3641,6 @@ impl flutter_rust_bridge::IntoDart
         [
             self.0.source.into_into_dart().into_dart(),
             self.0.id.into_into_dart().into_dart(),
-            self.0.season_index.into_into_dart().into_dart(),
-            self.0.episode_index.into_into_dart().into_dart(),
             self.0.subtitle_id.into_into_dart().into_dart(),
             self.0.title.into_into_dart().into_dart(),
             self.0.path.into_into_dart().into_dart(),
@@ -4373,8 +4357,6 @@ impl SseEncode
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.source, serializer);
         <String>::sse_encode(self.id, serializer);
-        <usize>::sse_encode(self.season_index, serializer);
-        <usize>::sse_encode(self.episode_index, serializer);
         <u64>::sse_encode(self.subtitle_id, serializer);
         <String>::sse_encode(self.title, serializer);
         <String>::sse_encode(self.path, serializer);

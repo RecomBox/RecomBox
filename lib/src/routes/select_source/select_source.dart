@@ -90,8 +90,6 @@ class _SelectSourceState extends State<SelectSourceScreen> {
       isLoading = true;
     });
     try{
-
-      
       List<SourceInfo> getSourceInfoResult = await getSources(
         pluginPath: args!.pluginPath, 
         source: args!.selectPluginScreenArguments.source.name, 

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mime/mime.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:recombox/src/global/app_color.dart';
+import 'package:recombox/src/global/helpers/format_bytes.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/dialogs/link_bulk_download/link_bulk_download.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
@@ -175,11 +176,20 @@ class _SelectFileTileState extends State<SelectFileTile> {
         onTap: onSelectFile,
         child: Container(
           padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10),
+          child: IntrinsicHeight(
+            child: Row(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (widget.selectFileMode == SelectFileMode.bulkDownload)
+                  Container(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.add_link_rounded,
+                      color: appColors.textPrimary,
+                    )
+                  ),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -193,18 +203,29 @@ class _SelectFileTileState extends State<SelectFileTile> {
                     ],
                   )
                   
-                )
-              ),
-            
-              if (widget.selectFileMode == SelectFileMode.bulkDownload)
+                  
+                ),
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    Icons.add_link_rounded,
-                    color: appColors.textPrimary,
-                  )
-                )
-            ]
+                  width: 1,
+                  color: appColors.textPrimary,
+                ),
+                
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    formatBytes(widget.fileInfo.length??BigInt.from(0)),
+                    style: GoogleFonts.nunito(
+                      color: appColors.textPrimary,
+                      fontSize: 24
+                    ),
+                  ),
+                  
+                ),
+              
+                
+              ]
+            )
+          
           )
         )
       )

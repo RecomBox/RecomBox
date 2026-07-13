@@ -9,8 +9,6 @@ use crate::utils::settings::Settings;
 pub async fn remove_subtitles(
   source: &str,
   id: &str,
-  season_index: usize,
-  episode_index: usize,
   subtitle_id: u64
 ) -> anyhow::Result<()> {
   let settings = Settings::get()?;
@@ -28,8 +26,6 @@ pub async fn remove_subtitles(
   let params = RemoveInstalledSubtitlesParams{
     source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or(anyhow::anyhow!("Invalid source"))?,
     id: id.to_string(),
-    season_index,
-    episode_index,
     subtitle_id
 
   };

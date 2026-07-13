@@ -115,7 +115,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
       if (!isInDownload){
         if (context.mounted && widget.bulkDownloadMode && (bulkDownload.seasonIndex == widget.season)){
           setState(() {
-            selectForBulkDownload = widget.bulkDownloadSelectAll;
+            selectForBulkDownload = widget.bulkDownloadSelectAll || bulkDownload.contains(widget.episode);
           });
         }
       }
