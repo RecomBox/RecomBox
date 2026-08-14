@@ -123,7 +123,7 @@ class _SearchTileState extends State<SearchTile> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "#${widget.searchContentInfo.rank??"-".toString()}",
+                                    "",
                                     style: GoogleFonts.nunito(
                                       color: appColors.textSecondary,
                                       fontSize: 10,

@@ -28,6 +28,7 @@ sealed class Settings with _$Settings {
     required Paths paths,
     required String version,
     BigInt? maxCacheSize,
+    String? tmdbRatToken,
   }) = _Settings;
 
   factory Settings.fromJson(Map<String, dynamic> json) =>

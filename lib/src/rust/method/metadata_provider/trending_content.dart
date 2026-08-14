@@ -19,7 +19,7 @@ class TrendingContentInfo {
   final String id;
   final String title;
   final String year;
-  final double rating;
+  final String rating;
   final String thumbnailUrl;
 
   const TrendingContentInfo({

@@ -100,12 +100,22 @@ pub async fn featured_content(source: &str, from_cache: bool) -> Result<Vec<Feat
 		}
 	}
 
-
-	let data = featured_content::new(&source)
-		.await
+	let settings = Settings::get()
 		.map_err(|e| e.to_string())?;
 
-	let result: Vec<FeaturedContentInfo> = data.0.iter()
+	let params = featured_content::FeaturedContentParams{
+		tmdb_token: settings.tmdb_rat_token.clone()
+			.ok_or(String::from("Missing tmdb_rat_token"))?,
+		source: source.clone(),
+	};
+
+	let data = featured_content::new(&params)
+		.await
+		.map_err(|e| 
+			format!("Failed to get featured_content for source '{}', tmdb_token: {} with error: \n{}", source.to_string(), settings.tmdb_rat_token.clone().unwrap_or_default(), e.to_string())
+		)?;
+
+	let result: Vec<FeaturedContentInfo> = data.iter()
 		.map(|info| FeaturedContentInfo {
 			source: source.to_string(),
 			id: info.id.to_owned(),

@@ -11,17 +11,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<List<SearchContentInfo>> searchContent(
         {required String source,
         required String search,
-        required BigInt sort,
         required BigInt page}) =>
     RustLib.instance.api.crateMethodMetadataProviderSearchContentSearchContent(
-        source: source, search: search, sort: sort, page: page);
+        source: source, search: search, page: page);
 
 class SearchContentInfo {
   final String source;
   final String id;
   final String title;
   final String year;
-  final BigInt? rank;
   final String thumbnailUrl;
 
   const SearchContentInfo({
@@ -29,7 +27,6 @@ class SearchContentInfo {
     required this.id,
     required this.title,
     required this.year,
-    this.rank,
     required this.thumbnailUrl,
   });
 
@@ -39,7 +36,6 @@ class SearchContentInfo {
       id.hashCode ^
       title.hashCode ^
       year.hashCode ^
-      rank.hashCode ^
       thumbnailUrl.hashCode;
 
   @override
@@ -51,6 +47,5 @@ class SearchContentInfo {
           id == other.id &&
           title == other.title &&
           year == other.year &&
-          rank == other.rank &&
           thumbnailUrl == other.thumbnailUrl;
 }

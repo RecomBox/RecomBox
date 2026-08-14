@@ -68,7 +68,6 @@ class _ViewState extends State<ViewScreen> with RouteAware {
   }
 
 
-
   @override
   void dispose() {
     _episodeScrollController.dispose();
@@ -77,7 +76,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     super.dispose();
   }
 
-  
+  List<int> currentEpisodeList = [];
 
   final _seasonScrollController = ScrollController();
   final _episodeScrollController = ScrollController();
@@ -122,11 +121,16 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     }
     try{
       var data = await ViewContentInfo.get_(source: args.source.name, id: args.id, fromCache: fromCache, checkExpire: true);
-      
+
+      List<int> newEpData = [];
+      for (var i = 0; i < data.episodes[currentSeasonIndex].toInt(); i++) {
+        newEpData.add(i);
+      }
       if (context.mounted){
         
         setState(() {
           viewContentInfoResult = data;
+          currentEpisodeList = newEpData;
           currentSeasonIndex = (data.lastWatchSeasonIndex??BigInt.from(0)).toInt();
         });
       }
@@ -165,7 +169,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
   void updateCountdown() {
     // Convert seconds → milliseconds
     DateTime future = DateTime.fromMillisecondsSinceEpoch(
-      viewContentInfoResult!.countdown * 1000,
+      viewContentInfoResult!.countdown,
       isUtc: true,
     );
     DateTime now = DateTime.now().toUtc();
@@ -220,16 +224,29 @@ class _ViewState extends State<ViewScreen> with RouteAware {
   }
 
 
-  List<EpisodeInfo> onFilterChange() {
-    return viewContentInfoResult!.episodes[currentSeasonIndex].asMap().entries
-      .where((entry) {
-        final item = entry.value;
-        return item.title.toLowerCase().contains(_textEditingController.text.toLowerCase())
-          || entry.key.toString().contains(_textEditingController.text.toLowerCase())
-          || (entry.key+1).toString().contains(_textEditingController.text.toLowerCase());
-      })
-      .map((entry) => entry.value) // only return EpisodeInfo
-      .toList();
+  void onFilterChange() {
+    if (_textEditingController.text.toLowerCase().isEmpty){
+      List<int> newData = [];
+      for (var i = 0; i < viewContentInfoResult!.episodes[currentSeasonIndex].toInt(); i++) {
+        newData.add(i);
+      }
+      setState(() {
+        currentEpisodeList = newData;
+      });
+    }else{
+      List<int> newData = [];
+      for (var i = 0; i < viewContentInfoResult!.episodes[currentSeasonIndex].toInt(); i++) {
+        if (
+          i.toString().toLowerCase().contains(_textEditingController.text.toLowerCase()) ||
+          ("Episode $i").toLowerCase().contains(_textEditingController.text.toLowerCase())
+        ){
+          newData.add(i);
+        }
+      }
+      setState(() {
+        currentEpisodeList = newData;
+      });
+    }
   }
 
 
@@ -303,7 +320,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     
 
     if (bulkDownloadSelectAll){
-      for (var i = 0; i < viewContentInfoResult!.episodes[currentSeasonIndex].length; i++) {
+      for (var i = 0; i < viewContentInfoResult!.episodes[currentSeasonIndex].toInt(); i++) {
         
         DownloadItemValue? downloadItemValue = await getDownload(downloadItemKey: DownloadItemKey(
           source: args.source.name, 
@@ -324,10 +341,6 @@ class _ViewState extends State<ViewScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    List<EpisodeInfo> filteredEpisodes = (viewContentInfoResult != null)
-      ? onFilterChange()
-      : <EpisodeInfo>[];
-
 
     return SafeArea(
       child: Scaffold(
@@ -871,7 +884,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                             child: Column(
                                               children: [
                                                 Text(
-                                                  (countdown?[entry.key] ?? 0).toString(),
+                                                  (countdown?[entry.key] ?? 0).toString(), // This is mapped from new array after calculated.
                                                   style: GoogleFonts.nunito(
                                                     fontSize: MediaQuery.of(context).size.width > 600 ? 32 : MediaQuery.of(context).size.width * 0.05,
                                                     fontWeight: FontWeight(800),
@@ -1037,15 +1050,15 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                                           controller: _textEditingController,
                                                           onChanged: (_){
                                                             if (!context.mounted) return;
-                                                            setState(() {
-                                                              filteredEpisodes = onFilterChange();
-                                                            });
+                                                            
+                                                            onFilterChange();
+                                                            
                                                           },
                                                           onSubmitted: (value){
                                                             if (!context.mounted) return;
-                                                            setState(() {
-                                                              filteredEpisodes = onFilterChange();
-                                                            });
+                                                            
+                                                            onFilterChange();
+                                                            
                                                           },
                                                           cursorColor: appColors.textPrimary,
                                                           focusNode: searchFocus,
@@ -1159,7 +1172,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                       child: ListView.separated(
                                         controller: _episodeScrollController,
                                         scrollDirection: Axis.vertical,
-                                        itemCount: filteredEpisodes.length,
+                                        itemCount: currentEpisodeList.length,
                                         itemBuilder: (current, index) {
                                             return Container(
                                               key: ValueKey('$currentSeasonIndex:$index:$bulkDownloadSelectAll'),
@@ -1174,7 +1187,6 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                                 titleSecondary: viewContentInfoResult!.titleSecondary,
                                                 season: BigInt.from(currentSeasonIndex),
                                                 episode: BigInt.from(index),
-                                                episodeInfo: filteredEpisodes[index],
                                                 onNavigateDownload: ()=>onNavigateDownload(BigInt.from(currentSeasonIndex), BigInt.from(index)),
 
                                                 bulkDownloadMode: bulkDownloadMode,

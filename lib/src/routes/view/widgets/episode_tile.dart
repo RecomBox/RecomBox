@@ -20,7 +20,6 @@ class EpisodeTile extends StatefulWidget {
     required this.titleSecondary,
     required this.season,
     required this.episode,
-    required this.episodeInfo,
     required this.onNavigateDownload,
 
     required this.bulkDownloadMode,
@@ -34,7 +33,6 @@ class EpisodeTile extends StatefulWidget {
   final String titleSecondary;
   final BigInt season;
   final BigInt episode;
-  final EpisodeInfo episodeInfo;
   final Function() onNavigateDownload;
 
 
@@ -153,19 +151,19 @@ class _EpisodeTileState extends State<EpisodeTile> {
                   children: [
                     Stack(
                       children: [
-                        Ink.image(
-                          width: 150,
-                          height: 100,
-                          image: failLoadThumbnail
-                            ? const AssetImage('assets/episode_thumbnail_placeholder.jpg')
-                            : NetworkImage(widget.episodeInfo.thumbnailUrl),
-                          fit: BoxFit.cover,
-                          onImageError: (_,__){
-                            setState(() {
-                              failLoadThumbnail = true;
-                            });
-                          },
-                        ),
+                        // Ink.image(
+                        //   width: 150,
+                        //   height: 100,
+                        //   image: failLoadThumbnail
+                        //     ? const AssetImage('assets/episode_thumbnail_placeholder.jpg')
+                        //     : NetworkImage(widget.episodeInfo.thumbnailUrl),
+                        //   fit: BoxFit.cover,
+                        //   onImageError: (_,__){
+                        //     setState(() {
+                        //       failLoadThumbnail = true;
+                        //     });
+                        //   },
+                        // ),
 
                         if (watchPosition > BigInt.from(0))
                           Container(
@@ -197,7 +195,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.episodeInfo.title,
+                              "Episode ${widget.episode.toInt()+1}",
                               style: TextStyle(
                                 color: appColors.textPrimary,
                                 fontSize: 16,

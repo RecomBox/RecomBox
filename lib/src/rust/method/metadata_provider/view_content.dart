@@ -7,31 +7,7 @@ import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `get_cache_dir`, `load_cache`, `save_cache`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`
-
-class EpisodeInfo {
-  final String source;
-  final String title;
-  final String thumbnailUrl;
-
-  const EpisodeInfo({
-    required this.source,
-    required this.title,
-    required this.thumbnailUrl,
-  });
-
-  @override
-  int get hashCode => source.hashCode ^ title.hashCode ^ thumbnailUrl.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is EpisodeInfo &&
-          runtimeType == other.runtimeType &&
-          source == other.source &&
-          title == other.title &&
-          thumbnailUrl == other.thumbnailUrl;
-}
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 class ExternalID {
   final String? mal;
@@ -73,7 +49,7 @@ class ViewContentInfo {
   final String trailerUrl;
   final PlatformInt64 countdown;
   final List<String> pictures;
-  final List<List<EpisodeInfo>> episodes;
+  final Uint64List episodes;
   final BigInt? lastWatchSeasonIndex;
   final BigInt? lastWatchEpisodeIndex;
   final String? lastUpdate;

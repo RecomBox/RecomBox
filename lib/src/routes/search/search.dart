@@ -117,7 +117,6 @@ class _SearchState extends State<SearchScreen> {
         final result = await searchContent(
             source: currentSource.name.trim(),
             search: currentSearch,
-            sort: BigInt.from(currentSortIndex),
             page: BigInt.from(currentPage),
         );
         setState(() {

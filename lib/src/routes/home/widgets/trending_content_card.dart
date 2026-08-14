@@ -101,7 +101,7 @@ class _TrendingContentCardState extends State<TrendingContentCard> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  widget.trendingContentInfo.rating.toStringAsFixed(2).replaceAll(RegExp(r'\.00$'), ''),
+                                  widget.trendingContentInfo.rating,
                                   style: GoogleFonts.nunito(
                                     color: appColors.textSecondary,
                                     fontSize: 10,

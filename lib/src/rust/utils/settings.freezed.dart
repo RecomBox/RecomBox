@@ -382,6 +382,7 @@ mixin _$Settings {
   Paths get paths;
   String get version;
   BigInt? get maxCacheSize;
+  String? get tmdbRatToken;
 
   /// Create a copy of Settings
   /// with the given fields replaced by the non-null parameter values.
@@ -402,17 +403,19 @@ mixin _$Settings {
             (identical(other.paths, paths) || other.paths == paths) &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.maxCacheSize, maxCacheSize) ||
-                other.maxCacheSize == maxCacheSize));
+                other.maxCacheSize == maxCacheSize) &&
+            (identical(other.tmdbRatToken, tmdbRatToken) ||
+                other.tmdbRatToken == tmdbRatToken));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, port, paths, version, maxCacheSize);
+  int get hashCode => Object.hash(
+      runtimeType, port, paths, version, maxCacheSize, tmdbRatToken);
 
   @override
   String toString() {
-    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize)';
+    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize, tmdbRatToken: $tmdbRatToken)';
   }
 }
 
@@ -421,7 +424,12 @@ abstract mixin class $SettingsCopyWith<$Res> {
   factory $SettingsCopyWith(Settings value, $Res Function(Settings) _then) =
       _$SettingsCopyWithImpl;
   @useResult
-  $Res call({int port, Paths paths, String version, BigInt? maxCacheSize});
+  $Res call(
+      {int port,
+      Paths paths,
+      String version,
+      BigInt? maxCacheSize,
+      String? tmdbRatToken});
 
   $PathsCopyWith<$Res> get paths;
 }
@@ -442,6 +450,7 @@ class _$SettingsCopyWithImpl<$Res> implements $SettingsCopyWith<$Res> {
     Object? paths = null,
     Object? version = null,
     Object? maxCacheSize = freezed,
+    Object? tmdbRatToken = freezed,
   }) {
     return _then(_self.copyWith(
       port: null == port
@@ -460,6 +469,10 @@ class _$SettingsCopyWithImpl<$Res> implements $SettingsCopyWith<$Res> {
           ? _self.maxCacheSize
           : maxCacheSize // ignore: cast_nullable_to_non_nullable
               as BigInt?,
+      tmdbRatToken: freezed == tmdbRatToken
+          ? _self.tmdbRatToken
+          : tmdbRatToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
@@ -565,16 +578,16 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            int port, Paths paths, String version, BigInt? maxCacheSize)?
+    TResult Function(int port, Paths paths, String version,
+            BigInt? maxCacheSize, String? tmdbRatToken)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _Settings() when $default != null:
-        return $default(
-            _that.port, _that.paths, _that.version, _that.maxCacheSize);
+        return $default(_that.port, _that.paths, _that.version,
+            _that.maxCacheSize, _that.tmdbRatToken);
       case _:
         return orElse();
     }
@@ -595,15 +608,15 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(
-            int port, Paths paths, String version, BigInt? maxCacheSize)
+    TResult Function(int port, Paths paths, String version,
+            BigInt? maxCacheSize, String? tmdbRatToken)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _Settings():
-        return $default(
-            _that.port, _that.paths, _that.version, _that.maxCacheSize);
+        return $default(_that.port, _that.paths, _that.version,
+            _that.maxCacheSize, _that.tmdbRatToken);
     }
   }
 
@@ -621,15 +634,15 @@ extension SettingsPatterns on Settings {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            int port, Paths paths, String version, BigInt? maxCacheSize)?
+    TResult? Function(int port, Paths paths, String version,
+            BigInt? maxCacheSize, String? tmdbRatToken)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _Settings() when $default != null:
-        return $default(
-            _that.port, _that.paths, _that.version, _that.maxCacheSize);
+        return $default(_that.port, _that.paths, _that.version,
+            _that.maxCacheSize, _that.tmdbRatToken);
       case _:
         return null;
     }
@@ -643,7 +656,8 @@ class _Settings implements Settings {
       {required this.port,
       required this.paths,
       required this.version,
-      this.maxCacheSize});
+      this.maxCacheSize,
+      this.tmdbRatToken});
   factory _Settings.fromJson(Map<String, dynamic> json) =>
       _$SettingsFromJson(json);
 
@@ -655,6 +669,8 @@ class _Settings implements Settings {
   final String version;
   @override
   final BigInt? maxCacheSize;
+  @override
+  final String? tmdbRatToken;
 
   /// Create a copy of Settings
   /// with the given fields replaced by the non-null parameter values.
@@ -680,17 +696,19 @@ class _Settings implements Settings {
             (identical(other.paths, paths) || other.paths == paths) &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.maxCacheSize, maxCacheSize) ||
-                other.maxCacheSize == maxCacheSize));
+                other.maxCacheSize == maxCacheSize) &&
+            (identical(other.tmdbRatToken, tmdbRatToken) ||
+                other.tmdbRatToken == tmdbRatToken));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, port, paths, version, maxCacheSize);
+  int get hashCode => Object.hash(
+      runtimeType, port, paths, version, maxCacheSize, tmdbRatToken);
 
   @override
   String toString() {
-    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize)';
+    return 'Settings(port: $port, paths: $paths, version: $version, maxCacheSize: $maxCacheSize, tmdbRatToken: $tmdbRatToken)';
   }
 }
 
@@ -701,7 +719,12 @@ abstract mixin class _$SettingsCopyWith<$Res>
       __$SettingsCopyWithImpl;
   @override
   @useResult
-  $Res call({int port, Paths paths, String version, BigInt? maxCacheSize});
+  $Res call(
+      {int port,
+      Paths paths,
+      String version,
+      BigInt? maxCacheSize,
+      String? tmdbRatToken});
 
   @override
   $PathsCopyWith<$Res> get paths;
@@ -723,6 +746,7 @@ class __$SettingsCopyWithImpl<$Res> implements _$SettingsCopyWith<$Res> {
     Object? paths = null,
     Object? version = null,
     Object? maxCacheSize = freezed,
+    Object? tmdbRatToken = freezed,
   }) {
     return _then(_Settings(
       port: null == port
@@ -741,6 +765,10 @@ class __$SettingsCopyWithImpl<$Res> implements _$SettingsCopyWith<$Res> {
           ? _self.maxCacheSize
           : maxCacheSize // ignore: cast_nullable_to_non_nullable
               as BigInt?,
+      tmdbRatToken: freezed == tmdbRatToken
+          ? _self.tmdbRatToken
+          : tmdbRatToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 

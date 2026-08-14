@@ -183,13 +183,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DownloadStatus dco_decode_download_status(dynamic raw);
 
   @protected
-  EpisodeInfo dco_decode_episode_info(dynamic raw);
-
-  @protected
   ExternalID dco_decode_external_id(dynamic raw);
-
-  @protected
-  double dco_decode_f_32(dynamic raw);
 
   @protected
   FavoriteItemInfo dco_decode_favorite_item_info(dynamic raw);
@@ -231,9 +225,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ChapterData> dco_decode_list_chapter_data(dynamic raw);
 
   @protected
-  List<EpisodeInfo> dco_decode_list_episode_info(dynamic raw);
-
-  @protected
   List<FavoriteItemInfo> dco_decode_list_favorite_item_info(dynamic raw);
 
   @protected
@@ -247,10 +238,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dco_decode_list_get_all_installed_subtitles_data(dynamic raw);
 
   @protected
-  List<List<EpisodeInfo>> dco_decode_list_list_episode_info(dynamic raw);
+  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw);
 
   @protected
-  List<PluginInfo> dco_decode_list_plugin_info(dynamic raw);
+  Uint64List dco_decode_list_prim_u_64_strict(dynamic raw);
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
@@ -521,13 +512,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DownloadStatus sse_decode_download_status(SseDeserializer deserializer);
 
   @protected
-  EpisodeInfo sse_decode_episode_info(SseDeserializer deserializer);
-
-  @protected
   ExternalID sse_decode_external_id(SseDeserializer deserializer);
-
-  @protected
-  double sse_decode_f_32(SseDeserializer deserializer);
 
   @protected
   FavoriteItemInfo sse_decode_favorite_item_info(SseDeserializer deserializer);
@@ -572,9 +557,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ChapterData> sse_decode_list_chapter_data(SseDeserializer deserializer);
 
   @protected
-  List<EpisodeInfo> sse_decode_list_episode_info(SseDeserializer deserializer);
-
-  @protected
   List<FavoriteItemInfo> sse_decode_list_favorite_item_info(
       SseDeserializer deserializer);
 
@@ -591,11 +573,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  List<List<EpisodeInfo>> sse_decode_list_list_episode_info(
-      SseDeserializer deserializer);
+  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer);
 
   @protected
-  List<PluginInfo> sse_decode_list_plugin_info(SseDeserializer deserializer);
+  Uint64List sse_decode_list_prim_u_64_strict(SseDeserializer deserializer);
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
@@ -887,13 +868,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       DownloadStatus self, SseSerializer serializer);
 
   @protected
-  void sse_encode_episode_info(EpisodeInfo self, SseSerializer serializer);
-
-  @protected
   void sse_encode_external_id(ExternalID self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_f_32(double self, SseSerializer serializer);
 
   @protected
   void sse_encode_favorite_item_info(
@@ -940,10 +915,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<ChapterData> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_episode_info(
-      List<EpisodeInfo> self, SseSerializer serializer);
-
-  @protected
   void sse_encode_list_favorite_item_info(
       List<FavoriteItemInfo> self, SseSerializer serializer);
 
@@ -959,12 +930,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<GetAllInstalledSubtitlesData> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_list_episode_info(
-      List<List<EpisodeInfo>> self, SseSerializer serializer);
-
-  @protected
   void sse_encode_list_plugin_info(
       List<PluginInfo> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_prim_u_64_strict(
+      Uint64List self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_u_8_strict(
