@@ -237,8 +237,10 @@ class _ViewState extends State<ViewScreen> with RouteAware {
       List<int> newData = [];
       for (var i = 0; i < viewContentInfoResult!.episodes[currentSeasonIndex].toInt(); i++) {
         if (
+          (i+1).toString().toLowerCase().contains(_textEditingController.text.toLowerCase()) ||
           i.toString().toLowerCase().contains(_textEditingController.text.toLowerCase()) ||
-          ("Episode $i").toLowerCase().contains(_textEditingController.text.toLowerCase())
+          ("Episode $i").toLowerCase().contains(_textEditingController.text.toLowerCase()) ||
+          ("Episode ${i+1}").toLowerCase().contains(_textEditingController.text.toLowerCase())
         ){
           newData.add(i);
         }
@@ -1186,7 +1188,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                                 title: viewContentInfoResult!.title,
                                                 titleSecondary: viewContentInfoResult!.titleSecondary,
                                                 season: BigInt.from(currentSeasonIndex),
-                                                episode: BigInt.from(index),
+                                                episode: BigInt.from(currentEpisodeList[index]),
                                                 onNavigateDownload: ()=>onNavigateDownload(BigInt.from(currentSeasonIndex), BigInt.from(index)),
 
                                                 bulkDownloadMode: bulkDownloadMode,
@@ -1195,7 +1197,10 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                             );
                                         }, 
                                         separatorBuilder: (current, index) {
-                                          return SizedBox(height: 10,);
+                                          return Container(
+                                            height: 1,
+                                            color: appColors.strokePrimary,
+                                          );
                                         },
                                         
                                       )

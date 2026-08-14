@@ -9,6 +9,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<ArcDatabase> getDb() => RustLib.instance.api.crateMethodFavoriteGetDb();
 
+Future<String> getFavoriteDbPath() =>
+    RustLib.instance.api.crateMethodFavoriteGetFavoriteDbPath();
+
 class CategoryMap {
   final Map<BigInt, String> field0;
 

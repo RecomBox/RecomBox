@@ -3,6 +3,7 @@
 -->
 
 ### ‼️ This project is undergoing a major change to [v2](https://github.com/orgs/RecomBox/projects/1).
+- Favorite will be wipe to use new filesystem architecture
 - Currently Broken metadata provider.
 
 #

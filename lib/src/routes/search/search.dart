@@ -279,49 +279,49 @@ class _SearchState extends State<SearchScreen> {
                       )
                     ),
                     // <-
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      width: double.infinity,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Row(
-                          spacing: 8,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "SORT BY: ",
-                              style: GoogleFonts.nunito(
-                                fontWeight: FontWeight(900),
-                                fontSize: 15,
-                                color: appColors.textSecondary,
-                              ),
-                            ),
-                            for (final entry in availableSorts.entries)
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  enabledMouseCursor: SystemMouseCursors.click,
-                                  disabledMouseCursor: SystemMouseCursors.forbidden,
-                                  backgroundColor: currentSortIndex == entry.key ? appColors.accentPrimary : Colors.transparent,
-                                  foregroundColor: appColors.textPrimary,
-                                  textStyle: GoogleFonts.nunito(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 16,
-                                    color: appColors.textPrimary,
-                                  ),
+                    // Container(
+                    //   padding: EdgeInsets.all(15),
+                    //   width: double.infinity,
+                    //   child: SingleChildScrollView(
+                    //     scrollDirection: Axis.horizontal,
+                    //     physics: const AlwaysScrollableScrollPhysics(),
+                    //     child: Row(
+                    //       spacing: 8,
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Text(
+                    //           "SORT BY: ",
+                    //           style: GoogleFonts.nunito(
+                    //             fontWeight: FontWeight(900),
+                    //             fontSize: 15,
+                    //             color: appColors.textSecondary,
+                    //           ),
+                    //         ),
+                    //         for (final entry in availableSorts.entries)
+                    //           ElevatedButton(
+                    //             style: ElevatedButton.styleFrom(
+                    //               enabledMouseCursor: SystemMouseCursors.click,
+                    //               disabledMouseCursor: SystemMouseCursors.forbidden,
+                    //               backgroundColor: currentSortIndex == entry.key ? appColors.accentPrimary : Colors.transparent,
+                    //               foregroundColor: appColors.textPrimary,
+                    //               textStyle: GoogleFonts.nunito(
+                    //                 fontWeight: FontWeight.normal,
+                    //                 fontSize: 16,
+                    //                 color: appColors.textPrimary,
+                    //               ),
                                   
-                                ),
-                                onPressed: (){
-                                  changeSortIndex(entry.key);
-                                },
-                                child: Text(entry.value),
-                              ),
-                          ],
-                        )
-                      )
+                    //             ),
+                    //             onPressed: (){
+                    //               changeSortIndex(entry.key);
+                    //             },
+                    //             child: Text(entry.value),
+                    //           ),
+                    //       ],
+                    //     )
+                    //   )
                       
-                    ),
+                    // ),
                   
                     
                     Expanded(

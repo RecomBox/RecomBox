@@ -44,4 +44,3 @@ aws-lc-rs = {version="=1.16.2", features = ["bindgen"]}
 aws-lc-sys = {version="=0.39.1", features = ["bindgen"]}
 walkdir = "2.5.0"
 dotenv = "0.15.0"
-tokio-rusqlite = {version = "0.7.0", features = ["bundled"]}

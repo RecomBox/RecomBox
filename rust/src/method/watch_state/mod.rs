@@ -83,3 +83,19 @@ pub fn get_db() -> Result<Arc<Database>, String> {
     
     
 }
+
+pub async fn get_watch_state_db_path() -> Result<String, String> {
+    let settings = Settings::get()
+        .map_err(|e| e.to_string())?;
+
+    let db_dir = PathBuf::from(&settings.paths.app_support_dir)
+        .join("state");
+
+    fs::create_dir_all(&db_dir)
+        .map_err(|e| e.to_string())?;
+
+    let db_path = PathBuf::from(&db_dir)
+        .join(DATABASE_NAME);
+
+    Ok(db_path.to_str().unwrap_or("").to_string())
+}
