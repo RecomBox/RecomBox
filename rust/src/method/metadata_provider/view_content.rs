@@ -22,13 +22,6 @@ pub struct ExternalID {
     pub imdb: Option<String>
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EpisodeInfo{
-	pub source: String,
-	pub title: String,
-	pub thumbnail_url: String
-}
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ViewContentInfo {
@@ -44,7 +37,7 @@ pub struct ViewContentInfo {
 	pub trailer_url: String,
 	pub countdown: i64,
 	pub pictures: Vec<String>,
-	pub episodes: Vec<Vec<EpisodeInfo>>, // Seasons -> Episodes
+	pub episodes: Vec<u64>, // Seasons -> Episodes
 	pub last_watch_season_index: Option<u64>,
 	pub last_watch_episode_index: Option<u64>,
 	pub last_update: Option<String>,
@@ -203,32 +196,20 @@ impl ViewContentInfo{
 			_ => None
 		};
 
-		let source_clone = source.clone();
-		let id_clone = id.to_string();
 
-		let data = match tokio::task::spawn_blocking(move || {
-			tokio::runtime::Handle::current().block_on(async {
-				view_content::new(&source_clone, &id_clone)
-					.await
-					.unwrap()
-			})
-		})
-		.await
-		.map_err(|e| e.to_string()){
-			Ok(data) => data,
-			Err(e) => {
-				// On Error, try to load from cache if available.
-				match available_cache {
-					Some(cache) => {
-						return Ok(cache);
-					},
-					_ => {
-						return Err(e);
-					}
-				}
-				// <-
-			}
-		};
+	let settings = Settings::get()
+	.map_err(|e| e.to_string())?;
+
+	let params = view_content::ViewContentParams{
+		tmdb_token: settings.tmdb_rat_token.clone()
+			.ok_or(String::from("Missing tmdb_rat_token"))?,
+		source: source.clone(),
+		id: id.to_string()
+	};
+
+		let data = view_content::new(&params)
+			.await
+			.map_err(|e| e.to_string())?;
 
 		let external_id = ExternalID{
 			imdb: data.external_id.imdb,
@@ -250,17 +231,7 @@ impl ViewContentInfo{
 			trailer_url: data.trailer_url,
 			countdown: data.countdown,
 			pictures: data.pictures,
-			episodes: data.episodes.iter()
-				.map(|season| {
-					season.iter().map(|ep| {
-						EpisodeInfo {
-							source: source.to_string(),
-							title: ep.title.to_owned(),
-							thumbnail_url: ep.thumbnail_url.to_owned()
-						}
-					}).collect::<Vec<EpisodeInfo>>()
-				})
-				.collect(),
+			episodes: data.episodes,
 			last_watch_season_index: available_cache.as_ref().and_then(|f| f.last_watch_season_index),
 			last_watch_episode_index: available_cache.as_ref().and_then(|f| f.last_watch_episode_index),
 			last_update: available_cache.as_ref().and_then(|f| f.last_update.to_owned()),

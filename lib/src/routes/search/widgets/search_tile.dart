@@ -92,17 +92,12 @@ class _SearchTileState extends State<SearchTile> {
                       
 
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Row(
                             spacing: 2.5,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.calendar_month,
-                                color: appColors.textSecondary,
-                                size: 16,
-                              ),
                               Text(
                                 widget.searchContentInfo.year,
                                 style: GoogleFonts.nunito(
@@ -112,35 +107,18 @@ class _SearchTileState extends State<SearchTile> {
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                              )
+                              ),
+
+                              Icon(
+                                Icons.calendar_month,
+                                color: appColors.textSecondary,
+                                size: 16,
+                              ),
+                              
                               
                             ],
                           ),
-                          Row(
-                            children: [
-                              Row(
-                                spacing: 2.5,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "#${widget.searchContentInfo.rank??"-".toString()}",
-                                    style: GoogleFonts.nunito(
-                                      color: appColors.textSecondary,
-                                      fontSize: 10,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Icon(
-                                    Icons.emoji_events,
-                                    color: appColors.textSecondary,
-                                    size: 16,
-                                  ),
-                                ],
-                              )
-                            ],
-                          )
+                          
                         ],
                       ),
 

@@ -15,12 +15,12 @@ use crate::utils::settings::Settings;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrendingContentInfo {
-    pub source: String,
+  pub source: String,
 	pub id: String,
 	pub title: String,
-    pub year: String,
-    pub rating: f32,
-    pub thumbnail_url: String,
+	pub year: String,
+	pub rating: String,
+	pub thumbnail_url: String,
 }
 
 
@@ -100,18 +100,34 @@ pub async fn trending_content(source: &str, from_cache: bool) -> Result<Vec<Tren
 		}
 	}
 
-	let data = trending_content::new(&source)
-		.await
+	let settings = Settings::get()
 		.map_err(|e| e.to_string())?;
 
-	let result: Vec<TrendingContentInfo> = data.0.iter()
+
+	let params = trending_content::TrendingContentParams{
+		tmdb_token: settings.tmdb_rat_token.clone()
+			.ok_or(String::from("Missing tmdb_rat_token"))?,
+		source: source.clone()
+	};
+
+	let data = trending_content::new(&params)
+		.await
+		.map_err(|e| 
+			format!("Failed to get trending_content for source '{}', tmdb_token: {} with error: \n{}", source.to_string(), settings.tmdb_rat_token.clone().unwrap_or_default(), e.to_string())
+		)?;
+
+
+
+
+
+	let result: Vec<TrendingContentInfo> = data.iter()
 		.map(|info| TrendingContentInfo {
-            source: source.to_string(),
+      source: source.to_string(),
 			id: info.id.to_owned(),
 			title: info.title.to_owned(),
-            year: info.year.to_owned(),
-            rating: info.rating.to_owned(),
-            thumbnail_url: info.thumbnail_url.to_owned(),
+			year: info.year.to_owned(),
+			rating: info.rating.to_owned(),
+			thumbnail_url: info.thumbnail_url.to_owned(),
 		})
 		.collect();
 	

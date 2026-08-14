@@ -10,6 +10,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<ArcDatabase> getDb() =>
     RustLib.instance.api.crateMethodWatchStateGetDb();
 
+Future<String> getWatchStateDbPath() =>
+    RustLib.instance.api.crateMethodWatchStateGetWatchStateDbPath();
+
 class WatchStateKey {
   final String source;
   final String id;

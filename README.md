@@ -2,6 +2,12 @@
 [<img src="https://github.com/GoodDay360/HyperionBox/blob/main/public/1500x500-banner.png?raw=true">](/)
 -->
 
+### ‼️ This project is undergoing a major change to [v2](https://github.com/orgs/RecomBox/projects/1).
+- Favorite will be wipe to use new filesystem architecture
+- Currently Broken metadata provider.
+
+#
+
 <div>
     <a href="https://discord.gg/TkArvnVvNG">
         <img src="https://dcbadge.limes.pink/api/server/TkArvnVvNG?style=flat" />
@@ -27,9 +33,9 @@
 
 <a href="https://www.star-history.com/?repos=RecomBox%2FRecomBox&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&theme=dark&legend=top-left&sealed_token=V_yAfYk6qGWQZwAeoD-3ZOt9JB32ZRoOrzhhLa8-iDIM9NMJPge5N1Y9BUmLGbVrCe7Cw_K7yCb85ilTyZFX-X-lyQ2soc35NGdbnh-PEloHVG6aqsq6lA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left&sealed_token=V_yAfYk6qGWQZwAeoD-3ZOt9JB32ZRoOrzhhLa8-iDIM9NMJPge5N1Y9BUmLGbVrCe7Cw_K7yCb85ilTyZFX-X-lyQ2soc35NGdbnh-PEloHVG6aqsq6lA" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=RecomBox/RecomBox&type=date&legend=top-left&sealed_token=V_yAfYk6qGWQZwAeoD-3ZOt9JB32ZRoOrzhhLa8-iDIM9NMJPge5N1Y9BUmLGbVrCe7Cw_K7yCb85ilTyZFX-X-lyQ2soc35NGdbnh-PEloHVG6aqsq6lA" />
  </picture>
 </a>
 

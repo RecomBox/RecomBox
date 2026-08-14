@@ -6,8 +6,10 @@ import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/rust/method/clear_cache.dart';
+import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/settings/get_settings.dart';
 import 'package:recombox/src/rust/method/settings/set_settings.dart';
+import 'package:recombox/src/rust/method/watch_state.dart';
 import 'package:recombox/src/rust/utils/settings.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
@@ -142,11 +144,7 @@ class _StorageState extends State<Storage> {
 
 
   Future<void> onExportFavorite() async {
-    final inputFilePath = path.join(
-      settings!.paths.appSupportDir,
-      "favorite",
-      "favorite.redb",
-    );
+    final inputFilePath = await getFavoriteDbPath();
     final inputFile = File(inputFilePath);
     if (await inputFile.exists()){
       final bytes = await inputFile.readAsBytes();
@@ -215,17 +213,13 @@ class _StorageState extends State<Storage> {
       }
       final inputFile = File(inputFilePath);
 
-      final outputFile = path.join(dir.path, "favorite.redb");
+      final outputFile = await getFavoriteDbPath();
       await inputFile.copy(outputFile);
     }
   }
 
   Future<void> onExportWatchStatus() async {
-    final inputFilePath = path.join(
-      settings!.paths.appSupportDir,
-      "state",
-      "watch_state.redb",
-    );
+    final inputFilePath = await getWatchStateDbPath();
     final inputFile = File(inputFilePath);
     if (await inputFile.exists()){
       final bytes = await inputFile.readAsBytes();
@@ -296,7 +290,7 @@ class _StorageState extends State<Storage> {
 
       final inputFile = File(inputFilePath);
 
-      final outputFile = path.join(dir.path, "watch_state.redb");
+      final outputFile = await getWatchStateDbPath();
       await inputFile.copy(outputFile);
     }
   }

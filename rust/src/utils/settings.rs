@@ -14,7 +14,8 @@ pub struct Settings {
     pub port: u32,
     pub paths: Paths,
     pub version: String,
-    pub max_cache_size: Option<u64>
+    pub max_cache_size: Option<u64>,
+    pub tmdb_rat_token: Option<String>,
 }
 
 #[frb(json_serializable)]
@@ -44,6 +45,7 @@ impl Settings {
             },
             max_cache_size: Some(5368709120),
             version: "0.0.1".to_string(),
+            tmdb_rat_token: None
         };
         let mut guard = SETTIGNS.lock()
             .map_err(|e| anyhow::Error::msg(e.to_string()))?;
@@ -78,10 +80,13 @@ impl Settings {
                 }
             };
 
+            if saved_settings.tmdb_rat_token.as_ref().and_then(|f| Some(!f.is_empty())).unwrap_or(false) {
+                settings.tmdb_rat_token = saved_settings.tmdb_rat_token.clone();
+            }
             settings.paths.app_cache_dir = saved_settings.paths.app_cache_dir.clone();
             settings.paths.app_support_dir = saved_settings.paths.app_support_dir.clone();
+            
         }
-
 
         let mut guard = SETTIGNS.lock()
             .map_err(|e| anyhow::Error::msg(e.to_string()))?;

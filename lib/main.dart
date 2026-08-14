@@ -24,8 +24,7 @@ var logger = Logger();
 
 
 Future<void> main() async {
-	await initApp();
-
+  await initApp();
 	runApp(const App());
 }
 

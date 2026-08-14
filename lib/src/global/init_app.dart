@@ -14,6 +14,7 @@ import 'package:recombox/src/rust/utils/settings.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path/path.dart' as path;
 
 
@@ -33,9 +34,16 @@ Future<int> getFreePort() async {
 
 Future<void> initApp() async {
 	WidgetsFlutterBinding.ensureInitialized();
+  debugPrint("Current working directory: ${Directory.current.path}");
+
+  try {
+    await dotenv.load(fileName: path.join(Directory.current.path, ".env"));
+  } catch (e) {
+    debugPrint("Could not load .env file: $e. Skipping...");
+  }
   
-  final packageInfo = await PackageInfo.fromPlatform();
   // -> Single Instance
+  final packageInfo = await PackageInfo.fromPlatform();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     if (!(await FlutterSingleInstance().isFirstInstance())) {
       final err = await FlutterSingleInstance().focus();
@@ -83,11 +91,13 @@ Future<void> initApp() async {
 	
 	// <-
 
-  // -> Flutter Rust Bridge Initialization & Settings (Required before starting any other initialization)
+  // -> Flutter Rust Bridge Initialization & Settings 
+  // (Required before starting any other initialization that is rust related)
 	await RustLib.init();
 	await initSettings(settings: Settings(
     version: packageInfo.version,
     port: await getFreePort(),
+    tmdbRatToken: dotenv.env['TMDB_RAT_TOKEN'],
 		paths: Paths(
       appConfigDir: path.join((await getApplicationSupportDirectory()).path, "config"),
       appSupportDir: (await getApplicationSupportDirectory()).path,

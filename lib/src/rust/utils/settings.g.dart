@@ -27,6 +27,7 @@ _Settings _$SettingsFromJson(Map<String, dynamic> json) => _Settings(
       maxCacheSize: json['maxCacheSize'] == null
           ? null
           : BigInt.parse(json['maxCacheSize'] as String),
+      tmdbRatToken: json['tmdbRatToken'] as String?,
     );
 
 Map<String, dynamic> _$SettingsToJson(_Settings instance) => <String, dynamic>{
@@ -34,4 +35,5 @@ Map<String, dynamic> _$SettingsToJson(_Settings instance) => <String, dynamic>{
       'paths': instance.paths,
       'version': instance.version,
       'maxCacheSize': instance.maxCacheSize?.toString(),
+      'tmdbRatToken': instance.tmdbRatToken,
     };

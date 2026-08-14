@@ -26,7 +26,7 @@ use crate::utils::settings::Settings;
 
 static DATABASE: Lazy<RwLock<Option<Arc<Database>>>> = Lazy::new(|| RwLock::new(None));
 
-const DATABASE_NAME: &str = "favorite.redb";
+const DATABASE_NAME: &str = "favorite_v2.redb";
 const LAST_WATCH_TORRENT_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("last_watch_torrent");
 const CATEGORY_TABLE: TableDefinition<u64, &str> = TableDefinition::new("category");
 const CATEGORY_ORDER_TABLE:TableDefinition<u64, u64> = TableDefinition::new("category_order");
@@ -106,4 +106,21 @@ pub fn get_db() -> Result<Arc<Database>, String> {
     return Ok(db.clone());
     
     
+}
+
+
+pub async fn get_favorite_db_path() -> Result<String, String> {
+    let settings = Settings::get()
+        .map_err(|e| e.to_string())?;
+
+    let db_dir = PathBuf::from(&settings.paths.app_support_dir)
+        .join("favorite");
+
+    fs::create_dir_all(&db_dir)
+        .map_err(|e| e.to_string())?;
+
+    let db_path = PathBuf::from(&db_dir)
+        .join(DATABASE_NAME);
+
+    return Ok(db_path.to_str().unwrap_or("").to_string());
 }

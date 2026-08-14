@@ -1268,6 +1268,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
+
+[[package]]
 name = "dunce"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1943,7 +1949,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -3042,7 +3048,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.41",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -3080,7 +3086,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.61.2",
 ]
@@ -3209,10 +3215,11 @@ dependencies = [
 [[package]]
 name = "recombox_metadata_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_metadata_provider#8caab4280de019d4edbbb4c7ef40749492e3662d"
+source = "git+https://github.com/RecomBox/recombox_metadata_provider#a325be3239341ff301d170434db0849950703002"
 dependencies = [
  "anyhow",
  "chrono",
+ "dotenv",
  "fake_user_agent",
  "html-escape",
  "indexmap 2.14.0",
@@ -3249,7 +3256,7 @@ dependencies = [
 [[package]]
 name = "recombox_subtitle_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_subtitle_provider#c2138bd3fba9ad3a029eebf8d8c2dc9eb64dac37"
+source = "git+https://github.com/RecomBox/recombox_subtitle_provider#77c67e5e6d4a1f9def92ebeb9a93e3d8d421731c"
 dependencies = [
  "anyhow",
  "base64",
@@ -3467,6 +3474,7 @@ dependencies = [
  "bytes",
  "chrono",
  "dashmap 6.2.1",
+ "dotenv",
  "flutter_rust_bridge",
  "futures",
  "hex",

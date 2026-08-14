@@ -20,7 +20,6 @@ class EpisodeTile extends StatefulWidget {
     required this.titleSecondary,
     required this.season,
     required this.episode,
-    required this.episodeInfo,
     required this.onNavigateDownload,
 
     required this.bulkDownloadMode,
@@ -34,7 +33,6 @@ class EpisodeTile extends StatefulWidget {
   final String titleSecondary;
   final BigInt season;
   final BigInt episode;
-  final EpisodeInfo episodeInfo;
   final Function() onNavigateDownload;
 
 
@@ -131,7 +129,6 @@ class _EpisodeTileState extends State<EpisodeTile> {
       color: Colors.transparent,
       child: SizedBox(
         width: double.infinity,
-        height: 100,
         child: Row(
           children: [
             Expanded(
@@ -151,53 +148,17 @@ class _EpisodeTileState extends State<EpisodeTile> {
                 mouseCursor: SystemMouseCursors.click,
                 child: Row(
                   children: [
-                    Stack(
-                      children: [
-                        Ink.image(
-                          width: 150,
-                          height: 100,
-                          image: failLoadThumbnail
-                            ? const AssetImage('assets/episode_thumbnail_placeholder.jpg')
-                            : NetworkImage(widget.episodeInfo.thumbnailUrl),
-                          fit: BoxFit.cover,
-                          onImageError: (_,__){
-                            setState(() {
-                              failLoadThumbnail = true;
-                            });
-                          },
-                        ),
-
-                        if (watchPosition > BigInt.from(0))
-                          Container(
-                            width: 150,
-                            height: 100,
-                            padding: EdgeInsets.all(2.5),
-                            alignment: Alignment.bottomCenter,
-                            child: Text(
-                              Duration(milliseconds: watchPosition.toInt()).toString().split('.').first.padLeft(8, "0"),
-                              style: TextStyle(
-                                color: appColors.textPrimary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                backgroundColor: Colors.black.withAlpha(125)
-                              ),
-                              maxLines: 3,
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          )
-                      ],
-                    ),
                     
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.only(left:10, right: 10, top: 25, bottom: 25),
                         child: Column(
+                          spacing: 12,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.episodeInfo.title,
+                              "Episode ${widget.episode.toInt()+1}",
                               style: TextStyle(
                                 color: appColors.textPrimary,
                                 fontSize: 16,
@@ -207,6 +168,31 @@ class _EpisodeTileState extends State<EpisodeTile> {
                               textAlign: TextAlign.start,
                               overflow: TextOverflow.ellipsis,
                             ),
+                            if (watchPosition > BigInt.from(0))
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                spacing: 5,
+                                children: [
+                                  Icon(
+                                    Icons.visibility_rounded,
+                                    color: appColors.textSecondary,
+                                    size: 16,
+                                  ),
+
+                                  Text(
+                                    Duration(milliseconds: watchPosition.toInt()).toString().split('.').first.padLeft(8, "0"),
+                                    style: TextStyle(
+                                      color: appColors.textPrimary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    maxLines: 3,
+                                    textAlign: TextAlign.start,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                ],
+                              )
+                              
                             
                           ],
                         )
@@ -218,8 +204,6 @@ class _EpisodeTileState extends State<EpisodeTile> {
               ),
             ),
             
-
-
             if (!isInDownload && !widget.bulkDownloadMode)
               IconButton(
                 mouseCursor: SystemMouseCursors.click,
