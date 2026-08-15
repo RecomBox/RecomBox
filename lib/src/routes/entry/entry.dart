@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
+import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'package:recombox/src/rust/method/metadata_provider/featured_content.dart';
 import 'package:recombox/src/rust/method/metadata_provider/trending_content.dart';
 import 'dart:async';
@@ -168,138 +171,149 @@ class _EntryState extends State<EntryScreen> {
       return SafeArea(
         child: Material(
           color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(25),
-            
-            child: Column(
-              spacing: 12,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.asset(
-                    'assets/tmdb_logo.jpg',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.fill
-                  ),
-                ),
-                
-                Text(
-                  "TMDB Read Access Token is required",
-                  style: GoogleFonts.nunito(
-                    fontSize: 24,
-                    color: appColors.textPrimary,
-                    fontWeight: FontWeight(700)
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  width: min(600, double.infinity),
-                  child: TextField(
-                    controller: _textEditingController,
-                    enabled: !isVerifyingToken,
-                    obscureText: true, // hides the input
-                    decoration: InputDecoration(
-                      hintText: "Enter your token",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: appColors.secondary,
-                    ),
-                    style: GoogleFonts.nunito(
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),
-                    onChanged: (value) {
-                      tmdbToken = value;
-                    },
-                    onSubmitted: (value) {
-                      if (isVerifyingToken || tmdbToken.isEmpty) return;
-                      onVerifyToken(tmdbToken);
-                    },
-                  ),
-                ),
-
-                
-                SizedBox(
-                  width: min(500, double.infinity),
-                  child: ElevatedButton(
-                    
-                    onPressed: (){
-                      if (isVerifyingToken || tmdbToken.isEmpty) return;
-                      onVerifyToken(tmdbToken);
-                    }, 
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(15),
-                      backgroundColor: Colors.purple,
-                      enabledMouseCursor: SystemMouseCursors.click
-                    ),
-                    
-                    child: Text(
-                      isVerifyingToken ? "Verifying..." : "Verify Token",
-                      style: GoogleFonts.nunito(
-                        fontSize: 18,
-                        color: appColors.textPrimary,
-                        fontWeight: FontWeight(700),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                ),
-
-                TextButton(
-                  onPressed: (){
-                    String url = "https://www.themoviedb.org/settings/api";
-                    Clipboard.setData(ClipboardData(text: url));
-                    showToastWidget(
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: appColors.tertiary,
-                          borderRadius: BorderRadius.circular(25)
+          child: Column(
+            children: [
+              if (Platform.isLinux || Platform.isWindows || Platform.isMacOS)
+                TitleBar(),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(25),
+                  child: Column(
+                    spacing: 12,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.asset(
+                          'assets/tmdb_logo.jpg',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.fill
                         ),
-                        child: Text(
-                          "URL copied to clipboard",
-                          style: GoogleFonts.nunito(
-                            color: appColors.textPrimary,
-                            fontSize: 16
+                      ),
+                      
+                      Text(
+                        "TMDB Read Access Token is required",
+                        style: GoogleFonts.nunito(
+                          fontSize: 24,
+                          color: appColors.textPrimary,
+                          fontWeight: FontWeight(700)
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        width: min(600, double.infinity),
+                        child: TextField(
+                          controller: _textEditingController,
+                          enabled: !isVerifyingToken,
+                          obscureText: true, // hides the input
+                          decoration: InputDecoration(
+                            hintText: "Enter your token",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: appColors.secondary,
                           ),
+                          style: GoogleFonts.nunito(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          onChanged: (value) {
+                            tmdbToken = value;
+                          },
+                          onSubmitted: (value) {
+                            if (isVerifyingToken || tmdbToken.isEmpty) return;
+                            onVerifyToken(tmdbToken);
+                          },
                         ),
                       ),
-                      position: ToastPosition.bottom,
-                      dismissOtherToast: true,
-                    );
-                    launchUrl(
-                      Uri.parse(url),
-                      mode: LaunchMode.platformDefault,
-                    )
-                      .then((value) => debugPrint(value.toString()))
-                      .catchError((error) => debugPrint(error.toString()));
-                  }, 
-                  style: ButtonStyle(
-                    mouseCursor: WidgetStateProperty.all(SystemMouseCursors.click),
-                  ),
-                    child: Text(
-                    "Get Token Here",
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      color: appColors.textSecondary,
-                      fontWeight: FontWeight(700),
-                      decoration: TextDecoration.underline,
-                      decorationColor: appColors.textSecondary,
-                      decorationThickness: 2.5,
-                    ),
-                  
-                    textAlign: TextAlign.center,
-                  ),
-                ),
 
-              ],
-            )
+                      
+                      SizedBox(
+                        width: min(500, double.infinity),
+                        child: ElevatedButton(
+                          
+                          onPressed: (){
+                            if (isVerifyingToken || tmdbToken.isEmpty) return;
+                            onVerifyToken(tmdbToken);
+                          }, 
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(15),
+                            backgroundColor: Colors.purple,
+                            enabledMouseCursor: SystemMouseCursors.click
+                          ),
+                          
+                          child: Text(
+                            isVerifyingToken ? "Verifying..." : "Verify Token",
+                            style: GoogleFonts.nunito(
+                              fontSize: 18,
+                              color: appColors.textPrimary,
+                              fontWeight: FontWeight(700),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      ),
+
+                      TextButton(
+                        onPressed: (){
+                          String url = "https://www.themoviedb.org/settings/api";
+                          Clipboard.setData(ClipboardData(text: url));
+                          showToastWidget(
+                            Container(
+                              padding: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: appColors.tertiary,
+                                borderRadius: BorderRadius.circular(25)
+                              ),
+                              child: Text(
+                                "URL copied to clipboard",
+                                style: GoogleFonts.nunito(
+                                  color: appColors.textPrimary,
+                                  fontSize: 16
+                                ),
+                              ),
+                            ),
+                            position: ToastPosition.bottom,
+                            dismissOtherToast: true,
+                          );
+                          launchUrl(
+                            Uri.parse(url),
+                            mode: LaunchMode.platformDefault,
+                          )
+                            .then((value) => debugPrint(value.toString()))
+                            .catchError((error) => debugPrint(error.toString()));
+                        }, 
+                        style: ButtonStyle(
+                          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.click),
+                        ),
+                          child: Text(
+                          "Get Token Here",
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            color: appColors.textSecondary,
+                            fontWeight: FontWeight(700),
+                            decoration: TextDecoration.underline,
+                            decorationColor: appColors.textSecondary,
+                            decorationThickness: 2.5,
+                          ),
+                        
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+
+                    ],
+                  )
+                )
+                
+                
+              ),
+              
+            ],
           )
         )
+      
       );
     }
   }
