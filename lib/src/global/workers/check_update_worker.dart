@@ -36,46 +36,6 @@ Future<void> onUpdate(
             }
           },
         );
-    }else if (Platform.isWindows){
-      setIsDownloading(true);
-      final settings = await getSettings();
-      final tempDir = settings.paths.tempDir;
-
-      final filePath = path.join(tempDir, 'recombox_updater.exe');
-      final file = File(filePath);
-      if (!await file.parent.exists()) {
-        await file.parent.create(recursive: true);
-      }
-
-      final request = await HttpClient().getUrl(Uri.parse(downloadUrl));
-      final response = await request.close();
-
-      if (response.statusCode == 200) {
-        final totalBytes = response.contentLength;
-        int downloadedBytes = 0;
-        final sink = file.openWrite();
-
-        await for (var chunk in response) {
-          downloadedBytes += chunk.length;
-          sink.add(chunk);
-          if (totalBytes > 0) {
-            double progress = downloadedBytes / totalBytes;
-            progress = progress.clamp(0.0, 1.0); 
-            setDownloadProgress(progress);
-          }
-        }
-        await sink.close();
-
-        await Process.start(
-          filePath,
-          ['/S'],
-          mode: ProcessStartMode.detached,
-        );
-
-        exit(0);
-      } else {
-        debugPrint('Failed to download update: Server returned status ${response.statusCode}');
-      }
     }else{
       launchUrl(
         Uri.parse(downloadUrl),
