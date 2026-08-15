@@ -2,12 +2,6 @@
 [<img src="https://github.com/GoodDay360/HyperionBox/blob/main/public/1500x500-banner.png?raw=true">](/)
 -->
 
-### ‼️ This project is undergoing a major change to [v2](https://github.com/orgs/RecomBox/projects/1).
-- Favorite will be wipe to use new filesystem architecture
-- Currently Broken metadata provider.
-
-#
-
 <div>
     <a href="https://discord.gg/TkArvnVvNG">
         <img src="https://dcbadge.limes.pink/api/server/TkArvnVvNG?style=flat" />
