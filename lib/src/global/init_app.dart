@@ -62,7 +62,7 @@ Future<void> initApp() async {
   // <-
 
   // -> Hive DB
-	WidgetsFlutterBinding.ensureInitialized();
+	
 	await Hive.initFlutter();
   
 	// <- 
@@ -135,9 +135,7 @@ Future<void> initApp() async {
 
 	
 
-	// -> Flutter Widgets
-	WidgetsFlutterBinding.ensureInitialized();
-	// <-
+
 
 	
 
