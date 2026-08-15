@@ -41,6 +41,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
 
   bool isInitialized = false;
+  AppColorsScheme appColors = appColorsNotifier.value;
+
 
   @override
   void initState() {
@@ -113,8 +115,9 @@ class _AppState extends State<App> {
       );
       
     }else{
-      return const MaterialApp(
+      return MaterialApp(
         debugShowCheckedModeBanner: false,
+        color: appColors.primary,
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(),

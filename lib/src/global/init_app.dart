@@ -37,11 +37,15 @@ Future<void> initApp() async {
 	WidgetsFlutterBinding.ensureInitialized();
   debugPrint("Current working directory: ${Directory.current.path}");
 
+  // -> Extract Environment
+  String? tmdbRatToken;
   try {
     await dotenv.load(fileName: path.join(Directory.current.path, ".env"));
+    tmdbRatToken = dotenv.env['TMDB_RAT_TOKEN'];
   } catch (e) {
     debugPrint("Could not load .env file: $e. Skipping...");
   }
+  // <-
   
   // -> Single Instance
   final packageInfo = await PackageInfo.fromPlatform();
@@ -98,7 +102,7 @@ Future<void> initApp() async {
 	await initSettings(settings: Settings(
     version: packageInfo.version,
     port: await getFreePort(),
-    tmdbRatToken: dotenv.env['TMDB_RAT_TOKEN'],
+    tmdbRatToken: tmdbRatToken,
 		paths: Paths(
       appConfigDir: path.join((await getApplicationSupportDirectory()).path, "config"),
       appSupportDir: (await getApplicationSupportDirectory()).path,
