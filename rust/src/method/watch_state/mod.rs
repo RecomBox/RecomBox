@@ -13,7 +13,7 @@ use crate::utils::settings::Settings;
 
 static DATABASE: Lazy<RwLock<Option<Arc<Database>>>> = Lazy::new(|| RwLock::new(None));
 
-const DATABASE_NAME: &str = "watch_state.redb";
+const DATABASE_NAME: &str = "watch_state_v2.redb";
 const WATCH_STATE_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("watch_state");
 
 const WATCH_STATE_ORDER_TABLE: TableDefinition<u64, &[u8]> = TableDefinition::new("watch_state_order");

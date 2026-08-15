@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recombox/src/global/app_color.dart';
+import 'package:recombox/src/routes/entry/entry.dart';
 import 'package:recombox/src/rust/method/clear_cache.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
 import 'package:recombox/src/rust/method/settings/get_settings.dart';
@@ -17,14 +18,14 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class Storage extends StatefulWidget {
-  const Storage({super.key});
+class General extends StatefulWidget {
+  const General({super.key});
 
   @override
-  State<Storage> createState() => _StorageState();
+  State<General> createState() => _GeneralState();
 }
 
-class _StorageState extends State<Storage> {
+class _GeneralState extends State<General> {
 
   AppColorsScheme appColors = appColorsNotifier.value;
   Settings? settings;
@@ -39,6 +40,8 @@ class _StorageState extends State<Storage> {
     BigInt.from(53687091200): '50 GB',
   };
 
+  TextEditingController tmdbTextEditingController = TextEditingController(text: "");
+  bool isNewTmdbToken = false;
 
   @override
   void initState() {
@@ -55,7 +58,7 @@ class _StorageState extends State<Storage> {
     if (context.mounted) {
       setState(() {
         settings = result;
-
+        tmdbTextEditingController.text = settings!.tmdbRatToken ?? "";
         directoryInfo.clear();
         directoryInfo.add({
           "label": "App Data Directory",
@@ -295,6 +298,21 @@ class _StorageState extends State<Storage> {
     }
   }
 
+  Future<void> onUpdateToken(String token) async {
+    var ctx = context;
+    Settings newSettings = settings!.copyWith(tmdbRatToken: token);
+    await setSettings(settings: newSettings);
+    if (token.isNotEmpty && token != settings!.tmdbRatToken && ctx.mounted){
+      Navigator.pushReplacement(
+        ctx,
+        MaterialPageRoute(
+          builder: (_) => const EntryScreen(verifySavedToken: true),
+        ),
+      );
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (settings == null || directoryInfo.isEmpty) return Container();
@@ -310,6 +328,82 @@ class _StorageState extends State<Storage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 10,
               children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 8,
+                  children: [
+                    Text(
+                      "TMDB Read Access Token",
+                      style: GoogleFonts.nunito(
+                        color: appColors.textPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight(600)
+                      ),
+                    ),
+                    Row(
+                      spacing: 12,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: tmdbTextEditingController,
+                            obscureText: true, // hides the input
+                            decoration: InputDecoration(
+                              
+                              hintText: "Enter your token",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: appColors.secondary,
+                            ),
+                            style: GoogleFonts.nunito(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                            onChanged: (value) {
+                              if (value.isNotEmpty && value != settings!.tmdbRatToken){
+                                setState(() {
+                                  isNewTmdbToken = true;
+                                });
+                              }else{
+                                setState(() {
+                                  isNewTmdbToken = false;
+                                });
+                              }
+                            },
+                            onSubmitted: (value) async {
+                              await onUpdateToken(value);
+                            },
+                            
+                          ),
+                        
+                        ),
+                        if (!isNewTmdbToken)
+                          IconButton(
+                            mouseCursor: SystemMouseCursors.click,
+                            onPressed: (){
+                              tmdbTextEditingController.text = "";
+                            },
+                            icon: Icon(Icons.delete_forever_rounded),
+                            color: Colors.red,
+                          ),
+                        if (isNewTmdbToken)
+                          IconButton(
+                            mouseCursor: SystemMouseCursors.click,
+                            onPressed: () async {
+                              await onUpdateToken(tmdbTextEditingController.text);
+                            },
+                            icon: Icon(Icons.check_rounded),
+                            color: Colors.green,
+                          )
+                        
+                      ],
+                    )
+
+                    
+                  ]
+                ),
+                
                 for (final item in directoryInfo) ...[
                   Text(
                     item["label"],

@@ -212,6 +212,8 @@ class _ViewState extends State<ViewScreen> with RouteAware {
       seasonIndex: BigInt.from(index),
     );
 
+    
+
     if (context.mounted){
       setState(() {
         bulkDownloadMode = false;
@@ -220,7 +222,10 @@ class _ViewState extends State<ViewScreen> with RouteAware {
         currentSeasonIndex = index;
       });
       
+      onFilterChange();
     }
+
+
   }
 
 
@@ -260,7 +265,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     } else {
-      Navigator.pushReplacementNamed(context, "/");
+      Navigator.pushReplacementNamed(context, "/home");
     }
 
   }

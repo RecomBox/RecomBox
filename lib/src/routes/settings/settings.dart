@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/routes/settings/widgets/installed_subtitles.dart';
-import 'package:recombox/src/routes/settings/widgets/storage.dart';
+import 'package:recombox/src/routes/settings/widgets/general.dart';
 import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_horizontal.dart';
 import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_vertical.dart';
 import 'dart:io';
@@ -23,7 +23,7 @@ class SettingsState extends State<SettingsScreen> {
 
   final List<Map<String, dynamic>> settingItems = [
     // {'icon': Icons.style_rounded, 'label': "Appearance"},
-    {'icon': Icons.storage_rounded, 'label': "Storage", 'widget': Storage()},
+    {'icon': Icons.storage_rounded, 'label': "General", 'widget': General()},
     {'icon': Icons.subtitles_rounded, 'label': "Installed Subtitles", 'widget': InstalledSubtitles()},
 
 
