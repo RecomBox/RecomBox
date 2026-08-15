@@ -20,7 +20,7 @@ use crate::utils::settings::Settings;
 
 static DATABASE: Lazy<RwLock<Option<Arc<Database>>>> = Lazy::new(|| RwLock::new(None));
 
-const DATABASE_NAME: &str = "download.redb";
+const DATABASE_NAME: &str = "download_v2.redb";
 const DOWNLOAD_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("download");
 const DOWNLOAD_STATUS_TABLE: TableDefinition<&[u8], &[u8]> = TableDefinition::new("download_status");
 
