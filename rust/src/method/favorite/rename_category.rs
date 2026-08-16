@@ -1,20 +1,19 @@
-
-
-use super::{get_db, CATEGORY_TABLE};
+use super::{get_db, rusqlite};
 
 pub async fn rename_category(category_id: u64, new_category_name: &str) -> Result<(), String> {
-    let db = get_db()?;
+    let db = get_db().await?;
+    let cat_id = category_id as i64;
+    let new_name = new_category_name.to_string();
 
-    let write_txn = db.begin_write().map_err(|e| e.to_string())?;
+    db.call(move |conn| -> Result<(), rusqlite::Error> {
+        conn.execute(
+            "UPDATE category SET name = ?1 WHERE id = ?2",
+            rusqlite::params![new_name, cat_id],
+        )?;
+        Ok(())
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
-    {
-        let mut cat_table = write_txn.open_table(CATEGORY_TABLE)
-            .map_err(|e| e.to_string())?;
-
-        // Replace the existing value with the new name
-        cat_table.insert(category_id, new_category_name).map_err(|e| e.to_string())?;
-    }
-
-    write_txn.commit().map_err(|e| e.to_string())?;
     Ok(())
 }

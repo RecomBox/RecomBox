@@ -177,11 +177,11 @@ abstract class RustLibApi extends BaseApi {
 
   Future<String?> crateMethodCurrentWatchGetCurrentWatchTorrent();
 
-  Future<ArcDatabase> crateMethodDownloadProviderGetDb();
+  Future<Connection> crateMethodDownloadProviderGetDb();
 
-  Future<ArcDatabase> crateMethodFavoriteGetDb();
+  Future<Connection> crateMethodFavoriteGetDb();
 
-  Future<ArcDatabase> crateMethodWatchStateGetDb();
+  Future<Connection> crateMethodWatchStateGetDb();
 
   Future<DownloadItemValue?> crateMethodDownloadProviderGetDownloadGetDownload(
       {required DownloadItemKey downloadItemKey});
@@ -344,12 +344,12 @@ abstract class RustLibApi extends BaseApi {
           required BigInt episodeIndex});
 
   RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_ArcDatabase;
+      get rust_arc_increment_strong_count_Connection;
 
   RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_ArcDatabase;
+      get rust_arc_decrement_strong_count_Connection;
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ArcDatabasePtr;
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ConnectionPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -653,7 +653,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_get_all_installed_subtitles_data,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderGetAllInstalledSubtitlesGetAllInstalledSubtitlesConstMeta,
@@ -749,7 +749,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<ArcDatabase> crateMethodDownloadProviderGetDb() {
+  Future<Connection> crateMethodDownloadProviderGetDb() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -758,7 +758,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase,
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection,
         decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodDownloadProviderGetDbConstMeta,
@@ -774,7 +774,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<ArcDatabase> crateMethodFavoriteGetDb() {
+  Future<Connection> crateMethodFavoriteGetDb() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -783,7 +783,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase,
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection,
         decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodFavoriteGetDbConstMeta,
@@ -798,7 +798,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<ArcDatabase> crateMethodWatchStateGetDb() {
+  Future<Connection> crateMethodWatchStateGetDb() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -807,7 +807,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase,
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection,
         decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodWatchStateGetDbConstMeta,
@@ -945,7 +945,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       codec: SseCodec(
         decodeSuccessData:
             sse_decode_Map_u_64_get_installed_subtitles_data_None,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderGetInstalledSubtitlesGetInstalledSubtitlesConstMeta,
@@ -1122,7 +1122,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_Map_String_list_subtitle_data_None,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateMethodSubtitleProviderGetSubtitlesGetSubtitlesConstMeta,
       argValues: [link],
@@ -1151,7 +1151,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_chapter_data,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderGetSubtitlesChaptersGetSubtitlesChaptersConstMeta,
@@ -1423,7 +1423,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderInstallSubtitleInstallSubtitleConstMeta,
@@ -1563,7 +1563,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderRemoveSubtitlesRemoveSubtitlesConstMeta,
@@ -1652,7 +1652,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_search_data,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta:
           kCrateMethodSubtitleProviderSearchSubtitlesSearchSubtitlesConstMeta,
@@ -2043,12 +2043,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_ArcDatabase => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase;
+      get rust_arc_increment_strong_count_Connection => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection;
 
   RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_ArcDatabase => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase;
+      get rust_arc_decrement_strong_count_Connection => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -2057,11 +2057,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ArcDatabase
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+  Connection
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ArcDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return ConnectionImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -2116,11 +2116,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ArcDatabase
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+  Connection
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ArcDatabaseImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return ConnectionImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -2970,11 +2970,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ArcDatabase
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+  Connection
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return ArcDatabaseImpl.frbInternalSseDecode(
+    return ConnectionImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
@@ -3034,11 +3034,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ArcDatabase
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+  Connection
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return ArcDatabaseImpl.frbInternalSseDecode(
+    return ConnectionImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
@@ -4003,11 +4003,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
-          ArcDatabase self, SseSerializer serializer) {
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
+          Connection self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-        (self as ArcDatabaseImpl).frbInternalSseEncode(move: true), serializer);
+        (self as ConnectionImpl).frbInternalSseEncode(move: true), serializer);
   }
 
   @protected
@@ -4061,11 +4061,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
-          ArcDatabase self, SseSerializer serializer) {
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
+          Connection self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-        (self as ArcDatabaseImpl).frbInternalSseEncode(move: null), serializer);
+        (self as ConnectionImpl).frbInternalSseEncode(move: null), serializer);
   }
 
   @protected
@@ -4848,21 +4848,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 }
 
 @sealed
-class ArcDatabaseImpl extends RustOpaque implements ArcDatabase {
+class ConnectionImpl extends RustOpaque implements Connection {
   // Not to be used by end users
-  ArcDatabaseImpl.frbInternalDcoDecode(List<dynamic> wire)
+  ConnectionImpl.frbInternalDcoDecode(List<dynamic> wire)
       : super.frbInternalDcoDecode(wire, _kStaticData);
 
   // Not to be used by end users
-  ArcDatabaseImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+  ConnectionImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
       : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
 
   static final _kStaticData = RustArcStaticData(
     rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_ArcDatabase,
+        RustLib.instance.api.rust_arc_increment_strong_count_Connection,
     rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_ArcDatabase,
+        RustLib.instance.api.rust_arc_decrement_strong_count_Connection,
     rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_ArcDatabasePtr,
+        RustLib.instance.api.rust_arc_decrement_strong_count_ConnectionPtr,
   );
 }

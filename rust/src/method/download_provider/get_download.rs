@@ -1,48 +1,39 @@
-use redb::ReadableDatabase;
-use serde_json::from_slice;
-
-use super::{get_db, DOWNLOAD_TABLE, DownloadItemValue, DownloadItemKey};
+use super::{get_db, rusqlite, DownloadItemKey, DownloadItemValue};
 
 pub async fn get_download(
     download_item_key: &DownloadItemKey,
 ) -> Result<Option<DownloadItemValue>, String> {
-    let db = get_db()?;
-    let read_txn = db.begin_read().map_err(|e| e.to_string())?;
+    let db = get_db().await?;
 
-    let table = match read_txn.open_table(DOWNLOAD_TABLE) {
-        Ok(table) => table,
-        Err(e) => {
-            println!("[{}:{}] Failed to open table: {}", file!(),  line!(), e);
-            return Ok(None)
-        },
-    };
+    let source = download_item_key.source.clone();
+    let id = download_item_key.id.clone();
+    let season_index = download_item_key.season_index as i64;
+    let episode_index = download_item_key.episode_index as i64;
 
-    // Encode the key as an array (same as add_download)
-    let encoded_key = serde_json::to_vec(&[
-        &download_item_key.source,
-        &download_item_key.id,
-        download_item_key.season_index.to_string().as_str(),
-        download_item_key.episode_index.to_string().as_str(),
-    ])
-    .map_err(|e| e.to_string())?;
+    let value = db
+        .call(move |conn| -> Result<Option<DownloadItemValue>, rusqlite::Error> {
+            let result = conn.query_row(
+                "SELECT torrent_source, file_id, file_path, mime_type FROM download
+                 WHERE source = ?1 AND item_id = ?2 AND season_index = ?3 AND episode_index = ?4",
+                rusqlite::params![source, id, season_index, episode_index],
+                |row| {
+                    Ok(DownloadItemValue {
+                        torrent_source: row.get(0)?,
+                        file_id: row.get::<_, i64>(1)? as u64,
+                        file_path: row.get(2)?,
+                        mime_type: row.get(3)?,
+                    })
+                },
+            );
 
-    // Lookup the value
-    if let Some(value) = table.get(encoded_key.as_slice())
-        .map_err(|e| e.to_string())?
-    {
-        // Decode back into array form
-        let decoded: Vec<String> = from_slice(value.value())
-            .map_err(|e| e.to_string())?;
-        
-        let info = DownloadItemValue {
-            torrent_source: decoded[0].clone(),
-            file_id: decoded[1].parse::<u64>().map_err(|e| e.to_string())?,
-            file_path: decoded[2].clone(),
-            mime_type: decoded[3].clone(),
-        };
-        Ok(Some(info))
-    
-    } else {
-        Ok(None)
-    }
+            match result {
+                Ok(info) => Ok(Some(info)),
+                Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+                Err(e) => Err(e),
+            }
+        })
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(value)
 }

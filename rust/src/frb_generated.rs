@@ -386,7 +386,7 @@ fn wire__crate__method__subtitle_provider__get_all_installed_subtitles__get_all_
             let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end(); move |context| async move {
-                    transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
+                    transform_result_sse::<_, String>((move || async move {
                          let output_ok = crate::method::subtitle_provider::get_all_installed_subtitles::get_all_installed_subtitles().await?;   Ok(output_ok)
                     })().await)
                 } })
@@ -486,7 +486,7 @@ fn wire__crate__method__download_provider__get_db_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "get_db",
             port: Some(port_),
@@ -503,11 +503,14 @@ fn wire__crate__method__download_provider__get_db_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = crate::method::download_provider::get_db()?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let output_ok = crate::method::download_provider::get_db().await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -518,7 +521,7 @@ fn wire__crate__method__favorite__get_db_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "get_db",
             port: Some(port_),
@@ -535,11 +538,14 @@ fn wire__crate__method__favorite__get_db_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = crate::method::favorite::get_db()?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let output_ok = crate::method::favorite::get_db().await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -550,7 +556,7 @@ fn wire__crate__method__watch_state__get_db_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "get_db",
             port: Some(port_),
@@ -567,11 +573,14 @@ fn wire__crate__method__watch_state__get_db_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = crate::method::watch_state::get_db()?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let output_ok = crate::method::watch_state::get_db().await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -693,7 +702,7 @@ fn wire__crate__method__subtitle_provider__get_installed_subtitles__get_installe
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_source = <String>::sse_decode(&mut deserializer);
 let api_id = <String>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
-                    transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
+                    transform_result_sse::<_, String>((move || async move {
                          let output_ok = crate::method::subtitle_provider::get_installed_subtitles::get_installed_subtitles(&api_source, &api_id).await?;   Ok(output_ok)
                     })().await)
                 } })
@@ -868,7 +877,7 @@ fn wire__crate__method__subtitle_provider__get_subtitles__get_subtitles_impl(
             let api_link = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, String>(
                     (move || async move {
                         let output_ok =
                             crate::method::subtitle_provider::get_subtitles::get_subtitles(
@@ -894,7 +903,7 @@ fn wire__crate__method__subtitle_provider__get_subtitles_chapters__get_subtitles
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_imdb_id = <String>::sse_decode(&mut deserializer);
 let api_source = <String>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
-                    transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>((move || async move {
+                    transform_result_sse::<_, String>((move || async move {
                          let output_ok = crate::method::subtitle_provider::get_subtitles_chapters::get_subtitles_chapters(&api_imdb_id, &api_source).await?;   Ok(output_ok)
                     })().await)
                 } })
@@ -965,7 +974,7 @@ fn wire__crate__method__watch_state__get_watch_state__get_watch_state_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "get_watch_state",
             port: Some(port_),
@@ -984,15 +993,17 @@ fn wire__crate__method__watch_state__get_watch_state__get_watch_state_impl(
             let api_watch_state_key =
                 <crate::method::watch_state::WatchStateKey>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
+            move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
+                    (move || async move {
                         let output_ok =
                             crate::method::watch_state::get_watch_state::get_watch_state(
                                 api_watch_state_key,
-                            )?;
+                            )
+                            .await?;
                         Ok(output_ok)
-                    })(),
+                    })()
+                    .await,
                 )
             }
         },
@@ -1249,7 +1260,7 @@ fn wire__crate__method__subtitle_provider__install_subtitle__install_subtitle_im
             let api_link = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, String>(
                     (move || async move {
                         let output_ok =
                             crate::method::subtitle_provider::install_subtitle::install_subtitle(
@@ -1455,7 +1466,7 @@ fn wire__crate__method__subtitle_provider__remove_subtitles__remove_subtitles_im
             let api_subtitle_id = <u64>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, String>(
                     (move || async move {
                         let output_ok =
                             crate::method::subtitle_provider::remove_subtitles::remove_subtitles(
@@ -1583,7 +1594,7 @@ fn wire__crate__method__subtitle_provider__search_subtitles__search_subtitles_im
             let api_source = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, String>(
                     (move || async move {
                         let output_ok =
                             crate::method::subtitle_provider::search_subtitles::search_subtitles(
@@ -2079,7 +2090,7 @@ const _: fn() = || {
 // Section: related_funcs
 
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc<Database>>
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>
 );
 
 // Section: dart2rust
@@ -2092,11 +2103,11 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
-impl SseDecode for Arc<Database> {
+impl SseDecode for Connection {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc<Database>>,
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
@@ -2183,7 +2194,7 @@ impl SseDecode for std::collections::HashMap<u64, u64> {
 }
 
 impl SseDecode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc<Database>>>
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3319,16 +3330,16 @@ fn pde_ffi_dispatcher_sync_impl(
 // Section: rust2dart
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Arc<Database>> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<Connection> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
             .into_dart()
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Arc<Database>> {}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Connection> {}
 
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Arc<Database>>> for Arc<Database> {
-    fn into_into_dart(self) -> FrbWrapper<Arc<Database>> {
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Connection>> for Connection {
+    fn into_into_dart(self) -> FrbWrapper<Connection> {
         self.into()
     }
 }
@@ -4121,10 +4132,10 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
-impl SseEncode for Arc<Database> {
+impl SseEncode for Connection {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
+        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
     }
 }
 
@@ -4203,7 +4214,7 @@ impl SseEncode for std::collections::HashMap<u64, u64> {
 }
 
 impl SseEncode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc<Database>>>
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5042,17 +5053,17 @@ mod io {
     flutter_rust_bridge::frb_generated_boilerplate_io!();
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_recombox_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+    pub extern "C" fn frbgen_recombox_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
         ptr: *const std::ffi::c_void,
     ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>::increment_strong_count(ptr as _);
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>::increment_strong_count(ptr as _);
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_recombox_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+    pub extern "C" fn frbgen_recombox_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
         ptr: *const std::ffi::c_void,
     ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>::decrement_strong_count(ptr as _);
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>::decrement_strong_count(ptr as _);
     }
 }
 #[cfg(not(target_family = "wasm"))]
@@ -5081,17 +5092,17 @@ mod web {
     flutter_rust_bridge::frb_generated_boilerplate_web!();
 
     #[wasm_bindgen]
-    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
         ptr: *const std::ffi::c_void,
     ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>::increment_strong_count(ptr as _);
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>::increment_strong_count(ptr as _);
     }
 
     #[wasm_bindgen]
-    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerArcDatabase(
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
         ptr: *const std::ffi::c_void,
     ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Arc < Database >>>::decrement_strong_count(ptr as _);
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Connection>>::decrement_strong_count(ptr as _);
     }
 }
 #[cfg(target_family = "wasm")]

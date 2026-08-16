@@ -10,13 +10,16 @@ pub struct _SearchData{
   pub link: String
 }
 
-pub async fn search_subtitles(imdb_id: &str, source: &str) -> anyhow::Result<Option<SearchData>> {
+pub async fn search_subtitles(imdb_id: &str, source: &str) -> anyhow::Result<Option<SearchData>, String> {
   
   let params = SearchParams {
     imdb_id: imdb_id.to_string(),
-    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or(anyhow::anyhow!("Invalid source"))?,
+    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or("Invalid source")?,
   };
  
-  recombox_subtitle_provider::search::new(&params).await
+  let result = recombox_subtitle_provider::search::new(&params).await
+    .map_err(|e| e.to_string())?;
+
+  Ok(result)
 
 }

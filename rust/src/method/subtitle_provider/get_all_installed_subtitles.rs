@@ -15,8 +15,9 @@ pub struct _GetAllInstalledSubtitlesData{
 }
 
 
-pub async fn get_all_installed_subtitles() -> anyhow::Result<Vec<GetAllInstalledSubtitlesData>> {
-  let settings = Settings::get()?;
+pub async fn get_all_installed_subtitles() -> Result<Vec<GetAllInstalledSubtitlesData>, String> {
+  let settings = Settings::get()
+    .map_err(|e| e.to_string())?;
 
   let appdata_dir = &settings.paths.app_support_dir;
   let subtitle_directory = PathBuf::from(appdata_dir)
@@ -27,6 +28,9 @@ pub async fn get_all_installed_subtitles() -> anyhow::Result<Vec<GetAllInstalled
   let manager = recombox_subtitle_provider::manage_subtitle::SubtitleDatabaseManager{
     subtitle_directory
   };
-  manager.get_all_installed().await
+  let result = manager.get_all_installed().await
+    .map_err(|e| e.to_string())?;
+
+  Ok(result)
 
 }
