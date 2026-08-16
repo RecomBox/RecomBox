@@ -16,8 +16,9 @@ pub struct _GetInstalledSubtitlesData{
 pub async fn get_installed_subtitles(
   source: &str,
   id: &str,
-) -> anyhow::Result<HashMap<u64, GetInstalledSubtitlesData>> {
-  let settings = Settings::get()?;
+) -> anyhow::Result<HashMap<u64, GetInstalledSubtitlesData>, String> {
+  let settings = Settings::get()
+    .map_err(|e| e.to_string())?;
 
   let appdata_dir = &settings.paths.app_support_dir;
   let subtitle_directory = PathBuf::from(appdata_dir)
@@ -30,10 +31,13 @@ pub async fn get_installed_subtitles(
   };
 
   let params = GetInstalledSubtitlesParams{
-    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or(anyhow::anyhow!("Invalid source"))?,
+    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or("Invalid source".to_string())?,
     id: id.to_string(),
   };
 
-  manager.get_installed(&params).await
+  let result = manager.get_installed(&params).await
+    .map_err(|e| e.to_string())?;
+
+  Ok(result)
 
 }

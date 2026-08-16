@@ -1,39 +1,31 @@
-
-use redb::{ReadableDatabase};
-use serde_json::from_slice;
-
-
-use super::{get_db, CATEGORY_AND_ITEM_TABLE, FavoriteItemInfo};
+use super::{get_db, rusqlite, FavoriteItemInfo};
 
 pub async fn get_all_item_by_category_id(category_id: u64) -> Result<Vec<FavoriteItemInfo>, String> {
-    let db = get_db()?;
+    let db = get_db().await?;
+    let cat_id = category_id as i64;
 
-    let read_txn = db.begin_read()
+    let items = db
+        .call(move |conn| -> Result<Vec<FavoriteItemInfo>, rusqlite::Error> {
+            let mut stmt = conn.prepare(
+                "SELECT source, item_id FROM category_item WHERE category_id = ?1",
+            )?;
+
+            let rows = stmt.query_map(rusqlite::params![cat_id], |row| {
+                Ok(FavoriteItemInfo {
+                    source: row.get(0)?,
+                    id: row.get(1)?,
+                })
+            })?;
+
+            let mut items = Vec::new();
+            for row in rows {
+                items.push(row?);
+            }
+
+            Ok(items)
+        })
+        .await
         .map_err(|e| e.to_string())?;
-
-    let cat_item_table = match read_txn.open_multimap_table(CATEGORY_AND_ITEM_TABLE) {
-        Ok(t) => t,
-        Err(_) => return Ok(Vec::new()),
-    };
-
-    let mut items: Vec<FavoriteItemInfo> = Vec::new();
-
-    // MultimapValue is iterable
-    let values = cat_item_table.get(&category_id).map_err(|e| e.to_string())?;
-
-    for entry in values {
-        let item_val = entry.map_err(|e| e.to_string())?;
-
-        let decoded_item: [String;2] = from_slice(item_val.value())
-            .map_err(|e| e.to_string())?;
-        
-        let new_item = FavoriteItemInfo {
-            source: decoded_item[0].clone(),
-            id: decoded_item[1].clone(),
-        };
-        
-        items.push(new_item);
-    }
 
     Ok(items)
 }

@@ -1,51 +1,39 @@
-use redb::{ReadableDatabase};
-use serde_json::from_slice;
-
-
-use super::{get_db, DOWNLOAD_STATUS_TABLE, DownloadItemKey, DownloadStatus};
+use super::{get_db, rusqlite, DownloadItemKey, DownloadStatus};
 
 pub async fn get_download_status(
     download_item_key: &DownloadItemKey,
 ) -> Result<Option<DownloadStatus>, String> {
-    let db = get_db()?;
-    let read_txn = db.begin_read().map_err(|e| e.to_string())?;
+    let db = get_db().await?;
 
-    let table = match read_txn.open_table(DOWNLOAD_STATUS_TABLE) {
-        Ok(t) => t,
-        Err(e) => {
-            println!("[{}:{}] {}", file!(), line!(), e);
-            return Ok(None);
-        },
-    };
+    let source = download_item_key.source.clone();
+    let id = download_item_key.id.clone();
+    let season_index = download_item_key.season_index as i64;
+    let episode_index = download_item_key.episode_index as i64;
 
-    // Encode the key as an array (same style as add_download)
-    let encoded_key = serde_json::to_vec(&[
-        download_item_key.source.clone(),
-        download_item_key.id.clone(),
-        download_item_key.season_index.to_string(),
-        download_item_key.episode_index.to_string(),
-    ])
-    .map_err(|e| e.to_string())?;
+    let value = db
+        .call(move |conn| -> Result<Option<DownloadStatus>, rusqlite::Error> {
+            let result = conn.query_row(
+                "SELECT progress_size, total_size, paused, done FROM download_status
+                 WHERE source = ?1 AND item_id = ?2 AND season_index = ?3 AND episode_index = ?4",
+                rusqlite::params![source, id, season_index, episode_index],
+                |row| {
+                    Ok(DownloadStatus {
+                        progress_size: row.get::<_, i64>(0)? as u64,
+                        total_size: row.get::<_, i64>(1)? as u64,
+                        paused: row.get(2)?,
+                        done: row.get(3)?,
+                    })
+                },
+            );
 
-    // Lookup the value
-    let value = match table.get(encoded_key.as_slice()).map_err(|e| e.to_string())? {
-        Some(e) => e,
-        None => return Ok(None),
-    };
-
-
-    let status_parts: Vec<String> = from_slice(value.value())
+            match result {
+                Ok(status) => Ok(Some(status)),
+                Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+                Err(e) => Err(e),
+            }
+        })
+        .await
         .map_err(|e| e.to_string())?;
 
-
-    let state = DownloadStatus {
-        progress_size: status_parts[0].parse::<u64>().map_err(|e| e.to_string())?,
-        total_size: status_parts[1].parse::<u64>().map_err(|e| e.to_string())?,
-        paused: status_parts[2].parse::<bool>().map_err(|e| e.to_string())?,
-        done: status_parts[3].parse::<bool>().map_err(|e| e.to_string())?,
-    };
-
-    return Ok(Some(state));
-
-    
+    return Ok(value);
 }

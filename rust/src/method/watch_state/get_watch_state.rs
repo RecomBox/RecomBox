@@ -1,46 +1,35 @@
 use anyhow::{Context, Result};
-use serde_json::{to_vec, from_slice};
-use redb::{ReadableDatabase};
 
-use super::{get_db, WATCH_STATE_TABLE, WatchStateKey, WatchStateValue};
+use super::{get_db, rusqlite, WatchStateKey, WatchStateValue};
 
-pub fn get_watch_state(
-    watch_state_key: WatchStateKey
-) -> Result<Option<WatchStateValue>> {
-    let db = get_db().map_err(|e| anyhow::anyhow!(e))?;
-    
-    let read_txn = db.begin_read()
-        .context("Failed to begin read transaction")?;
+pub async fn get_watch_state(watch_state_key: WatchStateKey) -> Result<Option<WatchStateValue>> {
+    let db = get_db().await.map_err(|e| anyhow::anyhow!(e))?;
 
-    let table = match read_txn.open_table(WATCH_STATE_TABLE)
-        .context("Failed to open table") {
-            Ok(table) => table,
-            Err(_) => return Ok(None),
-        };
+    let source = watch_state_key.source;
+    let id = watch_state_key.id;
+    let season_index = watch_state_key.season_index as i64;
+    let episode_index = watch_state_key.episode_index as i64;
 
-    let encoded_key = to_vec(&[
-        watch_state_key.source.as_str(),
-        watch_state_key.id.as_str(),
-        watch_state_key.season_index.to_string().as_str(),
-        watch_state_key.episode_index.to_string().as_str(),
-    ]).context("Failed to encode lookup key")?;
+    let value = db
+        .call(move |conn| -> Result<Option<Option<u64>>, rusqlite::Error> {
+            let result = conn.query_row(
+                "SELECT position FROM watch_state
+                 WHERE source = ?1 AND item_id = ?2 AND season_index = ?3 AND episode_index = ?4",
+                rusqlite::params![source, id, season_index, episode_index],
+                |row| {
+                    let position: Option<i64> = row.get(0)?;
+                    Ok(position.map(|p| p as u64))
+                },
+            );
 
-    let result = table.get(encoded_key.as_slice())
+            match result {
+                Ok(position) => Ok(Some(position)),
+                Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+                Err(e) => Err(e),
+            }
+        })
+        .await
         .context("Database read error")?;
 
-    match result {
-        Some(guard) => {
-            let encoded_value = guard.value();
-            
-            let decoded_vec: Vec<u64> = from_slice(encoded_value)
-                .context("Failed to decode watch state value")?;
-
-            
-            return Ok(Some(WatchStateValue { 
-                position: decoded_vec.get(0).copied(),
-            }));
-            
-        },
-        None => return Ok(None),
-    }
+    Ok(value.map(|position| WatchStateValue { position }))
 }

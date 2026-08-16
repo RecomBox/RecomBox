@@ -9,13 +9,16 @@ pub struct _ChapterData{
 }
 
 
-pub async fn get_subtitles_chapters(imdb_id: &str, source: &str) -> anyhow::Result<Vec<ChapterData>> {
+pub async fn get_subtitles_chapters(imdb_id: &str, source: &str) -> anyhow::Result<Vec<ChapterData>, String> {
   
   let params = GetChaptersParams{
     imdb_id: imdb_id.to_string(),
-    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or(anyhow::anyhow!("Invalid source"))?,
+    source: recombox_subtitle_provider::global_types::Source::from_str(source).ok_or("Invalid source".to_string())?,
   };
 
-  recombox_subtitle_provider::get_chapters::new(&params).await
+  let result = recombox_subtitle_provider::get_chapters::new(&params).await
+    .map_err(|e| e.to_string())?;
+
+  Ok(result)
 
 }

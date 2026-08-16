@@ -1,36 +1,46 @@
-use serde_json::to_vec;
-
-use super::{get_db, LAST_WATCH_TORRENT_TABLE, LastWatchTorrentInfo};
-
+use super::{get_db, rusqlite, LastWatchTorrentInfo};
 
 pub async fn set_last_watch_torrent(
-    source: &str, 
-    id: &str, 
-    season_index: u64, 
+    source: &str,
+    id: &str,
+    season_index: u64,
     episode_index: u64,
-    last_watch_torrent_info: LastWatchTorrentInfo
+    last_watch_torrent_info: LastWatchTorrentInfo,
 ) -> Result<(), String> {
-    let db = get_db()?;
-    
-    let write_txn = db.begin_write()
-        .map_err(|e| e.to_string())?;
+    let db = get_db().await?;
 
-    {
-        let mut table = write_txn.open_table(LAST_WATCH_TORRENT_TABLE)
-            .map_err(|e| e.to_string())?;
-        
-        let encoded_key = to_vec(&[source,id,season_index.to_string().as_str(),episode_index.to_string().as_str()])
-            .map_err(|e| e.to_string())?;
+    let source_owned = source.to_string();
+    let id_owned = id.to_string();
+    let season = season_index as i64;
+    let episode = episode_index as i64;
+    let file_id = last_watch_torrent_info.file_id as i64;
+    let torrent_source = last_watch_torrent_info.torrent_source;
+    let mime_type = last_watch_torrent_info.mime_type;
 
-        let encoded_value = to_vec(&last_watch_torrent_info)
-            .map_err(|e| e.to_string())?;
+    db.call(move |conn| -> Result<(), rusqlite::Error> {
+        conn.execute(
+            "INSERT INTO last_watch_torrent
+                (source, item_id, season_index, episode_index, torrent_source, file_id, mime_type)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+             ON CONFLICT (source, item_id, season_index, episode_index)
+             DO UPDATE SET
+                torrent_source = excluded.torrent_source,
+                file_id        = excluded.file_id,
+                mime_type      = excluded.mime_type",
+            rusqlite::params![
+                source_owned,
+                id_owned,
+                season,
+                episode,
+                torrent_source,
+                file_id,
+                mime_type,
+            ],
+        )?;
+        Ok(())
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
-        table.insert(encoded_key.as_slice(), encoded_value.as_slice())
-            .map_err(|e| e.to_string())?;
-
-    }
-    write_txn.commit()
-        .map_err(|e| e.to_string())?;
-    
     return Ok(());
 }

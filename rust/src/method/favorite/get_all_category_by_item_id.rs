@@ -1,39 +1,37 @@
 use std::collections::HashMap;
-use redb::{ReadableDatabase};
-use serde_json::{to_vec};
 
-use super::{get_db, CATEGORY_TABLE, ITEM_AND_CATEGORY_TABLE, CategoryMap};
+use super::{get_db, rusqlite, CategoryMap};
 
-pub async fn get_all_category_by_item_id(source:&str, id: &str) -> Result<CategoryMap, String> {
-    let db = get_db()?;
+pub async fn get_all_category_by_item_id(source: &str, id: &str) -> Result<CategoryMap, String> {
+    let db = get_db().await?;
+    let source_owned = source.to_string();
+    let id_owned = id.to_string();
 
-    let read_txn = db.begin_read()
+    let map = db
+        .call(move |conn| -> Result<HashMap<u64, String>, rusqlite::Error> {
+            let mut stmt = conn.prepare(
+                "SELECT c.id, c.name
+                 FROM category_item ci
+                 JOIN category c ON c.id = ci.category_id
+                 WHERE ci.source = ?1 AND ci.item_id = ?2",
+            )?;
+
+            let rows = stmt.query_map(rusqlite::params![source_owned, id_owned], |row| {
+                let id: i64 = row.get(0)?;
+                let name: String = row.get(1)?;
+                Ok((id as u64, name))
+            })?;
+
+            let mut map = HashMap::new();
+            for row in rows {
+                let (id, name) = row?;
+                map.insert(id, name);
+            }
+
+            Ok(map)
+        })
+        .await
         .map_err(|e| e.to_string())?;
-
-    let item_cat_table = match read_txn.open_multimap_table(ITEM_AND_CATEGORY_TABLE) {
-        Ok(t) => t,
-        Err(_) => return Ok(CategoryMap(HashMap::new())),
-    };
-    let cat_table = match read_txn.open_table(CATEGORY_TABLE) {
-        Ok(t) => t,
-        Err(_) => return Ok(CategoryMap(HashMap::new())),
-    };
-
-    let mut map: HashMap<u64, String> = HashMap::new();
-
-    let encoded_key = to_vec(&[source,id])
-        .map_err(|e| e.to_string())?;
-
-    // MultimapValue is iterable
-    let values = item_cat_table.get(encoded_key.as_slice()).map_err(|e| e.to_string())?;
-
-    for entry in values {
-        let cat_id = entry.map_err(|e| e.to_string())?;
-
-        if let Some(name_val) = cat_table.get(cat_id.value()).map_err(|e| e.to_string())? {
-            map.insert(cat_id.value(), name_val.value().to_string());
-        }
-    }
 
     Ok(CategoryMap(map))
 }

@@ -10,8 +10,11 @@ pub struct _SubtitleData{
 }
 
 
-pub async fn get_subtitles(link: &str) -> anyhow::Result<HashMap<String, Vec<SubtitleData>>> {
+pub async fn get_subtitles(link: &str) -> anyhow::Result<HashMap<String, Vec<SubtitleData>>, String> {
   
-  recombox_subtitle_provider::get_subtitles::new(link).await
+  let result = recombox_subtitle_provider::get_subtitles::new(link).await
+    .map_err(|e| e.to_string())?;
+
+  Ok(result)
 
 }

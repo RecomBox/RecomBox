@@ -7,8 +7,9 @@ import '../frb_generated.dart';
 import 'download_provider.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<ArcDatabase> getDb() =>
-    RustLib.instance.api.crateMethodWatchStateGetDb();
+// These functions are ignored because they are not marked as `pub`: `get_db_path`
+
+Future<Connection> getDb() => RustLib.instance.api.crateMethodWatchStateGetDb();
 
 Future<String> getWatchStateDbPath() =>
     RustLib.instance.api.crateMethodWatchStateGetWatchStateDbPath();

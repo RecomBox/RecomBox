@@ -1,67 +1,52 @@
 use chrono::Utc;
-use serde_json::{to_vec, from_slice};
-use redb::{ReadableTableMetadata}; 
 
-use super::{
-    get_db, WATCH_STATE_TABLE, WATCH_STATE_ORDER_TABLE, 
-    WatchStateKey, WatchStateValue
-};
+use super::{get_db, rusqlite, WatchStateKey, WatchStateValue};
 
 pub async fn set_watch_state(
     watch_state_key: WatchStateKey,
-    watch_state_value: WatchStateValue
+    watch_state_value: WatchStateValue,
 ) -> Result<(), String> {
-    let db = get_db()?;
-    let max_history: u64 = 500;
+    let db = get_db().await?;
+    let max_history: i64 = 500;
 
-    let encoded_key = to_vec(&[
-        watch_state_key.source.as_str(),
-        watch_state_key.id.as_str(),
-        watch_state_key.season_index.to_string().as_str(),
-        watch_state_key.episode_index.to_string().as_str(),
-    ]).map_err(|e| e.to_string())?;
+    let source = watch_state_key.source;
+    let id = watch_state_key.id;
+    let season_index = watch_state_key.season_index as i64;
+    let episode_index = watch_state_key.episode_index as i64;
+    let position: Option<i64> = watch_state_value.position.map(|p| p as i64);
+    let now = Utc::now().timestamp();
 
-    let encoded_value = to_vec(&[
-        &watch_state_value.position,
-    ]).map_err(|e| e.to_string())?;
+    db.call(move |conn| -> Result<(), rusqlite::Error> {
+        let tx = conn.transaction()?;
 
+        // -> Prune the oldest entries once history reaches max_history, mirroring the
+        //    previous redb order-table eviction.
+        let count: i64 = tx.query_row("SELECT COUNT(*) FROM watch_state", [], |row| row.get(0))?;
 
-    let write_txn = db.begin_write().map_err(|e| e.to_string())?;
-
-    {
-        let mut state_table = write_txn.open_table(WATCH_STATE_TABLE).map_err(|e| e.to_string())?;
-        let mut order_table = write_txn.open_table(WATCH_STATE_ORDER_TABLE).map_err(|e| e.to_string())?;
-
-        // -> Get the oldest state from order_table and remove it if it reach max_history.
-        while state_table.len().map_err(|e| e.to_string())? >= max_history {
-
-            if let Some(oldest_entry) = order_table.pop_first().map_err(|e| e.to_string())? {
-                let key_info: WatchStateKey = from_slice(oldest_entry.1.value())
-                    .map_err(|e| e.to_string())?;
-                
-                let key_to_prune = to_vec(&[
-                    key_info.source.as_str(),
-                    key_info.id.as_str(),
-                    key_info.season_index.to_string().as_str(),
-                    key_info.episode_index.to_string().as_str(),
-                ]).map_err(|e| e.to_string())?;
-
-                state_table.remove(key_to_prune.as_slice()).map_err(|e| e.to_string())?;
-            } else {
-                break; 
-            }
+        if count >= max_history {
+            let to_prune = count - max_history + 1;
+            tx.execute(
+                "DELETE FROM watch_state WHERE rowid IN (
+                    SELECT rowid FROM watch_state ORDER BY updated_at ASC LIMIT ?1
+                )",
+                rusqlite::params![to_prune],
+            )?;
         }
         // <-
 
-        state_table.insert(encoded_key.as_slice(), encoded_value.as_slice())
-            .map_err(|e| e.to_string())?;
+        tx.execute(
+            "INSERT INTO watch_state (source, item_id, season_index, episode_index, position, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+             ON CONFLICT (source, item_id, season_index, episode_index)
+             DO UPDATE SET position = excluded.position, updated_at = excluded.updated_at",
+            rusqlite::params![source, id, season_index, episode_index, position, now],
+        )?;
 
-        let timestamp = Utc::now().timestamp() as u64;
-        order_table.insert(timestamp, encoded_key.as_slice())
-            .map_err(|e| e.to_string())?;
-    }
+        tx.commit()?;
+        Ok(())
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
-    write_txn.commit().map_err(|e| e.to_string())?;
-    
     Ok(())
 }
