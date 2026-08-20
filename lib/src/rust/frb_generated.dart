@@ -122,7 +122,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 438034665;
+  int get rustContentHash => -1341185410;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -342,6 +342,12 @@ abstract class RustLibApi extends BaseApi {
           required String id,
           required BigInt seasonIndex,
           required BigInt episodeIndex});
+
+  Future<void>
+      crateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProvider(
+          {required String source,
+          required String id,
+          required int selectedProvider});
 
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_Connection;
@@ -2042,6 +2048,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             argNames: ["source", "id", "seasonIndex", "episodeIndex"],
           );
 
+  @override
+  Future<void>
+      crateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProvider(
+          {required String source,
+          required String id,
+          required int selectedProvider}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(source, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_u_32(selectedProvider, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 59, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_String,
+      ),
+      constMeta:
+          kCrateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProviderConstMeta,
+      argValues: [source, id, selectedProvider],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProviderConstMeta =>
+          const TaskConstMeta(
+            debugName: "view_content_info_update_selected_provider",
+            argNames: ["source", "id", "selectedProvider"],
+          );
+
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_Connection => wire
           .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection;
@@ -2209,6 +2248,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int dco_decode_box_autoadd_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
   BigInt dco_decode_box_autoadd_u_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_u_64(raw);
@@ -2324,12 +2369,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ExternalID dco_decode_external_id(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return ExternalID(
       mal: dco_decode_opt_String(arr[0]),
       kitsu: dco_decode_opt_String(arr[1]),
       imdb: dco_decode_opt_String(arr[2]),
+      tmdb: dco_decode_opt_String(arr[3]),
+      thetvdb: dco_decode_opt_String(arr[4]),
     );
   }
 
@@ -2637,6 +2684,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? dco_decode_opt_box_autoadd_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_u_32(raw);
+  }
+
+  @protected
   BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_u_64(raw);
@@ -2915,8 +2968,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ViewContentInfo dco_decode_view_content_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 16)
-      throw Exception('unexpected arr length: expect 16 but see ${arr.length}');
+    if (arr.length != 17)
+      throw Exception('unexpected arr length: expect 17 but see ${arr.length}');
     return ViewContentInfo(
       source: dco_decode_String(arr[0]),
       externalId: dco_decode_external_id(arr[1]),
@@ -2934,6 +2987,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       lastWatchSeasonIndex: dco_decode_opt_box_autoadd_u_64(arr[13]),
       lastWatchEpisodeIndex: dco_decode_opt_box_autoadd_u_64(arr[14]),
       lastUpdate: dco_decode_opt_String(arr[15]),
+      selectedProvider: dco_decode_opt_box_autoadd_u_32(arr[16]),
     );
   }
 
@@ -3128,6 +3182,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int sse_decode_box_autoadd_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_u_32(deserializer));
+  }
+
+  @protected
   BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_u_64(deserializer));
@@ -3233,7 +3293,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_mal = sse_decode_opt_String(deserializer);
     var var_kitsu = sse_decode_opt_String(deserializer);
     var var_imdb = sse_decode_opt_String(deserializer);
-    return ExternalID(mal: var_mal, kitsu: var_kitsu, imdb: var_imdb);
+    var var_tmdb = sse_decode_opt_String(deserializer);
+    var var_thetvdb = sse_decode_opt_String(deserializer);
+    return ExternalID(
+        mal: var_mal,
+        kitsu: var_kitsu,
+        imdb: var_imdb,
+        tmdb: var_tmdb,
+        thetvdb: var_thetvdb);
   }
 
   @protected
@@ -3681,6 +3748,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_u_32(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -3954,6 +4032,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_lastWatchEpisodeIndex =
         sse_decode_opt_box_autoadd_u_64(deserializer);
     var var_lastUpdate = sse_decode_opt_String(deserializer);
+    var var_selectedProvider = sse_decode_opt_box_autoadd_u_32(deserializer);
     return ViewContentInfo(
         source: var_source,
         externalId: var_externalId,
@@ -3970,7 +4049,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         episodes: var_episodes,
         lastWatchSeasonIndex: var_lastWatchSeasonIndex,
         lastWatchEpisodeIndex: var_lastWatchEpisodeIndex,
-        lastUpdate: var_lastUpdate);
+        lastUpdate: var_lastUpdate,
+        selectedProvider: var_selectedProvider);
   }
 
   @protected
@@ -4153,6 +4233,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_u_64(self, serializer);
@@ -4241,6 +4327,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.mal, serializer);
     sse_encode_opt_String(self.kitsu, serializer);
     sse_encode_opt_String(self.imdb, serializer);
+    sse_encode_opt_String(self.tmdb, serializer);
+    sse_encode_opt_String(self.thetvdb, serializer);
   }
 
   @protected
@@ -4600,6 +4688,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_u_32(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -4827,6 +4925,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_u_64(self.lastWatchSeasonIndex, serializer);
     sse_encode_opt_box_autoadd_u_64(self.lastWatchEpisodeIndex, serializer);
     sse_encode_opt_String(self.lastUpdate, serializer);
+    sse_encode_opt_box_autoadd_u_32(self.selectedProvider, serializer);
   }
 
   @protected

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
+import 'package:recombox/src/routes/view/dialogs/select_provider_dialog.dart';
 import 'package:recombox/src/routes/watch/watch.dart';
+import 'package:recombox/src/routes/watch_embed/watch_embed.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
 import 'package:recombox/src/rust/method/favorite.dart';
@@ -10,17 +12,19 @@ import 'package:recombox/src/rust/method/favorite/get_last_watch_torrent.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 class NavigateWatchArgs {
-  final BuildContext context;
-  final Source source;
-  final String viewID;
-  final ExternalID externalID;
-  final String title;
-  final String titleSecondary;
-  final BigInt seasonIndex;
-  final BigInt episodeIndex;
+  BuildContext context;
+  int? provider;
+  Source source;
+  String viewID;
+  ExternalID externalID;
+  String title;
+  String titleSecondary;
+  BigInt seasonIndex;
+  BigInt episodeIndex;
 
-  const NavigateWatchArgs({
+  NavigateWatchArgs({
     required this.context,
+    required this.provider,
     required this.source,
     required this.viewID,
     required this.externalID,
@@ -29,10 +33,56 @@ class NavigateWatchArgs {
     required this.seasonIndex,
     required this.episodeIndex,
   });
+  
 }
 
 Future<void> navigateWatch(NavigateWatchArgs args) async{
   final ctx = args.context;
+
+  if (args.provider == null){
+    showDialog(
+      context: ctx,
+      builder: (ctx) {
+        return SelectProviderDialog(
+          source: args.source,
+          viewID: args.viewID,
+          onApply: (int provider) async {
+            args.provider = provider;
+            await startHandler(args);
+          },
+        );
+      },
+    );
+    
+  }else{
+    await startHandler(args);
+  }
+  
+
+}
+
+Future<void> startHandler(NavigateWatchArgs args) async {
+  final ctx = args.context;
+
+  if (args.provider == 1){
+    WatchEmbedArguments watchEmbedArgs = WatchEmbedArguments(
+      source: args.source,
+      viewID: args.viewID,
+      externalID: args.externalID,
+      season: args.seasonIndex.toInt(),
+      episode: args.episodeIndex.toInt()
+    );
+    if (ctx.mounted){
+      Navigator.pushNamed(
+        ctx,
+        '/watch_embed',
+        arguments: watchEmbedArgs,
+      );
+    }
+    return;
+  }
+  
+  
   // -> Get downloaded
   try{
     final downloadInfo = await getDownload(downloadItemKey: DownloadItemKey(
@@ -127,3 +177,4 @@ Future<void> navigateWatch(NavigateWatchArgs args) async{
   }
 
 }
+

@@ -17,9 +17,11 @@ use crate::utils::settings::Settings;
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct ExternalID {
-    pub mal: Option<String>,
-    pub kitsu: Option<String>,
-    pub imdb: Option<String>
+	pub mal: Option<String>,
+	pub kitsu: Option<String>,
+	pub imdb: Option<String>,
+	pub tmdb: Option<String>,
+	pub thetvdb: Option<String>
 }
 
 
@@ -41,6 +43,7 @@ pub struct ViewContentInfo {
 	pub last_watch_season_index: Option<u64>,
 	pub last_watch_episode_index: Option<u64>,
 	pub last_update: Option<String>,
+	pub selected_provider: Option<u32>,
 }
 
 
@@ -56,6 +59,8 @@ impl ViewContentInfo{
 				.join("favorite")
 				.join(source.to_string())
 				.join(id.to_string());
+			fs::create_dir_all(&cache_dir)
+				.map_err(|e| e.to_string())?;
 			return Ok(cache_dir);
 		}else{
 			
@@ -63,6 +68,8 @@ impl ViewContentInfo{
 				.join("view_content_info")
 				.join(source.to_string())
 				.join(id.to_string());
+			fs::create_dir_all(&app_cache_dir)
+				.map_err(|e| e.to_string())?;
 			return Ok(app_cache_dir);
 
 		}
@@ -111,9 +118,12 @@ impl ViewContentInfo{
 	async fn load_cache(source: &Source, id: &str, check_expire: bool) -> Result<Option<ViewContentInfo>, String> {
 		let cache_dir = ViewContentInfo::get_cache_dir(source, id).await?;
 
-		
 		let file_path = cache_dir
 			.join("data.json");
+
+		if !file_path.exists() {
+			return Ok(None);
+		}
 
 		let raw_data = fs::read_to_string(file_path)
 			.map_err(|e| e.to_string())?;
@@ -177,6 +187,21 @@ impl ViewContentInfo{
 		return Ok(());
 	}
 
+	pub async fn update_selected_provider(source: &str, id: &str, selected_provider: u32) -> Result<(), String> {
+
+		let source = Source::from_str(source);
+		
+		
+		let mut data = ViewContentInfo::load_cache(&source, id, false).await?
+			.ok_or("Not in favorite. Can't update selected provider.")?;
+
+		data.selected_provider = Some(selected_provider);
+
+		ViewContentInfo::save_cache(&source, id, &mut data, false).await?;
+		
+		return Ok(());
+	}
+
 	pub async fn get(source: &str, id: &str, from_cache: bool, check_expire: bool) -> Result<ViewContentInfo, String> {
 
 		let source = Source::from_str(source);
@@ -197,15 +222,15 @@ impl ViewContentInfo{
 		};
 
 
-	let settings = Settings::get()
-	.map_err(|e| e.to_string())?;
+		let settings = Settings::get()
+		.map_err(|e| e.to_string())?;
 
-	let params = view_content::ViewContentParams{
-		tmdb_token: settings.tmdb_rat_token.clone()
-			.ok_or(String::from("Missing tmdb_rat_token"))?,
-		source: source.clone(),
-		id: id.to_string()
-	};
+		let params = view_content::ViewContentParams{
+			tmdb_token: settings.tmdb_rat_token.clone()
+				.ok_or(String::from("Missing tmdb_rat_token"))?,
+			source: source.clone(),
+			id: id.to_string()
+		};
 
 		let data = view_content::new(&params)
 			.await
@@ -214,7 +239,9 @@ impl ViewContentInfo{
 		let external_id = ExternalID{
 			imdb: data.external_id.imdb,
 			kitsu: data.external_id.kitsu,
-			mal: data.external_id.mal
+			mal: data.external_id.mal,
+			tmdb: data.external_id.tmdb,
+			thetvdb: data.external_id.thetvdb
 		};
 
 
@@ -235,6 +262,7 @@ impl ViewContentInfo{
 			last_watch_season_index: available_cache.as_ref().and_then(|f| f.last_watch_season_index),
 			last_watch_episode_index: available_cache.as_ref().and_then(|f| f.last_watch_episode_index),
 			last_update: available_cache.as_ref().and_then(|f| f.last_update.to_owned()),
+			selected_provider: available_cache.as_ref().and_then(|f| f.selected_provider),
 		};
 
 		ViewContentInfo::save_cache(&source, &id,&mut result, true).await?;

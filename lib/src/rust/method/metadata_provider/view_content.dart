@@ -13,18 +13,27 @@ class ExternalID {
   final String? mal;
   final String? kitsu;
   final String? imdb;
+  final String? tmdb;
+  final String? thetvdb;
 
   const ExternalID({
     this.mal,
     this.kitsu,
     this.imdb,
+    this.tmdb,
+    this.thetvdb,
   });
 
   static Future<ExternalID> default_() => RustLib.instance.api
       .crateMethodMetadataProviderViewContentExternalIdDefault();
 
   @override
-  int get hashCode => mal.hashCode ^ kitsu.hashCode ^ imdb.hashCode;
+  int get hashCode =>
+      mal.hashCode ^
+      kitsu.hashCode ^
+      imdb.hashCode ^
+      tmdb.hashCode ^
+      thetvdb.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -33,7 +42,9 @@ class ExternalID {
           runtimeType == other.runtimeType &&
           mal == other.mal &&
           kitsu == other.kitsu &&
-          imdb == other.imdb;
+          imdb == other.imdb &&
+          tmdb == other.tmdb &&
+          thetvdb == other.thetvdb;
 }
 
 class ViewContentInfo {
@@ -53,6 +64,7 @@ class ViewContentInfo {
   final BigInt? lastWatchSeasonIndex;
   final BigInt? lastWatchEpisodeIndex;
   final String? lastUpdate;
+  final int? selectedProvider;
 
   const ViewContentInfo({
     required this.source,
@@ -71,6 +83,7 @@ class ViewContentInfo {
     this.lastWatchSeasonIndex,
     this.lastWatchEpisodeIndex,
     this.lastUpdate,
+    this.selectedProvider,
   });
 
   static Future<ViewContentInfo> get_(
@@ -97,6 +110,14 @@ class ViewContentInfo {
               seasonIndex: seasonIndex,
               episodeIndex: episodeIndex);
 
+  static Future<void> updateSelectedProvider(
+          {required String source,
+          required String id,
+          required int selectedProvider}) =>
+      RustLib.instance.api
+          .crateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProvider(
+              source: source, id: id, selectedProvider: selectedProvider);
+
   @override
   int get hashCode =>
       source.hashCode ^
@@ -114,7 +135,8 @@ class ViewContentInfo {
       episodes.hashCode ^
       lastWatchSeasonIndex.hashCode ^
       lastWatchEpisodeIndex.hashCode ^
-      lastUpdate.hashCode;
+      lastUpdate.hashCode ^
+      selectedProvider.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -136,5 +158,6 @@ class ViewContentInfo {
           episodes == other.episodes &&
           lastWatchSeasonIndex == other.lastWatchSeasonIndex &&
           lastWatchEpisodeIndex == other.lastWatchEpisodeIndex &&
-          lastUpdate == other.lastUpdate;
+          lastUpdate == other.lastUpdate &&
+          selectedProvider == other.selectedProvider;
 }

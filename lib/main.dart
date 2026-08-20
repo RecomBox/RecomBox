@@ -16,6 +16,7 @@ import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/routes/watch/watch.dart';
 import 'dart:async';
 import 'package:recombox/src/global/app_color.dart';
+import 'package:recombox/src/routes/watch_embed/watch_embed.dart';
 import 'src/routes/home/home.dart';
 import 'dart:ui';
 
@@ -104,7 +105,7 @@ class _AppState extends State<App> {
                 "/select_torrent": (context) => const SelectTorrentScreen(),
                 "/select_file": (context) => const SelectFileScreen(),
                 "/watch": (context) => const WatchScreen(),
-                // "/watch_embed": (context) => const WatchEmbedScreen(),
+                "/watch_embed": (context) => const WatchEmbedScreen(),
                 "/favorite": (context) => const FavoriteScreen(),
                 "/download": (context) => const DownloadScreen(),
                 "/settings": (context) => const SettingsScreen(),

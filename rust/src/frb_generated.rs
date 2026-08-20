@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 438034665;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1341185410;
 
 // Section: executor
 
@@ -2045,6 +2045,23 @@ let api_episode_index = <u64>::sse_decode(&mut deserializer);deserializer.end();
                     })().await)
                 } })
 }
+fn wire__crate__method__metadata_provider__view_content__view_content_info_update_selected_provider_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "view_content_info_update_selected_provider", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
+            let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
+            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_source = <String>::sse_decode(&mut deserializer);
+let api_id = <String>::sse_decode(&mut deserializer);
+let api_selected_provider = <u32>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
+                    transform_result_sse::<_, String>((move || async move {
+                         let output_ok = crate::method::metadata_provider::view_content::ViewContentInfo::update_selected_provider(&api_source, &api_id, api_selected_provider).await?;   Ok(output_ok)
+                    })().await)
+                } })
+}
 
 // Section: static_checks
 
@@ -2336,10 +2353,14 @@ impl SseDecode for crate::method::metadata_provider::view_content::ExternalID {
         let mut var_mal = <Option<String>>::sse_decode(deserializer);
         let mut var_kitsu = <Option<String>>::sse_decode(deserializer);
         let mut var_imdb = <Option<String>>::sse_decode(deserializer);
+        let mut var_tmdb = <Option<String>>::sse_decode(deserializer);
+        let mut var_thetvdb = <Option<String>>::sse_decode(deserializer);
         return crate::method::metadata_provider::view_content::ExternalID {
             mal: var_mal,
             kitsu: var_kitsu,
             imdb: var_imdb,
+            tmdb: var_tmdb,
+            thetvdb: var_thetvdb,
         };
     }
 }
@@ -2856,6 +2877,17 @@ impl SseDecode for Option<crate::method::subtitle_provider::search_subtitles::Se
     }
 }
 
+impl SseDecode for Option<u32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<u32>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<u64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3197,6 +3229,7 @@ impl SseDecode for crate::method::metadata_provider::view_content::ViewContentIn
         let mut var_lastWatchSeasonIndex = <Option<u64>>::sse_decode(deserializer);
         let mut var_lastWatchEpisodeIndex = <Option<u64>>::sse_decode(deserializer);
         let mut var_lastUpdate = <Option<String>>::sse_decode(deserializer);
+        let mut var_selectedProvider = <Option<u32>>::sse_decode(deserializer);
         return crate::method::metadata_provider::view_content::ViewContentInfo {
             source: var_source,
             external_id: var_externalId,
@@ -3214,6 +3247,7 @@ impl SseDecode for crate::method::metadata_provider::view_content::ViewContentIn
             last_watch_season_index: var_lastWatchSeasonIndex,
             last_watch_episode_index: var_lastWatchEpisodeIndex,
             last_update: var_lastUpdate,
+            selected_provider: var_selectedProvider,
         };
     }
 }
@@ -3311,6 +3345,7 @@ fn pde_ffi_dispatcher_primary_impl(
 56 => wire__crate__method__favorite__unset_category__unset_category_impl(port, ptr, rust_vec_len, data_len),
 57 => wire__crate__method__metadata_provider__view_content__view_content_info_get_impl(port, ptr, rust_vec_len, data_len),
 58 => wire__crate__method__metadata_provider__view_content__view_content_info_update_last_watch_impl(port, ptr, rust_vec_len, data_len),
+59 => wire__crate__method__metadata_provider__view_content__view_content_info_update_selected_provider_impl(port, ptr, rust_vec_len, data_len),
                         _ => unreachable!(),
                     }
 }
@@ -3556,6 +3591,8 @@ impl flutter_rust_bridge::IntoDart for crate::method::metadata_provider::view_co
             self.mal.into_into_dart().into_dart(),
             self.kitsu.into_into_dart().into_dart(),
             self.imdb.into_into_dart().into_dart(),
+            self.tmdb.into_into_dart().into_dart(),
+            self.thetvdb.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4067,6 +4104,7 @@ impl flutter_rust_bridge::IntoDart
             self.last_watch_season_index.into_into_dart().into_dart(),
             self.last_watch_episode_index.into_into_dart().into_dart(),
             self.last_update.into_into_dart().into_dart(),
+            self.selected_provider.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4320,6 +4358,8 @@ impl SseEncode for crate::method::metadata_provider::view_content::ExternalID {
         <Option<String>>::sse_encode(self.mal, serializer);
         <Option<String>>::sse_encode(self.kitsu, serializer);
         <Option<String>>::sse_encode(self.imdb, serializer);
+        <Option<String>>::sse_encode(self.tmdb, serializer);
+        <Option<String>>::sse_encode(self.thetvdb, serializer);
     }
 }
 
@@ -4733,6 +4773,16 @@ impl SseEncode for Option<crate::method::subtitle_provider::search_subtitles::Se
     }
 }
 
+impl SseEncode for Option<u32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <u32>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<u64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5013,6 +5063,7 @@ impl SseEncode for crate::method::metadata_provider::view_content::ViewContentIn
         <Option<u64>>::sse_encode(self.last_watch_season_index, serializer);
         <Option<u64>>::sse_encode(self.last_watch_episode_index, serializer);
         <Option<String>>::sse_encode(self.last_update, serializer);
+        <Option<u32>>::sse_encode(self.selected_provider, serializer);
     }
 }
 

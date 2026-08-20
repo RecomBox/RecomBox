@@ -4,9 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:recombox/main.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/rust/method/check_update.dart';
-import 'package:recombox/src/rust/method/settings/get_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path/path.dart' as path;
 
 import 'package:ota_update/ota_update.dart';
 
