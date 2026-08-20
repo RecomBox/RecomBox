@@ -9,6 +9,7 @@ import 'package:recombox/src/global/navigate_watch.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
+import 'package:recombox/src/routes/view/dialogs/select_provider_dialog.dart';
 import 'package:recombox/src/routes/view/widgets/episode_tile.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
@@ -571,6 +572,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                     navigateWatch(NavigateWatchArgs(
                                       context: context, 
                                       source: args.source, 
+                                      provider: viewContentInfoResult?.selectedProvider,
                                       viewID: args.id, 
                                       externalID: viewContentInfoResult!.externalId, 
                                       title: viewContentInfoResult!.title, 
@@ -732,6 +734,33 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                     )
                                   ),
                                   child: Icon(Icons.launch),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return SelectProviderDialog(
+                                          source: args.source,
+                                          viewID: args.id,
+                                          onApply: (_) {
+                                            initViewContentInfo();
+                                          },
+                                        );
+                                      },
+                                    );
+
+                                      
+                                  },
+                                  style: TextButton.styleFrom(
+                                    enabledMouseCursor: SystemMouseCursors.click,
+                                    backgroundColor: appColors.secondary,
+                                    foregroundColor: appColors.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    )
+                                  ),
+                                  child: Icon(Icons.settings_rounded),
                                 )
                               ],
                             )
@@ -1188,6 +1217,7 @@ class _ViewState extends State<ViewScreen> with RouteAware {
                                                 : Colors.transparent,
                                               child: EpisodeTile(
                                                 source: args.source,
+                                                provider: viewContentInfoResult!.selectedProvider,
                                                 viewID: args.id,
                                                 externalID: viewContentInfoResult!.externalId,
                                                 title: viewContentInfoResult!.title,

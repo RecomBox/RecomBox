@@ -14,6 +14,7 @@ class EpisodeTile extends StatefulWidget {
   const EpisodeTile({
     super.key,
     required this.source,
+    required this.provider,
     required this.viewID,
     required this.externalID,
     required this.title,
@@ -27,6 +28,7 @@ class EpisodeTile extends StatefulWidget {
   });
 
   final Source source;
+  final int? provider;
   final String viewID;
   final ExternalID externalID;
   final String title;
@@ -137,6 +139,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
                   navigateWatch(NavigateWatchArgs(
                     context: context, 
                     source: widget.source, 
+                    provider: widget.provider,
                     viewID: widget.viewID, 
                     externalID: widget.externalID, 
                     title: widget.title, 

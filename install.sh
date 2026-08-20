@@ -74,7 +74,7 @@ sudo mkdir -p /usr/share/applications/
 cat <<EOF | sudo tee "/usr/share/applications/${BINARY_NAME}.desktop" > /dev/null
 [Desktop Entry]
 Type=Application
-Name=$APP_NAME
+Name=env WPE_DISABLE_DMABUF=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 LIBGL_ALWAYS_SOFTWARE=1 $APP_NAME
 Comment=Open-source cross-platform torrent streaming app
 Exec=$BIN_LINK
 Icon=$INSTALL_DIR/icon.png
