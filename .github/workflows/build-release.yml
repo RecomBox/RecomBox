@@ -113,7 +113,7 @@ jobs:
             # 5. Cleanup temporary folder
             rm -rf Payload
           elif [ "${{ matrix.target }}" == "linux" ]; then
-            sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 libmpv-dev mpv libwebkit2gtk-4.1-dev
+            sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 libmpv-dev mpv libwebkit2gtk-4.1-dev libwpewebkit-1.0-dev
             flutter build linux --release
           elif [ "${{ matrix.target }}" == "macos" ]; then
             flutter build macos --release

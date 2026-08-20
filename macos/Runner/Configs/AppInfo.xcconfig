@@ -12,3 +12,6 @@ PRODUCT_BUNDLE_IDENTIFIER = io.github.RecomBox.RecomBox
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+
+MACOSX_DEPLOYMENT_TARGET = 10.15
+
