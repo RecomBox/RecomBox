@@ -23,8 +23,8 @@ jobs:
             os: macos-latest
           - target: linux
             os: ubuntu-20.04
-          - target: macos
-            os: macos-latest
+          # - target: macos
+          #   os: macos-latest
           - target: windows
             os: windows-2022
 
