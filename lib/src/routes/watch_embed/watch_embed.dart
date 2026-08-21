@@ -440,7 +440,7 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                                 if (uri != null) {
                                   bool isAllow = false;
                                   for (var item in allowedNavigationOrigin){
-                                    if (uri.host.endsWith(item) || !uri.host.startsWith("http")){ 
+                                    if (uri.host.endsWith(item) || !uri.scheme.startsWith("http")){ 
                                       isAllow = true;
                                       break;
                                     } else {
