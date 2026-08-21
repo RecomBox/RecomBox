@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/global/widgets/title_bar.dart';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart'; // for Factory
 // for gesture recognizers
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:recombox/src/rust/method/direct_stream_provider.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
-import 'package:recombox/src/rust/method/watch_state.dart';
-import 'package:recombox/src/rust/method/watch_state/set_watch_state.dart';
 import 'package:window_manager/window_manager.dart';
 
 
@@ -51,7 +51,10 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
   final GlobalKey _webViewKey = GlobalKey();
   
   bool isFullScreen = false;
+  String currentPrefillUrl = "";
   String currentUrl = "";
+  String currentId = "";
+  List<String> allowedNavigationOrigin = [];
 
   // final FocusNode _focusNode = FocusNode();
   bool _ready = false;
@@ -74,18 +77,6 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
           );
 
       debugPrint(args.toString());
-      
-      String url;
-      if (args.source == Source.movies) {
-        url = "https://player.vidlove.cc/embed/movie/${args.externalID.tmdb}?primarycolor=ff4d6d&secondarycolor=c49de8";
-      }else{
-        url = "https://player.vidlove.cc/embed/tv/${args.externalID.tmdb}/${args.season+1}/${args.episode+1}?primarycolor=ff4d6d&secondarycolor=c49de8";
-      }
-    
-      setState(() {
-        currentUrl = url;
-        _ready = true;
-      });
 
       init();
     
@@ -98,17 +89,81 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
 
   
   Future<void> init() async {
-    await setWatchState(
-      watchStateKey: WatchStateKey(
-        source: args.source.name,
-        id: args.viewID,
-        seasonIndex: BigInt.from(args.season),
-        episodeIndex: BigInt.from(args.episode)
-      ),
-      watchStateValue: WatchStateValue(
-        position: BigInt.from(0)
-      )
+    var ctx = context;
+    ViewContentInfo viewContentInfo = await ViewContentInfo.get_(
+      source: args.source.name,
+      id: args.viewID,
+      fromCache: true,
+      checkExpire: false
     );
+
+    if (viewContentInfo.selectedProvider?.id == null && ctx.mounted){
+      Navigator.pop(ctx);
+    }
+
+    DirectStreamProvider streamProvider = await DirectStreamProvider.get_(
+      id: viewContentInfo.selectedProvider!.id!
+    );
+
+
+    String? prefillUrl = await streamProvider.urlSchema.get_(s: args.source.name);
+
+    if (prefillUrl == null && ctx.mounted){
+      Navigator.pop(ctx);
+    }
+
+    String? idType = await streamProvider.idType.get_(s: args.source.name);
+
+    if (idType == null && ctx.mounted){
+      Navigator.pop(ctx);
+    }
+
+    String? externalId = await viewContentInfo.externalId.get_(s: idType!);
+
+    if (externalId == null && ctx.mounted){
+      Navigator.pop(ctx);
+      showToastWidget(
+        Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: appColors.tertiary,
+            borderRadius: BorderRadius.circular(25)
+          ),
+          child: Text(
+            "Unable to find available stream",
+            style: GoogleFonts.nunito(
+              color: appColors.textPrimary,
+              fontSize: 16
+            ),
+          ),
+        ),
+        position: ToastPosition.bottom,
+        dismissOtherToast: true,
+      );
+    }
+
+
+    setState(() {
+      currentId = externalId!;
+      allowedNavigationOrigin = streamProvider.allowedNavigationOrigin;
+      currentPrefillUrl = prefillUrl!;
+      currentUrl = prefillUrl.replaceAll("{id}", currentId)
+        .replaceAll("{season}", (args.season+1).toString())
+        .replaceAll("{episode}", (args.episode+1).toString());
+
+      debugPrint(currentUrl);
+    });
+
+    await ViewContentInfo.updateLastWatch(
+      source: args.source.name, 
+      id: args.viewID, 
+      seasonIndex: BigInt.from(args.season), 
+      episodeIndex: BigInt.from(args.episode)
+    );
+
+    setState(() {
+      _ready = true;
+    });
   }
 
   void onNavigateBack(){
@@ -123,8 +178,13 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
   @override
   void dispose() {
     // Clean up the webview controller
-    webViewController?.dispose();
-    webViewController = null;
+    try{
+      webViewController?.dispose();
+      webViewController = null;
+    }catch(e){
+      debugPrint(e.toString());
+    }
+    
     super.dispose();
   }
 
@@ -161,16 +221,11 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
 
 
     if (availableNext && ctx.mounted){
-      await setWatchState(
-        watchStateKey: WatchStateKey(
-          source: args.source.name,
-          id: args.viewID,
-          seasonIndex: BigInt.from(nextSeasonIndex),
-          episodeIndex: BigInt.from(nextEpisodeIndex)
-        ),
-        watchStateValue: WatchStateValue(
-          position: BigInt.from(0)
-        )
+      await ViewContentInfo.updateLastWatch(
+        source: args.source.name, 
+        id: args.viewID, 
+        seasonIndex: BigInt.from(nextSeasonIndex), 
+        episodeIndex: BigInt.from(nextEpisodeIndex)
       );
 
       setState(() {
@@ -182,7 +237,10 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
           episode: nextEpisodeIndex
         );
 
-        currentUrl = "https://player.vidlove.cc/embed/tv/${args.externalID.tmdb}/${args.season+1}/${args.episode+1}?primarycolor=ff4d6d&secondarycolor=c49de8";
+        currentUrl = currentPrefillUrl.replaceAll("{id}", currentId)
+          .replaceAll("{season}", (nextSeasonIndex+1).toString())
+          .replaceAll("{episode}", (nextEpisodeIndex+1).toString());
+
         webViewController?.loadUrl(urlRequest: URLRequest(url: WebUri(currentUrl)));
 
       });
@@ -212,16 +270,11 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
     
 
     if (availableNext && ctx.mounted){
-      await setWatchState(
-        watchStateKey: WatchStateKey(
-          source: args.source.name,
-          id: args.viewID,
-          seasonIndex: BigInt.from(nextSeasonIndex),
-          episodeIndex: BigInt.from(nextEpisodeIndex)
-        ),
-        watchStateValue: WatchStateValue(
-          position: BigInt.from(0)
-        )
+      await ViewContentInfo.updateLastWatch(
+        source: args.source.name, 
+        id: args.viewID, 
+        seasonIndex: BigInt.from(nextSeasonIndex), 
+        episodeIndex: BigInt.from(nextEpisodeIndex)
       );
 
       setState(() {
@@ -233,7 +286,9 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
           episode: nextEpisodeIndex
         );
 
-        currentUrl = "https://player.vidlove.cc/embed/tv/${args.externalID.tmdb}/${args.season+1}/${args.episode+1}?primarycolor=ff4d6d&secondarycolor=c49de8";
+        currentUrl = currentPrefillUrl.replaceAll("{id}", currentId)
+          .replaceAll("{season}", (nextSeasonIndex+1).toString())
+          .replaceAll("{episode}", (nextEpisodeIndex+1).toString());
         
         webViewController?.loadUrl(urlRequest: URLRequest(url: WebUri(currentUrl)));
         
@@ -329,6 +384,8 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                             return InAppWebView(
                               
                               initialSettings: InAppWebViewSettings(
+                                isInspectable: false,
+                                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/115 Safari/537.36",
                                 mediaPlaybackRequiresUserGesture: false,
                                 allowsInlineMediaPlayback: true,
                                 javaScriptEnabled: true,
@@ -336,6 +393,8 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                                 databaseEnabled: true,        
                                 cacheEnabled: true,            
                                 thirdPartyCookiesEnabled: true, 
+                                allowsPictureInPictureMediaPlayback: true,
+                                iframeAllowFullscreen: true,
                                 
                               ),
                               initialUrlRequest: URLRequest(
@@ -344,10 +403,10 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                               onWebViewCreated: (controller) {
                                 webViewController = controller;
                               },
-                              onLoadStop: (controller, url) {
+                              onLoadStart: (controller, url) async {
                                 debugPrint("Page finished loading: $url");
                               },
-                              onLoadStart: (controller, url) {
+                              onLoadStop: (controller, url) {
                                 debugPrint("Page started loading: $url");
                               },
                               onEnterFullscreen: (controller)async{
@@ -379,12 +438,13 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                               shouldOverrideUrlLoading: (controller, navigationAction) async {
                                 final uri = navigationAction.request.url;
                                 if (uri != null) {
-                                  // Allow only vidlove.cc and its subdomains
-                                  if (uri.host.endsWith("vidlove.cc")) {
-                                    return NavigationActionPolicy.ALLOW;
-                                  } else {
-                                    debugPrint("❌ Blocked navigation to: $uri");
-                                    return NavigationActionPolicy.CANCEL;
+                                  for (var item in allowedNavigationOrigin){
+                                    if (uri.host.endsWith(item) || !item.startsWith("http")){ 
+                                      return NavigationActionPolicy.ALLOW;
+                                    } else {
+                                      debugPrint("❌ Blocked navigation to: $uri");
+                                      return NavigationActionPolicy.CANCEL;
+                                    }
                                   }
                                 }
                                 return NavigationActionPolicy.CANCEL;

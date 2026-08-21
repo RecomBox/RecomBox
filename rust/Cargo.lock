@@ -1994,7 +1994,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -3104,7 +3104,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.41",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -3142,7 +3142,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.61.2",
 ]
@@ -3271,7 +3271,7 @@ dependencies = [
 [[package]]
 name = "recombox_metadata_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_metadata_provider#4ead2f0f8ad15c22e61b5801f80a89b4f5bd872c"
+source = "git+https://github.com/RecomBox/recombox_metadata_provider#e2783de5aff5d3b4a0bd720c493b7bc231933fd1"
 dependencies = [
  "anyhow",
  "chrono",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/types.dart';
+import 'package:recombox/src/routes/view/dialogs/select_direct_stream_provider_dialog.dart';
 import 'dart:math';
 
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
@@ -16,7 +17,7 @@ class SelectProviderDialog extends StatefulWidget {
 
   final Source source;
   final String viewID;
-  final Function(int)? onApply;
+  final Function(SelectedProvider)? onApply;
 
   @override
   State<SelectProviderDialog> createState() => _SelectProviderDialogState();
@@ -25,9 +26,9 @@ class SelectProviderDialog extends StatefulWidget {
 class _SelectProviderDialogState extends State<SelectProviderDialog> {
 
   AppColorsScheme appColors = appColorsNotifier.value;
-  
+  bool _ready = false;
   List<String> providerList = ["Torrent", "Direct Stream"];
-  int selectedProvider = 0;
+  SelectedProvider selectedProvider = SelectedProvider(type: 0);
 
   @override
   void initState() {
@@ -46,7 +47,8 @@ class _SelectProviderDialogState extends State<SelectProviderDialog> {
 
     );
     setState(() {
-      selectedProvider = viewContentInfoResult.selectedProvider??0;
+      selectedProvider = viewContentInfoResult.selectedProvider??SelectedProvider(type: 0);
+      _ready = true;
     });
 
   }
@@ -57,7 +59,6 @@ class _SelectProviderDialogState extends State<SelectProviderDialog> {
   Widget build(BuildContext context) {
     
     
-
     return Dialog(
       backgroundColor: appColors.tertiary,
       shape: RoundedRectangleBorder(
@@ -76,7 +77,7 @@ class _SelectProviderDialogState extends State<SelectProviderDialog> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(15),
                 child: Text(
-                  'Set provider',
+                  'Set Provider',
                   style: GoogleFonts.nunito(
                     color: appColors.textPrimary,
                     fontSize: 28,
@@ -85,112 +86,135 @@ class _SelectProviderDialogState extends State<SelectProviderDialog> {
                   textAlign: TextAlign.start,
                 ),
               ),
-              if (providerList.isNotEmpty)
-                RadioGroup<int>(
-                  groupValue: selectedProvider,
-                  
-                  onChanged: (value) {
-                    setState(() {
-                      selectedProvider = value!;
-                    });
-                  },
-                  // children radios
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < providerList.length; i++)
-                        RadioListTile<int>(
-                          title: Text(
-                            providerList[i],
-                            style: GoogleFonts.nunito(
-                              fontSize: 18,
-                              color: appColors.textPrimary,
+
+              if (_ready) ...[
+                if (providerList.isNotEmpty)
+                  RadioGroup<int>(
+                    groupValue: selectedProvider.type,
+                    
+                    onChanged: (value) {
+                      setState(() {
+                        selectedProvider = SelectedProvider(type: value!);
+                      });
+                    },
+                    // children radios
+                    child: Column(
+                      children: [
+                        for (int i = 0; i < providerList.length; i++)
+                          RadioListTile<int>(
+                            title: Text(
+                              providerList[i],
+                              style: GoogleFonts.nunito(
+                                fontSize: 18,
+                                color: appColors.textPrimary,
+                              ),
+                              textAlign: TextAlign.start,
                             ),
-                            textAlign: TextAlign.start,
+                            value: i,
+                            fillColor: WidgetStateProperty.all(appColors.secondary),
                           ),
-                          value: i,
-                          fillColor: WidgetStateProperty.all(appColors.secondary),
+                        
+                      ],
+                    ),
+                  ),
+
+                if (providerList.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      "No provider found",
+                      style: GoogleFonts.nunito(
+                        color: appColors.textPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  
+
+                Container(
+                  padding: EdgeInsets.all(25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      
+
+                      TextButton(
+                        
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          enabledMouseCursor: SystemMouseCursors.click,
                         ),
+                        child: Text(
+                          "Cancel",
+                          style: GoogleFonts.nunito(
+                            color: appColors.textPrimary,
+                            fontSize: 18,
+                            fontWeight: FontWeight(600),
+                          ),
+                        
+                        ),
+                      ),
+
+                      ElevatedButton(
+                        
+                        onPressed: ()async{
+                          if (selectedProvider.type == 0){
+                            var ctx = context;
+                            await ViewContentInfo.updateSelectedProvider(
+                              source: widget.source.name, 
+                              id: widget.viewID, 
+                              selectedProvider: selectedProvider
+                            );
+                            widget.onApply?.call(selectedProvider);
+                            if (ctx.mounted){
+                              Navigator.pop(ctx);
+                            }
+                          }else{
+                            Navigator.pop(context);
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context, 
+                              builder: (context){
+                                return SelectDirectStreamProviderDialog(
+                                  source: widget.source,
+                                  viewID: widget.viewID,
+                                  onApply: widget.onApply,
+                                );
+                              }
+                            );
+                          }
+                          
+                        },
+                        style: ElevatedButton.styleFrom(
+                          enabledMouseCursor: SystemMouseCursors.click,
+                          backgroundColor: appColors.secondary,
+                          foregroundColor: appColors.primary,
+                        ),
+                        child: Text(
+                          selectedProvider.type == 0 ? "Apply" : "Next",
+                          style: GoogleFonts.nunito(
+                            fontSize: 18,
+                            fontWeight: FontWeight(600),
+                          ),
+                        ),
+                        
+                      ),
                       
                     ],
                   ),
-                ),
+                )
 
-              if (providerList.isEmpty)
+              ],
+              if (!_ready) 
                 Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    "No provider found",
-                    style: GoogleFonts.nunito(
-                      color: appColors.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                    ),
+                  padding: const EdgeInsets.all(15),
+                  child: CircularProgressIndicator(
+                    color: appColors.secondary,
                   ),
                 ),
-                
-
-              Container(
-                padding: EdgeInsets.all(25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    
-
-                    TextButton(
-                      
-                      onPressed: (){
-                        Navigator.pop(context);
-                      },
-                      style: TextButton.styleFrom(
-                        enabledMouseCursor: SystemMouseCursors.click,
-                      ),
-                      child: Text(
-                        "Cancel",
-                        style: GoogleFonts.nunito(
-                          color: appColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight(600),
-                        ),
-                      
-                      ),
-                    ),
-
-                    ElevatedButton.icon(
-                      
-                      onPressed: ()async{
-                        var ctx = context;
-                        await ViewContentInfo.updateSelectedProvider(
-                          source: widget.source.name, 
-                          id: widget.viewID, 
-                          selectedProvider: selectedProvider
-                        );
-                        widget.onApply?.call(selectedProvider);
-                        if (ctx.mounted){
-                          Navigator.pop(ctx);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        enabledMouseCursor: SystemMouseCursors.click,
-                        backgroundColor: appColors.secondary,
-                        foregroundColor: appColors.primary,
-                      ),
-                      icon: Icon(Icons.edit),
-                      label: Text(
-                        "Apply",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18,
-                          fontWeight: FontWeight(600),
-                        ),
-                      ),
-                      
-                    ),
-                    
-                  ],
-                ),
-              )
-
-              
-            
             ],
           ),
         )

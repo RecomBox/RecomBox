@@ -12,6 +12,7 @@ import 'frb_generated.dart';
 import 'method/check_update.dart';
 import 'method/clear_cache.dart';
 import 'method/current_watch.dart';
+import 'method/direct_stream_provider.dart';
 import 'method/download_provider.dart';
 import 'method/download_provider/get_all_download.dart';
 import 'method/download_provider/get_download.dart';
@@ -86,6 +87,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
+  Map<String, DirectStreamProvider>
+      dco_decode_Map_String_direct_stream_provider_None(dynamic raw);
+
+  @protected
   Map<String, InstalledPluginInfo>
       dco_decode_Map_String_installed_plugin_info_None(dynamic raw);
 
@@ -138,6 +143,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DownloadStatus dco_decode_box_autoadd_download_status(dynamic raw);
 
   @protected
+  ExternalID dco_decode_box_autoadd_external_id(dynamic raw);
+
+  @protected
+  IdType dco_decode_box_autoadd_id_type(dynamic raw);
+
+  @protected
   LastWatchTorrentInfo dco_decode_box_autoadd_last_watch_torrent_info(
       dynamic raw);
 
@@ -148,13 +159,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SearchData dco_decode_box_autoadd_search_data(dynamic raw);
 
   @protected
+  SelectedProvider dco_decode_box_autoadd_selected_provider(dynamic raw);
+
+  @protected
   Settings dco_decode_box_autoadd_settings(dynamic raw);
 
   @protected
-  int dco_decode_box_autoadd_u_32(dynamic raw);
+  BigInt dco_decode_box_autoadd_u_64(dynamic raw);
 
   @protected
-  BigInt dco_decode_box_autoadd_u_64(dynamic raw);
+  UrlSchema dco_decode_box_autoadd_url_schema(dynamic raw);
 
   @protected
   BigInt dco_decode_box_autoadd_usize(dynamic raw);
@@ -176,6 +190,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CheckUpdate dco_decode_check_update(dynamic raw);
+
+  @protected
+  DirectStreamProvider dco_decode_direct_stream_provider(dynamic raw);
 
   @protected
   DownloadItemKey dco_decode_download_item_key(dynamic raw);
@@ -211,6 +228,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
+
+  @protected
+  IdType dco_decode_id_type(dynamic raw);
 
   @protected
   InstalledPluginInfo dco_decode_installed_plugin_info(dynamic raw);
@@ -254,6 +274,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(AllDownloadItemKey, List<AllDownloadItemValue>)>
       dco_decode_list_record_all_download_item_key_list_all_download_item_value(
           dynamic raw);
+
+  @protected
+  List<(String, DirectStreamProvider)>
+      dco_decode_list_record_string_direct_stream_provider(dynamic raw);
 
   @protected
   List<(String, InstalledPluginInfo)>
@@ -309,7 +333,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SearchData? dco_decode_opt_box_autoadd_search_data(dynamic raw);
 
   @protected
-  int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+  SelectedProvider? dco_decode_opt_box_autoadd_selected_provider(dynamic raw);
 
   @protected
   BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
@@ -330,6 +354,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (AllDownloadItemKey, List<AllDownloadItemValue>)
       dco_decode_record_all_download_item_key_list_all_download_item_value(
           dynamic raw);
+
+  @protected
+  (String, DirectStreamProvider)
+      dco_decode_record_string_direct_stream_provider(dynamic raw);
 
   @protected
   (String, InstalledPluginInfo) dco_decode_record_string_installed_plugin_info(
@@ -354,6 +382,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SearchData dco_decode_search_data(dynamic raw);
+
+  @protected
+  SelectedProvider dco_decode_selected_provider(dynamic raw);
 
   @protected
   Settings dco_decode_settings(dynamic raw);
@@ -389,6 +420,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  UrlSchema dco_decode_url_schema(dynamic raw);
+
+  @protected
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
@@ -406,6 +440,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Connection
       sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
+          SseDeserializer deserializer);
+
+  @protected
+  Map<String, DirectStreamProvider>
+      sse_decode_Map_String_direct_stream_provider_None(
           SseDeserializer deserializer);
 
   @protected
@@ -470,6 +509,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  ExternalID sse_decode_box_autoadd_external_id(SseDeserializer deserializer);
+
+  @protected
+  IdType sse_decode_box_autoadd_id_type(SseDeserializer deserializer);
+
+  @protected
   LastWatchTorrentInfo sse_decode_box_autoadd_last_watch_torrent_info(
       SseDeserializer deserializer);
 
@@ -480,13 +525,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SearchData sse_decode_box_autoadd_search_data(SseDeserializer deserializer);
 
   @protected
+  SelectedProvider sse_decode_box_autoadd_selected_provider(
+      SseDeserializer deserializer);
+
+  @protected
   Settings sse_decode_box_autoadd_settings(SseDeserializer deserializer);
 
   @protected
-  int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
 
   @protected
-  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
+  UrlSchema sse_decode_box_autoadd_url_schema(SseDeserializer deserializer);
 
   @protected
   BigInt sse_decode_box_autoadd_usize(SseDeserializer deserializer);
@@ -510,6 +559,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CheckUpdate sse_decode_check_update(SseDeserializer deserializer);
+
+  @protected
+  DirectStreamProvider sse_decode_direct_stream_provider(
+      SseDeserializer deserializer);
 
   @protected
   DownloadItemKey sse_decode_download_item_key(SseDeserializer deserializer);
@@ -547,6 +600,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+
+  @protected
+  IdType sse_decode_id_type(SseDeserializer deserializer);
 
   @protected
   InstalledPluginInfo sse_decode_installed_plugin_info(
@@ -594,6 +650,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<(AllDownloadItemKey, List<AllDownloadItemValue>)>
       sse_decode_list_record_all_download_item_key_list_all_download_item_value(
+          SseDeserializer deserializer);
+
+  @protected
+  List<(String, DirectStreamProvider)>
+      sse_decode_list_record_string_direct_stream_provider(
           SseDeserializer deserializer);
 
   @protected
@@ -661,7 +722,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
-  int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+  SelectedProvider? sse_decode_opt_box_autoadd_selected_provider(
+      SseDeserializer deserializer);
 
   @protected
   BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
@@ -682,6 +744,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   (AllDownloadItemKey, List<AllDownloadItemValue>)
       sse_decode_record_all_download_item_key_list_all_download_item_value(
+          SseDeserializer deserializer);
+
+  @protected
+  (String, DirectStreamProvider)
+      sse_decode_record_string_direct_stream_provider(
           SseDeserializer deserializer);
 
   @protected
@@ -709,6 +776,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SearchData sse_decode_search_data(SseDeserializer deserializer);
+
+  @protected
+  SelectedProvider sse_decode_selected_provider(SseDeserializer deserializer);
 
   @protected
   Settings sse_decode_settings(SseDeserializer deserializer);
@@ -746,6 +816,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
+  UrlSchema sse_decode_url_schema(SseDeserializer deserializer);
+
+  @protected
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
@@ -765,6 +838,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
       sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerConnection(
           Connection self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_Map_String_direct_stream_provider_None(
+      Map<String, DirectStreamProvider> self, SseSerializer serializer);
 
   @protected
   void sse_encode_Map_String_installed_plugin_info_None(
@@ -827,6 +904,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       DownloadStatus self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_external_id(
+      ExternalID self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_id_type(IdType self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_last_watch_torrent_info(
       LastWatchTorrentInfo self, SseSerializer serializer);
 
@@ -839,13 +923,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SearchData self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_selected_provider(
+      SelectedProvider self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_settings(Settings self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
+  void sse_encode_box_autoadd_url_schema(
+      UrlSchema self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_usize(BigInt self, SseSerializer serializer);
@@ -870,6 +959,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_check_update(CheckUpdate self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_direct_stream_provider(
+      DirectStreamProvider self, SseSerializer serializer);
 
   @protected
   void sse_encode_download_item_key(
@@ -910,6 +1003,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_id_type(IdType self, SseSerializer serializer);
 
   @protected
   void sse_encode_installed_plugin_info(
@@ -962,6 +1058,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       sse_encode_list_record_all_download_item_key_list_all_download_item_value(
           List<(AllDownloadItemKey, List<AllDownloadItemValue>)> self,
           SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_record_string_direct_stream_provider(
+      List<(String, DirectStreamProvider)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_string_installed_plugin_info(
@@ -1027,7 +1127,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SearchData? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+  void sse_encode_opt_box_autoadd_selected_provider(
+      SelectedProvider? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
@@ -1049,6 +1150,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_record_all_download_item_key_list_all_download_item_value(
       (AllDownloadItemKey, List<AllDownloadItemValue>) self,
       SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_direct_stream_provider(
+      (String, DirectStreamProvider) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_installed_plugin_info(
@@ -1076,6 +1181,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_search_data(SearchData self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_selected_provider(
+      SelectedProvider self, SseSerializer serializer);
 
   @protected
   void sse_encode_settings(Settings self, SseSerializer serializer);
@@ -1112,6 +1221,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_url_schema(UrlSchema self, SseSerializer serializer);
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);

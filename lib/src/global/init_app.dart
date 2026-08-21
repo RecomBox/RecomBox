@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_single_instance/flutter_single_instance.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -114,13 +115,8 @@ Future<void> initApp() async {
 
 
   // -> Webview
-  // if (defaultTargetPlatform == TargetPlatform.windows ||
-  // defaultTargetPlatform == TargetPlatform.macOS ||
-  // defaultTargetPlatform == TargetPlatform.linux) {
-  //   await WebviewManager().initialize();
-  // }else{
-    
-  // }
+  PlatformInAppWebViewController.debugLoggingSettings.enabled = false;
+
   // <-
 
   // -> Torrent Session and Rest Server

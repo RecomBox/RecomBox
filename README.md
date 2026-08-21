@@ -65,11 +65,6 @@ An open-source cross-platform torrent streaming app for Anime, Movies, and TV.
         <img src="https://github.com/user-attachments/assets/9a6c1f38-53e7-46e3-8c4f-3715591c3bd8" alt="Download for IOS" width="250" height="80">
       </a>
     </td>
-    <td>
-      <a href="https://github.com/RecomBox/RecomBox/releases/latest/download/recombox-macos-aarch64.dmg">
-        <img src="https://github.com/user-attachments/assets/bdc45f91-367b-4505-a0a2-4dd5cd02e59c" alt="Download for MacOS" width="250" height="80">
-      </a>
-    </td>
   </tr>
 </table>
 

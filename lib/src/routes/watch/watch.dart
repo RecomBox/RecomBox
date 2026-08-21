@@ -517,7 +517,7 @@ class _WatchState extends State<WatchScreen> {
     if (availableNext && ctx.mounted){
       navigateWatch(NavigateWatchArgs(
         context: ctx, 
-        provider: 0,
+        provider: SelectedProvider(type: 0),
         source: args!.source, 
         viewID: args!.viewID, 
         externalID: args!.externalID, 
@@ -555,7 +555,7 @@ class _WatchState extends State<WatchScreen> {
       
       navigateWatch(NavigateWatchArgs(
         context: ctx, 
-        provider: 0,
+        provider: SelectedProvider(type: 0),
         source: args!.source, 
         viewID: args!.viewID, 
         externalID: args!.externalID, 

@@ -16,4 +16,5 @@ pub mod watch_state;
 pub mod current_watch;
 pub mod subtitle_provider;
 pub mod clear_cache;
+pub mod direct_stream_provider;
 
