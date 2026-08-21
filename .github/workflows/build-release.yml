@@ -13,6 +13,7 @@ jobs:
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
@@ -118,7 +119,7 @@ jobs:
             # 5. Cleanup temporary folder
             rm -rf Payload
           elif [ "${{ matrix.target }}" == "linux" ]; then
-            pacman -Syu --needed --noconfirm base-devel clang cmake ninja pkgconf gtk3 xz mpv webkit2gtk-4.1 wpewebkit libwpe
+            sudo pacman -Syu --needed --noconfirm base-devel clang cmake ninja pkgconf gtk3 xz mpv webkit2gtk-4.1 wpewebkit libwpe
             flutter build linux --release
           elif [ "${{ matrix.target }}" == "macos" ]; then
             flutter build macos --release
