@@ -22,9 +22,13 @@ jobs:
           - target: ios
             os: macos-latest
           - target: linux
-            os: ubuntu-20.04
+            os: ubuntu-latest
+            container:
+              image: archlinux:latest
+
           # - target: macos
           #   os: macos-latest
+          
           - target: windows
             os: windows-2022
 
@@ -114,7 +118,7 @@ jobs:
             # 5. Cleanup temporary folder
             rm -rf Payload
           elif [ "${{ matrix.target }}" == "linux" ]; then
-            sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 libmpv-dev mpv libwebkit2gtk-4.0-dev libwpewebkit-1.0-dev libwpe-1.0-dev
+            sudo pacman -Syu --needed --noconfirm base-devel clang cmake ninja pkgconf gtk3 xz mpv webkit2gtk-4.1 wpewebkit libwpe
             flutter build linux --release
           elif [ "${{ matrix.target }}" == "macos" ]; then
             flutter build macos --release
