@@ -40,7 +40,7 @@
 An open-source cross-platform torrent streaming app for Anime, Movies, and TV.
 
 # ✨ Features
-- **Stream Torrent** seamlessly from various sources without full download.
+- **Stream** seamlessly from various sources without full download.
 - **Track your watch progress** and pick up where you left off.
 - **Download** for offline watching.
 - **Advanced search** for quick content discovery.
