@@ -439,7 +439,7 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                                 final uri = navigationAction.request.url;
                                 if (uri != null) {
                                   for (var item in allowedNavigationOrigin){
-                                    if (uri.host.endsWith(item) || !uri.startsWith("http")){ 
+                                    if (uri.host.endsWith(item) || !uri.host.startsWith("http")){ 
                                       return NavigationActionPolicy.ALLOW;
                                     } else {
                                       debugPrint("❌ Blocked navigation to: $uri");
