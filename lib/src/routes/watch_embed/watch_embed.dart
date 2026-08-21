@@ -438,13 +438,21 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                               shouldOverrideUrlLoading: (controller, navigationAction) async {
                                 final uri = navigationAction.request.url;
                                 if (uri != null) {
+                                  bool isAllow = false;
                                   for (var item in allowedNavigationOrigin){
                                     if (uri.host.endsWith(item) || !uri.host.startsWith("http")){ 
-                                      return NavigationActionPolicy.ALLOW;
+                                      isAllow = true;
+                                      break;
                                     } else {
-                                      debugPrint("❌ Blocked navigation to: $uri");
-                                      return NavigationActionPolicy.CANCEL;
+                                      isAllow = false;
                                     }
+                                  }
+                                  if (isAllow){
+                                    debugPrint("✅ Allowed navigation to: $uri");
+                                    return NavigationActionPolicy.ALLOW;
+                                  }else{
+                                    debugPrint("❌ Blocked navigation to: $uri");
+                                    return NavigationActionPolicy.CANCEL;
                                   }
                                 }
                                 return NavigationActionPolicy.CANCEL;
