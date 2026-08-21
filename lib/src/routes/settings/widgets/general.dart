@@ -153,7 +153,7 @@ class _GeneralState extends State<General> {
       final bytes = await inputFile.readAsBytes();
       await FilePicker.saveFile(
         dialogTitle: 'Please select an output file:',
-        fileName: 'favorite-backup.redb',
+        fileName: 'favorite-backup.sqlite',
         bytes: bytes,
       );
     }else{
@@ -182,7 +182,7 @@ class _GeneralState extends State<General> {
   Future<void> onImportFavorite() async {
     FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['redb'],
+      allowedExtensions: ['sqlite'],
     );
 
     if (result != null) {
@@ -193,7 +193,7 @@ class _GeneralState extends State<General> {
       }
 
       String inputFilePath = result.files.single.path!;
-      if (path.extension(inputFilePath).toLowerCase() != ".redb") {
+      if (path.extension(inputFilePath).toLowerCase() != ".sqlite") {
         showToastWidget(
           Container(
             padding: EdgeInsets.all(15),
@@ -202,7 +202,7 @@ class _GeneralState extends State<General> {
               borderRadius: BorderRadius.circular(25)
             ),
             child: Text(
-              "Invalid file format. Please select a .redb file.",
+              "Invalid file format. Please select a .sqlite file.",
               style: GoogleFonts.nunito(
                 color: appColors.textPrimary,
                 fontSize: 16
@@ -228,7 +228,7 @@ class _GeneralState extends State<General> {
       final bytes = await inputFile.readAsBytes();
       await FilePicker.saveFile(
         dialogTitle: 'Please select an output file:',
-        fileName: 'watch_state-backup.redb',
+        fileName: 'watch_state-backup.sqlite',
         bytes: bytes,
       );
     }else{
@@ -257,7 +257,7 @@ class _GeneralState extends State<General> {
   Future<void> onImportWatchStatus() async {
     FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['redb'], // restrict to .redb files
+      allowedExtensions: ['sqlite'], // restrict to .sqlite files
     );
 
     if (result != null) {
@@ -268,7 +268,7 @@ class _GeneralState extends State<General> {
       }
 
       String inputFilePath = result.files.single.path!;
-      if (path.extension(inputFilePath).toLowerCase() != ".redb") {
+      if (path.extension(inputFilePath).toLowerCase() != ".sqlite") {
         showToastWidget(
           Container(
             padding: EdgeInsets.all(15),
@@ -277,7 +277,7 @@ class _GeneralState extends State<General> {
               borderRadius: BorderRadius.circular(25)
             ),
             child: Text(
-              "Invalid file format. Please select a .redb file.",
+              "Invalid file format. Please select a .sqlite file.",
               style: GoogleFonts.nunito(
                 color: appColors.textPrimary,
                 fontSize: 16

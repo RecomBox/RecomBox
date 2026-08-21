@@ -21,9 +21,29 @@ pub struct ExternalID {
 	pub kitsu: Option<String>,
 	pub imdb: Option<String>,
 	pub tmdb: Option<String>,
-	pub thetvdb: Option<String>
+	pub thetvdb: Option<String>,
+	pub anilist: Option<String>
+}
+impl ExternalID{
+	pub fn get(self, s: &str) -> Option<String> {
+		match s {
+			"mal" => self.mal.clone(),
+			"kitsu" => self.kitsu.clone(),
+			"imdb" => self.imdb.clone(),
+			"tmdb" => self.tmdb.clone(),
+			"thetvdb" => self.thetvdb.clone(),
+			"anilist" => self.anilist.clone(),
+			_ => None
+		}
+	}
 }
 
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SelectedProvider {
+	pub r#type: u32,
+	pub id: Option<String>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ViewContentInfo {
@@ -43,7 +63,7 @@ pub struct ViewContentInfo {
 	pub last_watch_season_index: Option<u64>,
 	pub last_watch_episode_index: Option<u64>,
 	pub last_update: Option<String>,
-	pub selected_provider: Option<u32>,
+	pub selected_provider: Option<SelectedProvider>,
 }
 
 
@@ -187,7 +207,7 @@ impl ViewContentInfo{
 		return Ok(());
 	}
 
-	pub async fn update_selected_provider(source: &str, id: &str, selected_provider: u32) -> Result<(), String> {
+	pub async fn update_selected_provider(source: &str, id: &str, selected_provider: SelectedProvider) -> Result<(), String> {
 
 		let source = Source::from_str(source);
 		
@@ -241,7 +261,8 @@ impl ViewContentInfo{
 			kitsu: data.external_id.kitsu,
 			mal: data.external_id.mal,
 			tmdb: data.external_id.tmdb,
-			thetvdb: data.external_id.thetvdb
+			thetvdb: data.external_id.thetvdb,
+			anilist: data.external_id.anilist
 		};
 
 
@@ -262,7 +283,7 @@ impl ViewContentInfo{
 			last_watch_season_index: available_cache.as_ref().and_then(|f| f.last_watch_season_index),
 			last_watch_episode_index: available_cache.as_ref().and_then(|f| f.last_watch_episode_index),
 			last_update: available_cache.as_ref().and_then(|f| f.last_update.to_owned()),
-			selected_provider: available_cache.as_ref().and_then(|f| f.selected_provider),
+			selected_provider: available_cache.as_ref().and_then(|f| f.selected_provider.clone()),
 		};
 
 		ViewContentInfo::save_cache(&source, &id,&mut result, true).await?;

@@ -13,7 +13,7 @@ import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 
 class NavigateWatchArgs {
   BuildContext context;
-  int? provider;
+  SelectedProvider? provider;
   Source source;
   String viewID;
   ExternalID externalID;
@@ -46,7 +46,7 @@ Future<void> navigateWatch(NavigateWatchArgs args) async{
         return SelectProviderDialog(
           source: args.source,
           viewID: args.viewID,
-          onApply: (int provider) async {
+          onApply: (SelectedProvider provider) async {
             args.provider = provider;
             await startHandler(args);
           },
@@ -64,7 +64,7 @@ Future<void> navigateWatch(NavigateWatchArgs args) async{
 Future<void> startHandler(NavigateWatchArgs args) async {
   final ctx = args.context;
 
-  if (args.provider == 1){
+  if (args.provider?.type == 1){
     WatchEmbedArguments watchEmbedArgs = WatchEmbedArguments(
       source: args.source,
       viewID: args.viewID,

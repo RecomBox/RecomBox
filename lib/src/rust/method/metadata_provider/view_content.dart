@@ -7,7 +7,7 @@ import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `get_cache_dir`, `load_cache`, `save_cache`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
 class ExternalID {
   final String? mal;
@@ -15,6 +15,7 @@ class ExternalID {
   final String? imdb;
   final String? tmdb;
   final String? thetvdb;
+  final String? anilist;
 
   const ExternalID({
     this.mal,
@@ -22,10 +23,14 @@ class ExternalID {
     this.imdb,
     this.tmdb,
     this.thetvdb,
+    this.anilist,
   });
 
   static Future<ExternalID> default_() => RustLib.instance.api
       .crateMethodMetadataProviderViewContentExternalIdDefault();
+
+  Future<String?> get_({required String s}) => RustLib.instance.api
+      .crateMethodMetadataProviderViewContentExternalIdGet(that: this, s: s);
 
   @override
   int get hashCode =>
@@ -33,7 +38,8 @@ class ExternalID {
       kitsu.hashCode ^
       imdb.hashCode ^
       tmdb.hashCode ^
-      thetvdb.hashCode;
+      thetvdb.hashCode ^
+      anilist.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -44,7 +50,29 @@ class ExternalID {
           kitsu == other.kitsu &&
           imdb == other.imdb &&
           tmdb == other.tmdb &&
-          thetvdb == other.thetvdb;
+          thetvdb == other.thetvdb &&
+          anilist == other.anilist;
+}
+
+class SelectedProvider {
+  final int type;
+  final String? id;
+
+  const SelectedProvider({
+    required this.type,
+    this.id,
+  });
+
+  @override
+  int get hashCode => type.hashCode ^ id.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SelectedProvider &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          id == other.id;
 }
 
 class ViewContentInfo {
@@ -64,7 +92,7 @@ class ViewContentInfo {
   final BigInt? lastWatchSeasonIndex;
   final BigInt? lastWatchEpisodeIndex;
   final String? lastUpdate;
-  final int? selectedProvider;
+  final SelectedProvider? selectedProvider;
 
   const ViewContentInfo({
     required this.source,
@@ -113,7 +141,7 @@ class ViewContentInfo {
   static Future<void> updateSelectedProvider(
           {required String source,
           required String id,
-          required int selectedProvider}) =>
+          required SelectedProvider selectedProvider}) =>
       RustLib.instance.api
           .crateMethodMetadataProviderViewContentViewContentInfoUpdateSelectedProvider(
               source: source, id: id, selectedProvider: selectedProvider);

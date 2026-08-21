@@ -28,7 +28,7 @@ class EpisodeTile extends StatefulWidget {
   });
 
   final Source source;
-  final int? provider;
+  final SelectedProvider? provider;
   final String viewID;
   final ExternalID externalID;
   final String title;
