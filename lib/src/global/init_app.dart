@@ -115,7 +115,7 @@ Future<void> initApp() async {
 
 
   // -> Webview
-  PlatformInAppWebViewController.debugLoggingSettings.enabled = false;
+  
 
   // <-
 
