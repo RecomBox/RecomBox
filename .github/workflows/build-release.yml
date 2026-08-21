@@ -34,6 +34,10 @@ jobs:
             os: windows-2022
 
     steps:
+      - name: Install base tools (Arch container)
+        if: matrix.target == 'linux'
+        run: pacman -Syu --needed --noconfirm git curl jq unzip tar xz which base-devel
+
       - name: Checkout code
         uses: actions/checkout@v4
 
