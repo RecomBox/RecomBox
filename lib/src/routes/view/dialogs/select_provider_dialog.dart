@@ -168,10 +168,10 @@ class _SelectProviderDialogState extends State<SelectProviderDialog> {
                               id: widget.viewID, 
                               selectedProvider: selectedProvider
                             );
-                            widget.onApply?.call(selectedProvider);
                             if (ctx.mounted){
                               Navigator.pop(ctx);
                             }
+                            widget.onApply?.call(selectedProvider);
                           }else{
                             Navigator.pop(context);
                             showDialog(

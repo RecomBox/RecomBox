@@ -198,13 +198,14 @@ class _SelectDirectStreamProviderDialogState extends State<SelectDirectStreamPro
                             selectedProvider: SelectedProvider(type: 1, id: selectedID),
                           );
 
-                          widget.onApply?.call(
-                            SelectedProvider(type: 1, id: selectedID),
-                          );
-
                           if (ctx.mounted){
                             Navigator.pop(ctx);
                           }
+
+                          widget.onApply?.call(
+                            SelectedProvider(type: 1, id: selectedID),
+                          );
+                          
                         },
                         style: ElevatedButton.styleFrom(
                           enabledMouseCursor: SystemMouseCursors.click,
