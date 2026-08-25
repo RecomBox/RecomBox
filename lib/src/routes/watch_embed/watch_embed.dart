@@ -140,6 +140,7 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
         position: ToastPosition.bottom,
         dismissOtherToast: true,
       );
+      return;
     }
 
 
