@@ -160,17 +160,31 @@ class _EpisodeTileState extends State<EpisodeTile> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Episode ${widget.episode.toInt()+1}",
-                              style: TextStyle(
-                                color: appColors.textPrimary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
+                            if (widget.source == Source.movies)
+                              Text(
+                                "Full",
+                                style: TextStyle(
+                                  color: appColors.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                maxLines: 3,
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 3,
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            if (widget.source != Source.movies)
+                              Text(
+                                "Episode ${widget.episode.toInt()+1}",
+                                style: TextStyle(
+                                  color: appColors.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                maxLines: 3,
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            
                             if (watchPosition > BigInt.from(0))
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,

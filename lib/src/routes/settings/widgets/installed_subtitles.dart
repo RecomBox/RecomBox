@@ -44,7 +44,7 @@ class _InstalledSubtitlesState extends State<InstalledSubtitles> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!allInstalledSubtitles.isEmpty)
+          if (allInstalledSubtitles.isNotEmpty)
             Container(
               height: MediaQuery.of(context).size.width*0.4,
               padding: EdgeInsets.all(10),
