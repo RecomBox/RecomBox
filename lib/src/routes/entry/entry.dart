@@ -38,7 +38,7 @@ class _EntryState extends State<EntryScreen> {
 	List<FeaturedContentInfo> featuredContentList = [];
 	Map<Source, List<TrendingContentInfo>> trendingContentMap = {};
 
-  TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
 
   AppColorsScheme appColors = appColorsNotifier.value;
 

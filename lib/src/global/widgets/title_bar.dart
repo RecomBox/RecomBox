@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'dart:io';
 import 'package:recombox/src/global/app_color.dart';
 
 class TitleBar extends StatefulWidget {
@@ -31,6 +31,7 @@ class _TitleBarState extends State<TitleBar> {
 
   Future<void> close() async {
     await windowManager.close();
+    exit(0);
   }
 
   @override

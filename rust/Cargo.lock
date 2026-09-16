@@ -3271,7 +3271,7 @@ dependencies = [
 [[package]]
 name = "recombox_metadata_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_metadata_provider#04ab961a8182cf37f55b8892e76c0d10bef9b23a"
+source = "git+https://github.com/RecomBox/recombox_metadata_provider#80bec4aad331a99b1c54505bcb9ee949f9836c70"
 dependencies = [
  "anyhow",
  "chrono",
