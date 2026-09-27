@@ -46,6 +46,7 @@ An open-source cross-platform streaming app for Anime, Movies, and TV.
 - **Advanced search** for quick content discovery.
 - **External Subtitles**: add subtitles from external provider.
 - **Plugins**: add and update external torrent provider without update entire app.
+- **Support**: Direct Stream and Torrent
 
 # Download
 <table>
