@@ -48,6 +48,11 @@ An open-source cross-platform streaming app for Anime, Movies, and TV.
 - **Plugins**: add and update external torrent provider without update entire app.
 - **Support**: Direct Stream and Torrent
 
+# How to get TMDB API key?
+- TMDB api key is required for the app to get metadata.
+- [Watch this video on Youtube (not my video)](https://youtu.be/FvuaZOK2grY?si=5fipveF1mwsTa-if)
+- Make sure to use API Read Access Token
+
 # Download
 <table>
   <tr>
@@ -94,9 +99,7 @@ https://raw.githubusercontent.com/RecomBox/RecomBox/refs/heads/main/altstore.jso
 - ☁️ **Google Drive Back Up** to sync your favorites and watch history across all your devices.
 -->
 
-# How to get TMDB API key?
-- [Watch this video on Youtube (not my video)](https://youtu.be/FvuaZOK2grY?si=5fipveF1mwsTa-if)
-- Make sure to use API Read Access Token 
+
 
 # 📸 Screenshot
 ### Home
