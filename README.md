@@ -51,6 +51,7 @@ An open-source cross-platform streaming app for Anime, Movies, and TV.
 # How to get TMDB API key?
 - TMDB api key is required for the app to get metadata.
 - [Watch this video on Youtube (not my video)](https://youtu.be/FvuaZOK2grY?si=5fipveF1mwsTa-if)
+- Visit: [TMDB site](https://www.themoviedb.org/settings/api)
 - Make sure to use API Read Access Token
 
 # Download
