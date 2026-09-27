@@ -3314,7 +3314,7 @@ dependencies = [
 [[package]]
 name = "recombox_subtitle_provider"
 version = "0.1.0"
-source = "git+https://github.com/RecomBox/recombox_subtitle_provider#20df0cbba5043e65793234078801767e930d289b"
+source = "git+https://github.com/RecomBox/recombox_subtitle_provider#f7cf782f50adf92297cb2cb033c30f4ae129da9e"
 dependencies = [
  "anyhow",
  "base64",
