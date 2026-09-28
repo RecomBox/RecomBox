@@ -386,7 +386,6 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                               
                               initialSettings: InAppWebViewSettings(
                                 isInspectable: false,
-                                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/115 Safari/537.36",
                                 mediaPlaybackRequiresUserGesture: false,
                                 allowsInlineMediaPlayback: true,
                                 javaScriptEnabled: true,
@@ -396,6 +395,7 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                                 thirdPartyCookiesEnabled: true, 
                                 allowsPictureInPictureMediaPlayback: true,
                                 iframeAllowFullscreen: true,
+                                mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
                                 
                               ),
                               initialUrlRequest: URLRequest(
@@ -441,7 +441,7 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                                 if (uri != null) {
                                   bool isAllow = false;
                                   for (var item in allowedNavigationOrigin){
-                                    if (uri.host.endsWith(item) || !uri.scheme.startsWith("http")){ 
+                                    if (uri.host.endsWith(item) || !uri.scheme.startsWith("http") || uri.host.endsWith("challenges.cloudflare.com") || uri.host.endsWith("cloudflare.com")){ 
                                       isAllow = true;
                                       break;
                                     } else {
