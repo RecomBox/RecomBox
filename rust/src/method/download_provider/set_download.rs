@@ -16,9 +16,9 @@ pub async fn set_download(download_item_key: &DownloadItemKey, download_item_val
         conn.execute(
             "INSERT INTO download
                 (source, item_id, season_index, episode_index, torrent_source, file_id, file_path, mime_type)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
-             ON CONFLICT (source, item_id, season_index, episode_index)
-             DO UPDATE SET
+                VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+                ON CONFLICT (source, item_id, season_index, episode_index)
+                DO UPDATE SET
                 torrent_source = excluded.torrent_source,
                 file_id        = excluded.file_id,
                 file_path      = excluded.file_path,

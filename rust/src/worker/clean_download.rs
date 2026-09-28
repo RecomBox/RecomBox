@@ -92,35 +92,5 @@ async fn init()-> anyhow::Result<()>{
     }
 
 
-    // -> Legacy old version clean up
-    
-    let addional_keep_dirs = ["data", "download.redb"];
-    let top_download_dir = PathBuf::from(&settings.paths.app_support_dir)
-        .join("download");
-    if top_download_dir.exists(){
-        for entry in fs::read_dir(&top_download_dir)? {
-            let entry = entry?;
-            let path = entry.path();
-            
-            if let Some(name_os) = path.file_name() {
-                let name_str = name_os.to_string_lossy().into_owned();
-
-                if !addional_keep_dirs.contains(&name_str.as_str()) && path.exists() {
-                    println!("[{}:{}] Delete path: {:?}", file!(), line!(), name_str);
-
-                    if path.is_dir() {
-                        fs::remove_dir_all(&path)?;
-                    } else {
-                        fs::remove_file(&path)?;
-                    }
-                }
-            }
-        }
-    }
-
-    // <-
-
-
-
     return Ok(());
 }
