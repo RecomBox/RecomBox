@@ -3,9 +3,9 @@ import 'package:recombox/src/global/app_color.dart';
 import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_items.dart';
 
 class NavigationBarHorizontal extends StatefulWidget {
-  const NavigationBarHorizontal({super.key, required this.currentIndex});
+  const NavigationBarHorizontal({super.key, required this.currentName});
 
-  final int currentIndex;
+  final String currentName;
 
   @override
   State<NavigationBarHorizontal> createState() =>
@@ -19,7 +19,8 @@ class _NavigationBarHorizontalState extends State<NavigationBarHorizontal> {
   @override
   void initState() {
     super.initState();
-    currentIndex = widget.currentIndex;
+    currentIndex = navigationItems.indexWhere((item) => item['name'] == widget.currentName);
+    if (currentIndex == -1) currentIndex = 0;
   }
 
   void navigate(int index) {

@@ -10,6 +10,7 @@ import 'dart:io';
 // for gesture recognizers
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:recombox/src/rust/method/direct_stream_provider.dart';
+import 'package:recombox/src/rust/method/favorite/recent_watch.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -90,6 +91,18 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
   
   Future<void> init() async {
     var ctx = context;
+
+    try{
+      await setRecentWatch(
+        source: args.source.name, 
+        id: args.viewID, 
+        seasonIndex: BigInt.from(args.season), 
+        episodeIndex: BigInt.from(args.episode)
+      );
+    }catch(e){
+      debugPrint("[Failed to update Recent Watch]${e.toString()}");
+    }
+
     ViewContentInfo viewContentInfo = await ViewContentInfo.get_(
       source: args.source.name,
       id: args.viewID,
@@ -180,7 +193,6 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
   void dispose() {
     // Clean up the webview controller
     try{
-      webViewController?.dispose();
       webViewController = null;
     }catch(e){
       debugPrint(e.toString());

@@ -16,7 +16,7 @@ ICON_URL="https://github.com/RecomBox/RecomBox/blob/main/assets/icon/icon-transp
 # Local temporary filename
 LOCAL_TAR="${BINARY_NAME}.tar.gz"
 
-echo "🚀 Starting installation of $APP_NAME..."
+echo "Starting installation of $APP_NAME..."
 
 # Error handling function
 error_exit() {
@@ -35,7 +35,7 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 cd "$TEMP_DIR"
 
 # 3. Download the Tarball
-echo "📦 Downloading latest release..."
+echo "Downloading latest release..."
 if ! curl -Lf "$TAR_URL" -o "$LOCAL_TAR"; then
     error_exit "Download failed. Check the URL: $TAR_URL"
 fi
@@ -46,7 +46,7 @@ if ! file "$LOCAL_TAR" | grep -q "gzip"; then
 fi
 
 # 5. Deployment
-echo "📂 Extracting to $INSTALL_DIR..."
+echo "Extracting to $INSTALL_DIR..."
 sudo mkdir -p "$INSTALL_DIR"
 sudo rm -rf "${INSTALL_DIR:?}"/* 
 sudo tar -xzf "$LOCAL_TAR" -C "$INSTALL_DIR" --strip-components=1 || error_exit "Extraction failed."
@@ -57,12 +57,12 @@ if [ ! -f "$INSTALL_DIR/$BINARY_NAME" ]; then
 fi
 
 # 7. Permissions and Linking
-echo "⚙️  Setting permissions and symlinks..."
+echo "Setting permissions and symlinks..."
 sudo chmod +x "$INSTALL_DIR/$BINARY_NAME"
 sudo ln -sf "$INSTALL_DIR/$BINARY_NAME" "$BIN_LINK"
 
 # 8. Icon and Desktop Entry
-echo "🎨 Setting up menu shortcut..."
+echo "Setting up menu shortcut..."
 if ! sudo curl -Lf "$ICON_URL" -o "$INSTALL_DIR/icon.png"; then
     echo "⚠️  Warning: Icon download failed, but the app was installed."
 fi
@@ -70,13 +70,27 @@ fi
 # Ensure the applications directory exists
 sudo mkdir -p /usr/share/applications/
 
+# Ask whether to disable hardware acceleration (default: no).
+# Read from /dev/tty so this still works when piped (curl ... | bash).
+EXEC_CMD="$BIN_LINK"
+DISABLE_HW_ACCEL=""
+if [ -r /dev/tty ]; then
+    read -r -p "Disable hardware acceleration? Use this if the app shows a blank/black window or crashes. [y/N]: " DISABLE_HW_ACCEL < /dev/tty || DISABLE_HW_ACCEL=""
+fi
+case "$DISABLE_HW_ACCEL" in
+    [yY]|[yY][eE][sS])
+        echo "Hardware acceleration will be disabled."
+        EXEC_CMD="env WPE_DISABLE_DMABUF=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 LIBGL_ALWAYS_SOFTWARE=1 $BIN_LINK"
+        ;;
+esac
+
 # FIX: Using 'tee' to handle redirection with sudo privileges
 cat <<EOF | sudo tee "/usr/share/applications/${BINARY_NAME}.desktop" > /dev/null
 [Desktop Entry]
 Type=Application
 Name=$APP_NAME
 Comment=Open-source cross-platform torrent streaming app
-Exec=env WPE_DISABLE_DMABUF=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 LIBGL_ALWAYS_SOFTWARE=1 $BIN_LINK
+Exec=$EXEC_CMD
 Icon=$INSTALL_DIR/icon.png
 Terminal=false
 Categories=AudioVideo;Video;Player;Network;
@@ -85,4 +99,4 @@ EOF
 
 echo "---"
 echo "✅ Success! $APP_NAME has been installed."
-echo "👉 Run it from your Application Menu or type '$BINARY_NAME' in your terminal."
+echo "Run it from your Application Menu or type '$BINARY_NAME' in your terminal."

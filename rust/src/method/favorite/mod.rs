@@ -11,6 +11,7 @@ pub mod rename_category;
 pub mod is_in_category;
 pub mod get_last_watch_torrent;
 pub mod set_last_watch_torrent;
+pub mod recent_watch;
 
 pub use tokio_rusqlite::Connection;
 pub use tokio_rusqlite::rusqlite;
@@ -45,6 +46,14 @@ pub struct LastWatchTorrentInfo {
     pub torrent_source: String,
     pub file_id: u64,
     pub mime_type: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RecentWatchInfo {
+    pub source: String,
+    pub id: String,
+    pub season_index: u64,
+    pub episode_index: u64,
 }
 
 async fn get_db_path() -> Result<PathBuf, String> {
@@ -110,6 +119,18 @@ pub async fn get_db() -> Result<Connection, String> {
                 mime_type      TEXT NOT NULL,
                 PRIMARY KEY (source, item_id, season_index, episode_index)
             );
+
+            CREATE TABLE IF NOT EXISTS recent_watch (
+                source        TEXT NOT NULL,
+                item_id       TEXT NOT NULL,
+                season_index  INTEGER NOT NULL,
+                episode_index INTEGER NOT NULL,
+                watched_at    INTEGER NOT NULL,
+                PRIMARY KEY (source, item_id)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_recent_watch_watched_at
+                ON recent_watch (watched_at DESC);
             ",
         )?;
         Ok(())

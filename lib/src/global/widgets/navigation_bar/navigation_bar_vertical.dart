@@ -7,10 +7,10 @@ import 'dart:io';
 class NavigationBarVertical extends StatefulWidget {
   const NavigationBarVertical({
     super.key,
-    required this.currentIndex,
+    required this.currentName,
   });
 
-  final int currentIndex;
+  final String currentName;
 
   @override
   State<NavigationBarVertical> createState() => _NavigationBarVerticalState();
@@ -24,10 +24,13 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
   @override
   void initState() {
     super.initState();
-    currentIndex = widget.currentIndex;
+    currentIndex = navigationItems.indexWhere((item) => item['name'] == widget.currentName);
+    if (currentIndex == -1) currentIndex = 0;
+    debugPrint(navigationItems.toString());
   }
 
   void navigate(int index) {
+    debugPrint(index.toString());
     setState(() {
       currentIndex = index;
     });
@@ -74,7 +77,7 @@ class _NavigationBarVerticalState extends State<NavigationBarVertical> {
               selectedIndex: currentIndex,
               onDestinationSelected: navigate,
               
-              // 2. Render destinations from the list
+              // Render destinations from the list
               destinations: navigationItems.map((item) {
                 return NavigationRailDestination(
                   icon: MouseRegion(

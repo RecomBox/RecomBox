@@ -29,7 +29,7 @@ class SettingsState extends State<SettingsScreen> {
 
   ];
 
-  int showWidgetIndex = 0;
+  int showWidgetIndex = -1;
   
   @override
   void initState() {
@@ -53,7 +53,7 @@ class SettingsState extends State<SettingsScreen> {
           children: [
             if (MediaQuery.of(context).size.width >= 600)
               NavigationBarVertical(
-                currentIndex: 4,
+                currentName: 'settings',
               ),
             Expanded(
               child: Scaffold(
@@ -136,7 +136,7 @@ class SettingsState extends State<SettingsScreen> {
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
                   ? NavigationBarHorizontal(
-                    currentIndex: 4,
+                    currentName: 'settings',
                   )
                   : null
               )

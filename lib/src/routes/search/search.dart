@@ -145,7 +145,7 @@ class _SearchState extends State<SearchScreen> {
           children: [
             if (MediaQuery.of(context).size.width >= 600)
               NavigationBarVertical(
-                currentIndex: 1,
+                currentName: 'search',
               ),
             Expanded(
               child: Scaffold(
@@ -377,7 +377,7 @@ class _SearchState extends State<SearchScreen> {
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
                   ? NavigationBarHorizontal(
-                    currentIndex: 1,
+                    currentName: 'search',
                   )
                   : null
               )

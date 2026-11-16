@@ -70,6 +70,23 @@ set_target_properties(${BINARY_NAME}
 )
 
 
+# Compat shim for flutter_inappwebview_linux: newer WPE WebKit (2.54+) renamed
+# WPE_SETTING_DISABLE_ANIMATIONS to WPE_SETTING_REDUCED_MOTION. Map the old name
+# only when the installed headers lack it, so older WPE builds are unaffected.
+pkg_check_modules(WPE_PLATFORM QUIET wpe-platform-2.0)
+if(WPE_PLATFORM_FOUND)
+  find_file(WPE_SETTINGS_HEADER "wpe/WPESettings.h"
+    PATHS ${WPE_PLATFORM_INCLUDE_DIRS} NO_DEFAULT_PATH)
+  if(WPE_SETTINGS_HEADER)
+    file(READ "${WPE_SETTINGS_HEADER}" WPE_SETTINGS_CONTENT)
+    if(NOT WPE_SETTINGS_CONTENT MATCHES "WPE_SETTING_DISABLE_ANIMATIONS"
+       AND WPE_SETTINGS_CONTENT MATCHES "WPE_SETTING_REDUCED_MOTION")
+      add_compile_definitions(
+        WPE_SETTING_DISABLE_ANIMATIONS=WPE_SETTING_REDUCED_MOTION)
+    endif()
+  endif()
+endif()
+
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)

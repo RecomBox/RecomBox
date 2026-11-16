@@ -248,8 +248,6 @@ class _SubmitBulkDownloadState extends State<SubmitBulkDownload> {
                                           color: appColors.textSecondary,
                                           fontSize: 16
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       Text('- MimeType: ${(node.data as BulkDownloadValue).linkedMimeType??"not selected"}',
                                         style: GoogleFonts.nunito(

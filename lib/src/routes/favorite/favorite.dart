@@ -125,7 +125,7 @@ class _FavoriteState extends State<FavoriteScreen> {
           children: [
             if (MediaQuery.of(context).size.width >= 600)
               NavigationBarVertical(
-                currentIndex: 2,
+                currentName: 'favorite',
               ),
             
             
@@ -343,7 +343,7 @@ class _FavoriteState extends State<FavoriteScreen> {
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
                   ?  NavigationBarHorizontal(
-                      currentIndex: 2,
+                      currentName: 'favorite',
                     )
                   : null,
               ),
