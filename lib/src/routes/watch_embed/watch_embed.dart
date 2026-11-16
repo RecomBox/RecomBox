@@ -180,7 +180,6 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
   void dispose() {
     // Clean up the webview controller
     try{
-      webViewController?.dispose();
       webViewController = null;
     }catch(e){
       debugPrint(e.toString());

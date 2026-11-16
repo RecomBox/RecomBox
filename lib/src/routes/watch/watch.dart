@@ -11,6 +11,7 @@ import 'package:recombox/src/routes/select_file/select_file.dart';
 import 'package:recombox/src/routes/select_plugin/select_plugin.dart';
 import 'package:recombox/src/routes/view/view.dart';
 import 'package:recombox/src/routes/watch/dialogs/audio_track_control.dart';
+import 'package:recombox/src/routes/watch/dialogs/comment.dart';
 import 'package:recombox/src/routes/watch/dialogs/subtitle_track_control.dart';
 import 'package:recombox/src/rust/method/current_watch.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
@@ -415,7 +416,19 @@ class _WatchState extends State<WatchScreen> {
   Future<void> onSelectOption(int value) async {
       if (!context.mounted) return;
       switch (value) {
-        case 0: 
+        case 0:
+          final ctx = context;
+          await onNavigateCleanUp();
+          if (!ctx.mounted) return;
+          
+          showDialog(
+            context: ctx, 
+            builder: (_)=>CommentDialog(
+              watchScreenArgs: args!,
+            )
+          );
+          
+        case 1: 
           final ctx = context;
           await onNavigateCleanUp();
           if (!ctx.mounted) return;
@@ -668,6 +681,20 @@ class _WatchState extends State<WatchScreen> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Text(
+                  'Comments',
+                  style: GoogleFonts.nunito(
+                    fontSize: 18,
+                    color: appColors.textPrimary,
+                    fontWeight: FontWeight(600)
+                  ),
+                ),
+              )
+            ),
+            PopupMenuItem<int>(
+              onTap: () => onSelectOption(1),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Text(
                   'Change Plugin',
                   style: GoogleFonts.nunito(
                     fontSize: 18,
@@ -676,7 +703,6 @@ class _WatchState extends State<WatchScreen> {
                   ),
                 ),
               )
-              
             ),
           ],
           
