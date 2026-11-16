@@ -14,6 +14,7 @@ import 'package:recombox/src/routes/watch/dialogs/audio_track_control.dart';
 import 'package:recombox/src/routes/watch/dialogs/comment.dart';
 import 'package:recombox/src/routes/watch/dialogs/subtitle_track_control.dart';
 import 'package:recombox/src/rust/method/current_watch.dart';
+import 'package:recombox/src/rust/method/favorite/recent_watch.dart';
 import 'package:recombox/src/rust/method/download_provider.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download.dart';
 import 'package:recombox/src/rust/method/download_provider/get_download_status.dart';
@@ -209,6 +210,17 @@ class _WatchState extends State<WatchScreen> {
         );
       }catch(e){
         debugPrint("[Failed to update Last Watch]${e.toString()}");
+      }
+
+      try{
+        await setRecentWatch(
+          source: args!.source.name, 
+          id: args!.viewID, 
+          seasonIndex: args!.season, 
+          episodeIndex: args!.episode
+        );
+      }catch(e){
+        debugPrint("[Failed to update Recent Watch]${e.toString()}");
       }
       
       final settings = await getSettings();

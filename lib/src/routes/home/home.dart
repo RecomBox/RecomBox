@@ -5,6 +5,9 @@ import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/home/widgets/content_section.dart';
 import 'package:recombox/src/rust/method/metadata_provider/featured_content.dart';
 import 'package:recombox/src/rust/method/metadata_provider/trending_content.dart';
+import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
+import 'package:recombox/src/rust/method/favorite.dart';
+import 'package:recombox/src/rust/method/favorite/recent_watch.dart';
 import 'package:recombox/src/global/widgets/navigation_bar/navigation_bar_horizontal.dart';
 import 'dart:async';
 import 'dart:io';
@@ -31,6 +34,7 @@ class _HomeState extends State<HomeScreen> {
 
 	List<FeaturedContentInfo> featuredContentList = [];
 	Map<Source, List<TrendingContentInfo>> trendingContentMap = {};
+	List<(RecentWatchInfo, ViewContentInfo)> recentWatchList = [];
 
   AppColorsScheme appColors = appColorsNotifier.value;
 
@@ -50,6 +54,7 @@ class _HomeState extends State<HomeScreen> {
     });
     List<FeaturedContentInfo> featuredContentListResult = [];
     Map<Source, List<TrendingContentInfo>> trendingContentMapResult = {};
+    List<(RecentWatchInfo, ViewContentInfo)> recentWatchListResult = [];
 
     try{
       await Future.wait([
@@ -76,6 +81,33 @@ class _HomeState extends State<HomeScreen> {
           for (int i = 0; i < Source.values.length; i++) {
             trendingContentMapResult[Source.values[i]] = waitResult[i];
           }
+        })(),
+        // <-
+
+        // -> Recent Watch
+        (() async{
+          List<RecentWatchInfo> recentWatch = [];
+          try {
+            recentWatch = await getAllRecentWatch();
+          } catch (e) {
+            // Don't fail the whole home page if only recent watch fails.
+            debugPrint("getAllRecentWatch: $e");
+          }
+          // Fetch each show's info; skip any that fail so one bad entry
+          // doesn't hide the whole section. Order is kept (most recent first).
+          final infoResult = await Future.wait([
+            for (final item in recentWatch)
+              ViewContentInfo.get_(source: item.source, id: item.id, fromCache: fromCache, checkExpire: true)
+                .then<ViewContentInfo?>((data) => data)
+                .catchError((e) {
+                  debugPrint("Recent watch ${item.source}/${item.id}: $e");
+                  return null;
+                }),
+          ]);
+          for (int i = 0; i < recentWatch.length; i++) {
+            final info = infoResult[i];
+            if (info != null) recentWatchListResult.add((recentWatch[i], info));
+          }
         })()
         // <-
       ]);
@@ -91,6 +123,7 @@ class _HomeState extends State<HomeScreen> {
     setState(() {
       featuredContentList = featuredContentListResult;
       trendingContentMap = trendingContentMapResult;
+      recentWatchList = recentWatchListResult;
       isLoading = false;
     });
   }
@@ -179,6 +212,11 @@ class _HomeState extends State<HomeScreen> {
                                         
                                     ]
                                   ),
+                                  if (recentWatchList.isNotEmpty)
+                                    ContentSection(
+                                      label: "Continue Watching",
+                                      recentWatchList: recentWatchList,
+                                    ),
                                   for (final source in trendingContentMap.keys)
                                     ContentSection(
                                       label: "Trending ${source.label}",

@@ -95,3 +95,34 @@ class LastWatchTorrentInfo {
           fileId == other.fileId &&
           mimeType == other.mimeType;
 }
+
+class RecentWatchInfo {
+  final String source;
+  final String id;
+  final BigInt seasonIndex;
+  final BigInt episodeIndex;
+
+  const RecentWatchInfo({
+    required this.source,
+    required this.id,
+    required this.seasonIndex,
+    required this.episodeIndex,
+  });
+
+  @override
+  int get hashCode =>
+      source.hashCode ^
+      id.hashCode ^
+      seasonIndex.hashCode ^
+      episodeIndex.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecentWatchInfo &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          id == other.id &&
+          seasonIndex == other.seasonIndex &&
+          episodeIndex == other.episodeIndex;
+}

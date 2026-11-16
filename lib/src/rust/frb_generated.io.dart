@@ -27,6 +27,7 @@ import 'method/favorite/get_all_item_by_category_id.dart';
 import 'method/favorite/get_category_order.dart';
 import 'method/favorite/get_last_watch_torrent.dart';
 import 'method/favorite/is_in_category.dart';
+import 'method/favorite/recent_watch.dart';
 import 'method/favorite/rename_category.dart';
 import 'method/favorite/set_category.dart';
 import 'method/favorite/set_last_watch_torrent.dart';
@@ -269,6 +270,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<RecentWatchInfo> dco_decode_list_recent_watch_info(dynamic raw);
+
+  @protected
   List<(AllDownloadItemKey, List<AllDownloadItemValue>)>
       dco_decode_list_record_all_download_item_key_list_all_download_item_value(
           dynamic raw);
@@ -347,6 +351,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PluginInfo dco_decode_plugin_info(dynamic raw);
+
+  @protected
+  RecentWatchInfo dco_decode_recent_watch_info(dynamic raw);
 
   @protected
   (AllDownloadItemKey, List<AllDownloadItemValue>)
@@ -646,6 +653,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  List<RecentWatchInfo> sse_decode_list_recent_watch_info(
+      SseDeserializer deserializer);
+
+  @protected
   List<(AllDownloadItemKey, List<AllDownloadItemValue>)>
       sse_decode_list_record_all_download_item_key_list_all_download_item_value(
           SseDeserializer deserializer);
@@ -738,6 +749,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PluginInfo sse_decode_plugin_info(SseDeserializer deserializer);
+
+  @protected
+  RecentWatchInfo sse_decode_recent_watch_info(SseDeserializer deserializer);
 
   @protected
   (AllDownloadItemKey, List<AllDownloadItemValue>)
@@ -1052,6 +1066,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Uint8List self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_recent_watch_info(
+      List<RecentWatchInfo> self, SseSerializer serializer);
+
+  @protected
   void
       sse_encode_list_record_all_download_item_key_list_all_download_item_value(
           List<(AllDownloadItemKey, List<AllDownloadItemValue>)> self,
@@ -1143,6 +1161,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_plugin_info(PluginInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_recent_watch_info(
+      RecentWatchInfo self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_all_download_item_key_list_all_download_item_value(
