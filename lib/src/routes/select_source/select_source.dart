@@ -73,6 +73,19 @@ class _SelectSourceState extends State<SelectSourceScreen> {
             );
       });
       debugPrint(args.toString());
+
+      // Apply Default Search
+      var defaultSearch = "";
+
+      if (args!.selectPluginScreenArguments.source == Source.movies){
+        defaultSearch = args!.selectPluginScreenArguments.externalID.imdb??"";
+      }else{
+        defaultSearch = '${args!.selectPluginScreenArguments.titleSecondary} S${(args!.selectPluginScreenArguments.season+BigInt.from(1)).toString().padLeft(2, '0')}E${(args!.selectPluginScreenArguments.episode+BigInt.from(1)).toString().padLeft(2, '0')}';
+      }
+      setState(() {
+        _textEditingController.text = defaultSearch;
+      });
+
       initSelectSource();
     });
   }
@@ -89,6 +102,10 @@ class _SelectSourceState extends State<SelectSourceScreen> {
     setState(() {
       isLoading = true;
     });
+
+    
+
+
     try{
       List<SourceInfo> getSourceInfoResult = await getSources(
         pluginPath: args!.pluginPath, 

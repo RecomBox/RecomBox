@@ -70,7 +70,7 @@ class _DownloadTileState extends State<DownloadTile> {
       ));
       
 
-      if (result != null){
+      if (result != null && mounted){
 
         setState(() {
           downloadStatusResult = result;

@@ -131,7 +131,7 @@ class DownloadState extends State<DownloadScreen> {
           children: [
             if (MediaQuery.of(context).size.width >= 600)
               NavigationBarVertical(
-                currentIndex: 3,
+                currentName: 'download',
               ),
             Expanded(
               child: Scaffold(
@@ -199,7 +199,7 @@ class DownloadState extends State<DownloadScreen> {
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
                   ? NavigationBarHorizontal(
-                    currentIndex: 3,
+                    currentName: 'download',
                   )
                   : null
               )

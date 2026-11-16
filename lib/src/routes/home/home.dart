@@ -104,7 +104,7 @@ class _HomeState extends State<HomeScreen> {
           children: [
             if (MediaQuery.of(context).size.width >= 600)
               NavigationBarVertical(
-                currentIndex: 0,
+                currentName: 'home',
               ),
             Expanded(
               child: Scaffold(
@@ -215,7 +215,7 @@ class _HomeState extends State<HomeScreen> {
                 ),
                 bottomNavigationBar: (MediaQuery.of(context).size.width < 600)
                   ?  NavigationBarHorizontal(
-                      currentIndex: 0,
+                      currentName: 'home',
                     )
                   : null,
               ),

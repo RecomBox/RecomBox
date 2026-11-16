@@ -24,7 +24,12 @@ class DownloadCard extends StatefulWidget {
   State<DownloadCard> createState() => _DownloadCardState();
 }
 
-class _DownloadCardState extends State<DownloadCard> {
+class _DownloadCardState extends State<DownloadCard> with AutomaticKeepAliveClientMixin {
+
+  // Keep loaded cards alive when scrolled off screen so they don't reload
+  // from scratch (and change size) when scrolled back.
+  @override
+  bool get wantKeepAlive => true;
 
   
   AppColorsScheme appColors = appColorsNotifier.value;
@@ -47,6 +52,7 @@ class _DownloadCardState extends State<DownloadCard> {
         checkExpire: false
       );
 
+      if (!mounted) return;
       setState(() {
         viewContentInfoResult = getViewContentInfo;
       });
@@ -69,9 +75,9 @@ class _DownloadCardState extends State<DownloadCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (viewContentInfoResult == null) {
-      return Container();
-    }
+    super.build(context);
+    // Always render the full-size layout (with placeholders while info loads)
+    // so the card's height never changes after it appears.
 
     return Material(
       color: Colors.transparent,
@@ -141,30 +147,26 @@ class _DownloadCardState extends State<DownloadCard> {
               border: Border.all(color: appColors.strokePrimary),
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
             ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.35
-              ),
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: widget.allDownloadItemValueList.length,
-                itemBuilder: (context,index){
-                  return DownloadTile(
+            // Plain Column instead of a nested ListView: only the outer list
+            // scrolls, and the card's height is fixed by its episode count.
+            child: Column(
+              children: [
+                for (int index = 0; index < widget.allDownloadItemValueList.length; index++) ...[
+                  if (index > 0)
+                    Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: appColors.strokePrimary
+                    ),
+                  DownloadTile(
                     key: ValueKey(widget.allDownloadItemValueList[index]),
                     index: index,
                     allDownloadItemKey: widget.allDownloadItemKey,
                     allDownloadItemValue: widget.allDownloadItemValueList[index],
                     onRemoveDownload: ()=> widget.onRemoveDownload(widget.allDownloadItemKey, index),
-                  );
-                }, 
-                separatorBuilder: (_,__){
-                  return Container(
-                    width: double.infinity,
-                    height: 1,
-                    color: appColors.strokePrimary
-                  );
-                }, 
-              )
+                  ),
+                ],
+              ],
             )
           )
           
