@@ -13,6 +13,9 @@ import 'package:recombox/src/rust/method/direct_stream_provider.dart';
 import 'package:recombox/src/rust/method/favorite/recent_watch.dart';
 import 'package:recombox/src/rust/method/metadata_provider/view_content.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:recombox/src/routes/select_file/select_file.dart';
+import 'package:recombox/src/routes/watch/watch.dart';
+import 'package:recombox/src/routes/watch/dialogs/comment.dart';
 
 
 // Linux use this Command
@@ -312,6 +315,29 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
     
   }
 
+  void onShowComments() {
+    if (!context.mounted) return;
+    // CommentDialog only uses source, viewID, season and episode.
+    showDialog(
+      context: context,
+      builder: (_) => CommentDialog(
+        watchScreenArgs: WatchScreenArguments(
+          selectFileMode: SelectFileMode.watch,
+          source: args.source,
+          viewID: args.viewID,
+          externalID: args.externalID,
+          title: "",
+          titleSecondary: "",
+          torrentSource: "",
+          mimeType: "",
+          fileID: BigInt.zero,
+          season: BigInt.from(args.season),
+          episode: BigInt.from(args.episode),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -363,6 +389,15 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
                               },
                               icon: Icon(
                                 Icons.refresh_rounded,
+                                color: appColors.secondary,
+                              ),
+                              iconSize: 32,
+                            ),
+                            IconButton(
+                              mouseCursor: SystemMouseCursors.click,
+                              onPressed: onShowComments,
+                              icon: Icon(
+                                Icons.comment_rounded,
                                 color: appColors.secondary,
                               ),
                               iconSize: 32,
