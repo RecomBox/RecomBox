@@ -158,109 +158,90 @@ class _SubtitleTrackControlDialogState extends State<SubtitleTrackControlDialog>
                     ],
                   )
                 ),
-                if (subtitleTrackList.isNotEmpty || externalSubtitleMap.isNotEmpty) ...[
-                  ListView.separated(
-                    shrinkWrap: true,
-                    
-                    itemCount: subtitleTrackList.length,
-                    itemBuilder: (context, index) {
-                      return 
-                        InkWell(
-                          mouseCursor: SystemMouseCursors.click,
-                          onTap: (){
-                            onSubtitleTrackChange(subtitleTrackList[index]);
-                            onClose();
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            padding: EdgeInsets.all(10),
-                            child: Text(
-                              index > 0 
-                                ?"Subtitle: ${subtitleTrackList[index].id} | ${subtitleTrackList[index].language ?? 'Default'}"
-                                : "Disable",
-                              style: GoogleFonts.nunito(
-                                color: appColors.textPrimary,
-                                fontSize: 18
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                          )
-                      );
-                    
-                      
-                    }, 
-                    separatorBuilder: (_,__) {
-                      return Container(
-                        height: 2,
-                        color: appColors.strokePrimary,
-                      );
-                    }, 
-
-                  ),
-                  
-                  // -> External Subtitles
+                if (subtitleTrackList.isNotEmpty || externalSubtitleMap.isNotEmpty)
                   Expanded(
                     child: ListView.separated(
-                      shrinkWrap: true,
-                      
-                      itemCount: externalSubtitleMap.length,
+                      itemCount: subtitleTrackList.length + externalSubtitleMap.length,
                       itemBuilder: (context, index) {
-                        return 
-                          Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  mouseCursor: SystemMouseCursors.click,
-                                  onTap: (){
-                                    var sub = externalSubtitleMap[externalSubtitleMap.keys.toList()[index]];
-                                    widget.player.setSubtitleTrack(
-                                      SubtitleTrack.uri(sub!.path),
-                                    );
-
-                                    onClose();
-                                  },
-                                  child: Container(
-                                    color: Colors.transparent,
-                                    padding: EdgeInsets.all(10),
-                                    child: Text(externalSubtitleMap[externalSubtitleMap.keys.toList()[index]]!.title,
-                                      style: GoogleFonts.nunito(
-                                        color: appColors.textPrimary,
-                                        fontSize: 18
-                                      ),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  )
+                        // -> Embedded Subtitle Tracks
+                        if (index < subtitleTrackList.length) {
+                          return InkWell(
+                            mouseCursor: SystemMouseCursors.click,
+                            onTap: (){
+                              onSubtitleTrackChange(subtitleTrackList[index]);
+                              onClose();
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                index > 0 
+                                  ?"Subtitle: ${subtitleTrackList[index].id} | ${subtitleTrackList[index].language ?? 'Default'}"
+                                  : "Disable",
+                                style: GoogleFonts.nunito(
+                                  color: appColors.textPrimary,
+                                  fontSize: 18
                                 ),
+                                textAlign: TextAlign.start,
                               ),
-                              
-                              IconButton(
-                                mouseCursor: SystemMouseCursors.click,
-                                iconSize: 32,
-                                color: Colors.red,
-                                onPressed: () async {
-                                  try{
-                                    await removeSubtitles(
-                                      source: widget.watchScreenArgs.source.name,
-                                      id: widget.watchScreenArgs.viewID, 
-                                      subtitleId: externalSubtitleMap.keys.toList()[index]
-                                    );
-                                  
-                                    if (context.mounted){
-                                      setState(() {
-                                        externalSubtitleMap.remove(externalSubtitleMap.keys.toList()[index]);
-                                      });
-                                    }
-                                  }catch(e){
-                                    debugPrint(e.toString());
-                                  }
-                                },
-                                icon: const Icon(Icons.remove_circle_outline)
-                              )
-                            ],
+                            )
                           );
-                          
-                      
-                        
+                        }
+                        // <-
+
+                        // -> External Subtitles
+                        final subtitleId = externalSubtitleMap.keys.elementAt(index - subtitleTrackList.length);
+                        final sub = externalSubtitleMap[subtitleId]!;
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                mouseCursor: SystemMouseCursors.click,
+                                onTap: (){
+                                  widget.player.setSubtitleTrack(
+                                    SubtitleTrack.uri(sub.path),
+                                  );
+                                  onClose();
+                                },
+                                child: Container(
+                                  color: Colors.transparent,
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(sub.title,
+                                    style: GoogleFonts.nunito(
+                                      color: appColors.textPrimary,
+                                      fontSize: 18
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                )
+                              ),
+                            ),
+                            IconButton(
+                              mouseCursor: SystemMouseCursors.click,
+                              iconSize: 32,
+                              color: Colors.red,
+                              onPressed: () async {
+                                try{
+                                  await removeSubtitles(
+                                    source: widget.watchScreenArgs.source.name,
+                                    id: widget.watchScreenArgs.viewID, 
+                                    subtitleId: subtitleId
+                                  );
+                                
+                                  if (context.mounted){
+                                    setState(() {
+                                      externalSubtitleMap.remove(subtitleId);
+                                    });
+                                  }
+                                }catch(e){
+                                  debugPrint(e.toString());
+                                }
+                              },
+                              icon: const Icon(Icons.remove_circle_outline)
+                            )
+                          ],
+                        );
+                        // <-
                       }, 
                       separatorBuilder: (_,__) {
                         return Container(
@@ -268,12 +249,8 @@ class _SubtitleTrackControlDialogState extends State<SubtitleTrackControlDialog>
                           color: appColors.strokePrimary,
                         );
                       }, 
-
                     ),
                   ),
-                
-                  // <-
-                ],
 
                 if (subtitleTrackList.isEmpty && externalSubtitleMap.isEmpty)
                   Expanded(
