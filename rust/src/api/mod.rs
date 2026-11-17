@@ -1,9 +1,7 @@
 pub mod stream_video;
 
-use actix_web::web;
+use axum::{routing::get, Router};
 
-
-pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg
-        .service(stream_video::new);
+pub fn routes() -> Router {
+    Router::new().route("/stream_video", get(stream_video::new))
 }

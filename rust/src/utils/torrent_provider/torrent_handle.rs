@@ -58,7 +58,10 @@ pub struct TorrentHandle {
 
 impl TorrentHandle {
     pub async fn load(self) -> anyhow::Result<(Arc<ManagedTorrent>, bool), Box<dyn Error>>{
-        if self.torrent_handle_mode == TorrentHandleMode::Watch{
+        // Only clean the cache when nothing is currently being streamed.
+        // load() is called on every HTTP range request (each seek), so running the
+        // check while streaming is slow and could wipe files out from under the player.
+        if self.torrent_handle_mode == TorrentHandleMode::Watch && WATCH_TORRENT_HANDLE_MAP.is_empty() {
             let settings = Settings::get()?;
             let max_cache_size = settings.max_cache_size.unwrap_or(5368709120); // 5GB default
             let current_cache_size = get_dir_size::new(&settings.paths.app_cache_dir);
