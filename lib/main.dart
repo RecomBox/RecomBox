@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:recombox/src/global/init_app.dart';
+import 'package:recombox/src/global/route_observer.dart';
 import 'package:recombox/src/routes/download/download.dart';
 import 'package:recombox/src/routes/edit_category/edit_category.dart';
 import 'package:recombox/src/routes/entry/entry.dart';
@@ -71,6 +72,7 @@ class _AppState extends State<App> {
           return  OKToast(
             child: MaterialApp(
               navigatorKey: navigatorKey,
+              navigatorObservers: [routeObserver],
               theme: ThemeData(
                 pageTransitionsTheme: const PageTransitionsTheme(
                   builders: {

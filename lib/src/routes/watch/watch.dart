@@ -541,6 +541,17 @@ class _WatchState extends State<WatchScreen> {
     // No more episodes: do nothing (keep the current player running).
     if (!availableNext || !ctx.mounted) return;
 
+    try{
+      await ViewContentInfo.updateLastWatch(
+        source: args!.source.name, 
+        id: args!.viewID, 
+        seasonIndex: BigInt.from(nextSeasonIndex), 
+        episodeIndex: BigInt.from(nextEpisodeIndex)
+      );
+    }catch(e){
+      debugPrint("[Failed to update Last Watch]${e.toString()}");
+    }
+
     await onNavigateCleanUp();
 
     if (ctx.mounted){
@@ -596,6 +607,17 @@ class _WatchState extends State<WatchScreen> {
 
     // No previous episode: do nothing (keep the current player running).
     if (!availableNext || !ctx.mounted) return;
+
+    try{
+      await ViewContentInfo.updateLastWatch(
+        source: args!.source.name, 
+        id: args!.viewID, 
+        seasonIndex: BigInt.from(nextSeasonIndex), 
+        episodeIndex: BigInt.from(nextEpisodeIndex)
+      );
+    }catch(e){
+      debugPrint("[Failed to update Last Watch]${e.toString()}");
+    }
 
     await onNavigateCleanUp();
     if (ctx.mounted){

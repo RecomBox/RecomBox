@@ -245,6 +245,17 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
         episodeIndex: BigInt.from(nextEpisodeIndex)
       );
 
+      try{
+        await setRecentWatch(
+          source: args.source.name, 
+          id: args.viewID, 
+          seasonIndex: BigInt.from(nextSeasonIndex), 
+          episodeIndex: BigInt.from(nextEpisodeIndex)
+        );
+      }catch(e){
+        debugPrint("[Failed to update Recent Watch]${e.toString()}");
+      }
+
       setState(() {
         args = WatchEmbedArguments(
           viewID: args.viewID,
@@ -308,6 +319,17 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
         seasonIndex: BigInt.from(nextSeasonIndex), 
         episodeIndex: BigInt.from(nextEpisodeIndex)
       );
+
+      try{
+        await setRecentWatch(
+          source: args.source.name, 
+          id: args.viewID, 
+          seasonIndex: BigInt.from(nextSeasonIndex), 
+          episodeIndex: BigInt.from(nextEpisodeIndex)
+        );
+      }catch(e){
+        debugPrint("[Failed to update Recent Watch]${e.toString()}");
+      }
 
       setState(() {
         args = WatchEmbedArguments(

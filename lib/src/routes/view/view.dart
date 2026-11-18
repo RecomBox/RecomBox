@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:recombox/src/global/route_observer.dart';
 import 'package:recombox/src/global/bulk_download.dart';
 import 'package:recombox/src/global/dialogs/favorite/set_category_dialog.dart';
 import 'package:recombox/src/global/app_color.dart';
@@ -70,7 +71,22 @@ class _ViewState extends State<ViewScreen> with RouteAware {
 
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) routeObserver.subscribe(this, route);
+  }
+
+  // Called when a route pushed on top of this one is popped (e.g. back from
+  // watch_embed): reload so the last-watched episode updates.
+  @override
+  void didPopNext() {
+    initViewContentInfo();
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _episodeScrollController.dispose();
     _seasonScrollController.dispose();
     countdownTimer?.cancel();
