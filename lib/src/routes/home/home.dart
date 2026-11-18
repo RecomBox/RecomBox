@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recombox/src/global/app_color.dart';
+import 'package:recombox/src/global/route_observer.dart';
 import 'package:recombox/src/global/types.dart';
 import 'package:recombox/src/routes/home/widgets/content_section.dart';
 import 'package:recombox/src/rust/method/metadata_provider/featured_content.dart';
@@ -27,7 +28,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeState();
 }
 
-class _HomeState extends State<HomeScreen> {
+class _HomeState extends State<HomeScreen> with RouteAware {
 
   bool isLoading = false;
   bool isError = false;
@@ -46,11 +47,32 @@ class _HomeState extends State<HomeScreen> {
     initMetadataProvider();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) routeObserver.subscribe(this, route);
+  }
+
+  // Called when a route pushed on top of this one is popped: reload so
+  // e.g. the continue-watching section updates.
+  @override
+  void didPopNext() {
+    initMetadataProvider();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
   Future<void> initMetadataProvider({bool fromCache=true}) async {
     if (isLoading) return;
 
     setState(() {
       isLoading = true;
+      isError = false;
     });
     List<FeaturedContentInfo> featuredContentListResult = [];
     Map<Source, List<TrendingContentInfo>> trendingContentMapResult = {};
@@ -150,10 +172,9 @@ class _HomeState extends State<HomeScreen> {
                         child: CircularProgressIndicator(
                           color: appColors.secondary,
                         )
-                      ),
-                    if (!isLoading)
-                      if (isError)
-                        Expanded(
+                      )
+                    else if (isError)
+                        Positioned.fill(
                             child: Container(
                               padding: EdgeInsets.all(15),
                               alignment: Alignment.center,
@@ -167,8 +188,8 @@ class _HomeState extends State<HomeScreen> {
                                 textAlign: TextAlign.center,
                               )
                           ),
-                        ),
-                      if (!isError)
+                        )
+                    else
                         SizedBox(
                           height: double.infinity,
                           child: SingleChildScrollView(

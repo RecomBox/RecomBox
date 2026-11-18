@@ -36,6 +36,9 @@ class _DownloadCardState extends State<DownloadCard> with AutomaticKeepAliveClie
 
   ViewContentInfo? viewContentInfoResult;
 
+  // Whether the episode tiles under this card are shown.
+  bool showTiles = true;
+
   @override
   void initState() {
     super.initState();
@@ -139,36 +142,98 @@ class _DownloadCardState extends State<DownloadCard> with AutomaticKeepAliveClie
             ),
 
           ),
-          Container(
-            width: double.infinity,
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-              color: appColors.primary,
-              border: Border.all(color: appColors.strokePrimary),
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
+          // Full-width toggle bar to show/hide the episode tiles.
+          Material(
+            color: appColors.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: showTiles
+                ? BorderRadius.zero
+                : BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
             ),
-            // Plain Column instead of a nested ListView: only the outer list
-            // scrolls, and the card's height is fixed by its episode count.
-            child: Column(
-              children: [
-                for (int index = 0; index < widget.allDownloadItemValueList.length; index++) ...[
-                  if (index > 0)
-                    Container(
-                      width: double.infinity,
-                      height: 1,
-                      color: appColors.strokePrimary
-                    ),
-                  DownloadTile(
-                    key: ValueKey(widget.allDownloadItemValueList[index]),
-                    index: index,
-                    allDownloadItemKey: widget.allDownloadItemKey,
-                    allDownloadItemValue: widget.allDownloadItemValueList[index],
-                    onRemoveDownload: ()=> widget.onRemoveDownload(widget.allDownloadItemKey, index),
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              mouseCursor: SystemMouseCursors.click,
+              onTap: () => setState(() => showTiles = !showTiles),
+              child: Container(
+                width: double.infinity,
+                height: 36,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(color: appColors.strokePrimary),
+                    right: BorderSide(color: appColors.strokePrimary),
+                    bottom: BorderSide(color: appColors.strokePrimary),
                   ),
+                  borderRadius: showTiles
+                    ? null
+                    : BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "${showTiles ? "Hide" : "Show"} downloads (${widget.allDownloadItemValueList.length})",
+                        style: GoogleFonts.nunito(
+                          color: appColors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight(700)
+                        ),
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: showTiles ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: appColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Keep tile state alive while hidden so in-progress downloads
+          // keep their listeners/progress.
+          Visibility(
+            visible: showTiles,
+            maintainState: true,
+            child: Container(
+              width: double.infinity,
+              alignment: Alignment.topLeft,
+              decoration: BoxDecoration(
+                color: appColors.primary,
+                border: Border(
+                  left: BorderSide(color: appColors.strokePrimary),
+                  right: BorderSide(color: appColors.strokePrimary),
+                  bottom: BorderSide(color: appColors.strokePrimary),
+                ),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
+              ),
+              // Plain Column instead of a nested ListView: only the outer list
+              // scrolls, and the card's height is fixed by its episode count.
+              child: Column(
+                children: [
+                  for (int index = 0; index < widget.allDownloadItemValueList.length; index++) ...[
+                    if (index > 0)
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: appColors.strokePrimary
+                      ),
+                    DownloadTile(
+                      key: ValueKey(widget.allDownloadItemValueList[index]),
+                      index: index,
+                      allDownloadItemKey: widget.allDownloadItemKey,
+                      allDownloadItemValue: widget.allDownloadItemValueList[index],
+                      onRemoveDownload: ()=> widget.onRemoveDownload(widget.allDownloadItemKey, index),
+                    ),
+                  ],
                 ],
-              ],
+              )
             )
-          )
+          ),
           
           
           

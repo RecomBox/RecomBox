@@ -42,6 +42,7 @@ class _GeneralState extends State<General> {
 
   TextEditingController tmdbTextEditingController = TextEditingController(text: "");
   bool isNewTmdbToken = false;
+  bool showTmdbToken = false;
 
   @override
   void initState() {
@@ -346,9 +347,21 @@ class _GeneralState extends State<General> {
                         Expanded(
                           child: TextField(
                             controller: tmdbTextEditingController,
-                            obscureText: true, // hides the input
+                            obscureText: !showTmdbToken, // hidden unless toggled
                             decoration: InputDecoration(
-                              
+                              suffixIcon: IconButton(
+                                mouseCursor: SystemMouseCursors.click,
+                                tooltip: showTmdbToken ? "Hide token" : "Show token",
+                                onPressed: () {
+                                  setState(() {
+                                    showTmdbToken = !showTmdbToken;
+                                  });
+                                },
+                                icon: Icon(
+                                  showTmdbToken ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                                  color: Colors.black54,
+                                ),
+                              ),
                               hintText: "Enter your token",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
