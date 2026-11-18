@@ -522,7 +522,8 @@ class _WatchState extends State<WatchScreen> {
     int nextSeasonIndex = args!.season.toInt();
     int nextEpisodeIndex = args!.episode.toInt() + 1;
 
-    if (nextEpisodeIndex >= (episodeList[nextSeasonIndex].toInt() - 1)){
+    // Episode index is 0-based, so the last valid index is count - 1.
+    if (nextEpisodeIndex >= episodeList[nextSeasonIndex].toInt()){
       nextEpisodeIndex = 0;
       nextSeasonIndex++;
       if (nextSeasonIndex >= episodeList.length){
@@ -537,9 +538,12 @@ class _WatchState extends State<WatchScreen> {
       availableNext = true;
     }
 
+    // No more episodes: do nothing (keep the current player running).
+    if (!availableNext || !ctx.mounted) return;
+
     await onNavigateCleanUp();
 
-    if (availableNext && ctx.mounted){
+    if (ctx.mounted){
       navigateWatch(NavigateWatchArgs(
         context: ctx, 
         provider: SelectedProvider(type: 0),
@@ -564,20 +568,38 @@ class _WatchState extends State<WatchScreen> {
     int nextEpisodeIndex = args!.episode.toInt() - 1;
 
     if (nextEpisodeIndex < 0){
-      nextEpisodeIndex = 0;
       nextSeasonIndex--;
       if (nextSeasonIndex < 0){
         availableNext = false;
       }else{
-        availableNext = true;
+        // Go to the last episode of the previous season.
+        final viewContentInfoResult = await ViewContentInfo.get_(
+          source: args!.source.name,
+          id: args!.viewID,
+          fromCache: true,
+          checkExpire: false
+        );
+        final episodeList = viewContentInfoResult.episodes;
+        final int prevSeasonCount = nextSeasonIndex < episodeList.length
+          ? episodeList[nextSeasonIndex].toInt()
+          : 0;
+        if (prevSeasonCount == 0){
+          availableNext = false;
+        }else{
+          nextEpisodeIndex = prevSeasonCount - 1;
+          availableNext = true;
+        }
       }
     }else{
       availableNext = true;
     }
 
+    // No previous episode: do nothing (keep the current player running).
+    if (!availableNext || !ctx.mounted) return;
+
     await onNavigateCleanUp();
-    if (availableNext && ctx.mounted){
-      
+    if (ctx.mounted){
+
       navigateWatch(NavigateWatchArgs(
         context: ctx, 
         provider: SelectedProvider(type: 0),

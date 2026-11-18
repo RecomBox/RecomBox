@@ -220,7 +220,8 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
     int nextSeasonIndex = args.season.toInt();
     int nextEpisodeIndex = args.episode.toInt() + 1;
 
-    if (nextEpisodeIndex >= (episodeList[nextSeasonIndex].toInt() - 1)){
+    // Episode index is 0-based, so the last valid index is count - 1.
+    if (nextEpisodeIndex >= episodeList[nextSeasonIndex].toInt()){
       nextEpisodeIndex = 0;
       nextSeasonIndex++;
       if (nextSeasonIndex >= episodeList.length){
@@ -273,12 +274,27 @@ class _WatchEmbedState extends State<WatchEmbedScreen> {
     int nextEpisodeIndex = args.episode.toInt() - 1;
 
     if (nextEpisodeIndex < 0){
-      nextEpisodeIndex = 0;
       nextSeasonIndex--;
       if (nextSeasonIndex < 0){
         availableNext = false;
       }else{
-        availableNext = true;
+        // Go to the last episode of the previous season.
+        final viewContentInfoResult = await ViewContentInfo.get_(
+          source: args.source.name,
+          id: args.viewID,
+          fromCache: true,
+          checkExpire: false
+        );
+        final episodeList = viewContentInfoResult.episodes;
+        final int prevSeasonCount = nextSeasonIndex < episodeList.length
+          ? episodeList[nextSeasonIndex].toInt()
+          : 0;
+        if (prevSeasonCount == 0){
+          availableNext = false;
+        }else{
+          nextEpisodeIndex = prevSeasonCount - 1;
+          availableNext = true;
+        }
       }
     }else{
       availableNext = true;
