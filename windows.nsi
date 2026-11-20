@@ -16,20 +16,46 @@ RequestExecutionLevel admin
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
+# Finish page with "Launch RecomBox" checkbox (defines must come before the page macro)
+!define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_NAME}.exe"
+!define MUI_FINISHPAGE_RUN_TEXT "Launch RecomBox"
+!insertmacro MUI_PAGE_FINISH
+
 # Uninstaller pages
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
 !insertmacro MUI_LANGUAGE "English"
 
-!define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_NAME}.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "Launch RecomBox"
+
+# Kill the running app and WAIT until it has actually exited.
+# taskkill returns immediately; without waiting, File /r hits files that are
+# still locked by the dying process and NSIS shows "Error opening file for writing".
+!macro KillAppAndWait
+    nsExec::ExecToStack 'taskkill /F /T /IM "${APP_NAME}.exe"'
+    Pop $0
+    Pop $1
+    StrCpy $2 0
+    wait_app_exit_loop:
+        # find exits 0 while the process is still listed
+        nsExec::ExecToStack 'cmd /c tasklist /FI "IMAGENAME eq ${APP_NAME}.exe" /NH | find /I "${APP_NAME}.exe"'
+        Pop $0
+        Pop $1
+        StrCmp $0 "0" 0 wait_app_exit_done
+        IntOp $2 $2 + 1
+        IntCmp $2 50 wait_app_exit_done   # give up after ~10s
+        Sleep 200
+        Goto wait_app_exit_loop
+    wait_app_exit_done:
+    # Small grace period for Windows to release file handles
+    Sleep 500
+!macroend
 
 Section "MainSection" SEC01
 
     SetOutPath "$INSTDIR"
 
-    nsExec::ExecToStack 'taskkill /F /IM "${APP_NAME}.exe"'
+    !insertmacro KillAppAndWait
     
     # Grabs all flutter build files recursively
     File /r "${BUILD_DIR}\*"
@@ -55,7 +81,7 @@ Section "MainSection" SEC01
 SectionEnd
 
 Section "Uninstall"
-    nsExec::ExecToStack 'taskkill /F /IM "${APP_NAME}.exe"'
+    !insertmacro KillAppAndWait
     
     Delete "$DESKTOP\RecomBox.lnk"
     RMDir /r "$SMPROGRAMS\RecomBox"
